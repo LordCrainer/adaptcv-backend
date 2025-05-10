@@ -5,8 +5,10 @@ services:
       context: .
       target: 'dev'
     container_name: acv-api-backend
-    # depends_on:
-    #   - acv-mongo
+    depends_on:
+      - acv-mongo
+      - acv-redis
+    restart: unless-stopped
     ports:
       - '${API_PORT}:3000'
     volumes:
@@ -25,7 +27,7 @@ services:
       - acv-mongo-data:c
     networks:
       - acv-network
-  
+
   acv-redis:
     image: redis:6.2.5
     container_name: acv-redis
