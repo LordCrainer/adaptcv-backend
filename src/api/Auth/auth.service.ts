@@ -1,14 +1,14 @@
 import jwt from 'jsonwebtoken'
 
+import type { RequestUserData } from '@Api/Auth/interfaces/auth.interface'
+import type { UserRepository } from '@Api/Users/interfaces/users.repository'
+import type { IUsers } from '@lordcrainer/adaptcv-shared-types'
+
 import { customError } from '@Shared/utils/errorUtils'
 import { redisClient } from '@src/config/cache/redis'
 import config from '@src/config/environments'
 import Logger from '@src/lib/logger'
 import { getTokenExpirationInSeconds } from '@src/Shared/utils/auth.utils'
-
-import { RequestUserData } from '@Api/Auth/interfaces/auth.interface'
-import { IUsers } from '@Api/Users/interfaces/users.interface'
-import { UserRepository } from '@Api/Users/interfaces/users.repository'
 
 import { USER_MESSAGES } from '../Users/constants/users.message'
 import { checkPasswordHash } from '../Users/helpers/users.helpers'
@@ -19,10 +19,11 @@ import { AUTH_MESSAGES } from './constants/auth.messages'
  * @implements {IAuthService}
  */
 export class AuthService {
-  constructor(
-    private readonly userRepository: UserRepository
-    // private readonly redis: typeof redisClient
-  ) {}
+  private readonly userRepository: UserRepository
+
+  constructor(userRepository: UserRepository) {
+    this.userRepository = userRepository
+  }
 
   async login(
     params: IUsers
@@ -57,8 +58,7 @@ export class AuthService {
       name: foundUser.name,
       email: foundUser.email,
       timezone: foundUser?.timezone,
-      isSuperAdmin: foundUser?.isSuperAdmin,
-      organizations: foundUser.organizations
+      isSuperAdmin: foundUser?.isSuperAdmin
     }
 
     const expireSec = getTokenExpirationInSeconds(tokenData.expiresAt)

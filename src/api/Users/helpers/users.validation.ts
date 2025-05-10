@@ -1,8 +1,9 @@
 import * as Joi from 'joi'
 
-import { customError } from '@src/Shared/utils/errorUtils'
+import type { IUsers } from '@lordcrainer/adaptcv-shared-types'
+import type { UserCreationParams } from '../interfaces/users.interface'
 
-import { IUsers, UserCreationParams } from '../interfaces/users.interface'
+import { customError } from '@src/Shared/utils/errorUtils'
 
 const validationCreateUser = (body: UserCreationParams['body']) => {
   const validated = Joi.object<IUsers>()

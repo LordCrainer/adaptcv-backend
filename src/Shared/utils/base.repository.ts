@@ -1,27 +1,23 @@
-import {
+import type { IBaseRepository } from '@Shared/domain/base.repository.interface'
+import type {
   FilterQuery,
   Model,
   QueryOptions,
   UpdateQuery,
   UpdateWithAggregationPipeline
 } from 'mongoose'
+import type { providersDb, QueryFromCriteria } from './criteriaHandle'
 
-import { IBaseRepository } from '@Shared/domain/base.repository.interface'
 import { shortId } from '@src/lib/shortId'
-
-import { PostParams } from '@Api/Posts/interfaces/posts.interface'
-
-import { providersDb, QueryFromCriteria } from './criteriaHandle'
 
 export class BaseRepository<T extends { _id?: string }>
   implements IBaseRepository<T>
 {
   provider?: keyof providersDb
-  constructor(
-    private readonly model: Model<T>,
-    _provider: keyof providersDb
-  ) {
+  model: Model<T>
+  constructor(_model: Model<T>, _provider: keyof providersDb) {
     this.provider = _provider
+    this.model = _model
   }
 
   updateMany?(
@@ -95,7 +91,7 @@ export class BaseRepository<T extends { _id?: string }>
   async update(
     filter: FilterQuery<T>,
     update: UpdateQuery<T> | UpdateWithAggregationPipeline,
-    options?: QueryOptions<T> | null | undefined
+    options?: any
   ): Promise<boolean> {
     const updated = await this.model.updateOne(filter, update, options)
     return updated.modifiedCount > 0

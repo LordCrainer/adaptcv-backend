@@ -1,9 +1,7 @@
-import { IBaseRepository } from '@Shared/domain/base.repository.interface'
-import {
-  Criteria,
-  extractQueryFromCriteria,
-  QueryFromCriteria
-} from '@Shared/utils/criteriaHandle'
+import type { IBaseRepository } from '@Shared/domain/base.repository.interface'
+import type { Criteria, QueryFromCriteria } from '@Shared/utils/criteriaHandle'
+
+import { extractQueryFromCriteria } from '@Shared/utils/criteriaHandle'
 
 export interface CreatorService<T> {
   execute: (body: T) => Promise<T>
@@ -24,7 +22,9 @@ export interface UpdaterService<T> {
 
 export class BaseService<T = any> {
   extractQuery: (params?: Criteria<T>) => QueryFromCriteria<T>
-  constructor(private readonly repository: IBaseRepository<T>) {
+  repository: IBaseRepository<T>
+  constructor(repository: IBaseRepository<T>) {
+    this.repository = repository
     if (this.repository.provider) {
       this.extractQuery = extractQueryFromCriteria(this.repository.provider)
     } else {

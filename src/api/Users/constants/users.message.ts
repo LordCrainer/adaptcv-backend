@@ -1,4 +1,4 @@
-import { ApiMessages } from '@Shared/utils/define'
+import type { ApiMessages } from '@Shared/utils/define'
 
 interface UserMessages extends Partial<ApiMessages> {}
 

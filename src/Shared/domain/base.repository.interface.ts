@@ -1,11 +1,13 @@
-import {
+import type {
+  providersDb,
+  QueryFromCriteria
+} from '@Shared/utils/criteriaHandle'
+import type {
   FilterQuery,
   QueryOptions,
   UpdateQuery,
   UpdateWithAggregationPipeline
 } from 'mongoose'
-
-import { providersDb, QueryFromCriteria } from '@Shared/utils/criteriaHandle'
 
 export interface IWrite<T> {
   update(

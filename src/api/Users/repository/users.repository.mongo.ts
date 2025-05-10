@@ -1,7 +1,8 @@
+import type { IUsers } from '@lordcrainer/adaptcv-shared-types'
+import type { UserRepository } from '../interfaces/users.repository'
+
 import { BaseRepository } from '@Shared/utils/base.repository'
 
-import { IUsers } from '../interfaces/users.interface'
-import { UserRepository } from '../interfaces/users.repository'
 import { usersModel } from './users.schema'
 
 export class UserRepositoryMongo

@@ -1,7 +1,8 @@
+import type { PermissionMethod } from '@src/middleware/permissions.middleware'
+
 import {
   basePermissionRules,
-  checkPermissions,
-  PermissionMethod
+  checkPermissions
 } from '@src/middleware/permissions.middleware'
 
 type UserPermissionType =

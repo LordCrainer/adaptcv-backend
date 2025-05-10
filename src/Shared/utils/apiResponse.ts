@@ -1,4 +1,4 @@
-import { Response } from 'express'
+import type { Response } from 'express'
 
 export class ResponseUseCase {
   success: boolean
@@ -23,7 +23,10 @@ export class ResponseUseCase {
 }
 
 class ApiResponse {
-  constructor(private res: Response) {}
+  res: Response
+  constructor(res: Response) {
+    this.res = res
+  }
 
   static success(res: Response): ApiResponse {
     return new ApiResponse(res).status(200)

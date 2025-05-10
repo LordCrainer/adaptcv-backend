@@ -1,4 +1,4 @@
-import { RoleConfig, RoleType } from '@lordcrainer/adaptcv-shared-types'
+import type { RoleConfig, RoleType } from '@lordcrainer/adaptcv-shared-types'
 
 export class Roles {
   private static readonly ROLES: RoleConfig = {
