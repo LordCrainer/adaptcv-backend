@@ -10,6 +10,14 @@ import { inyectUserController } from './users.dependencies'
  * @constant {express.Router}
  */
 const UsersRouter = express.Router()
+
+UsersRouter.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    message: 'Users service is running'
+  })
+})
+
 UsersRouter.use(inyectAuthMiddleware, canAccess('admin'))
 
 /**

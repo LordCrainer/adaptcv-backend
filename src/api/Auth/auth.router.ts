@@ -2,7 +2,7 @@ import { Router } from 'express'
 
 import { inyectAuthController, inyectAuthMiddleware } from './auth.dependencies'
 
-const router: Router = Router()
+const AuthRouter: Router = Router()
 
 /**
  * @swagger
@@ -50,7 +50,7 @@ const router: Router = Router()
  *       400:
  *         description: Bad request
  */
-router.post('/signup', inyectAuthController.signup)
+AuthRouter.post('/signup', inyectAuthController.signup)
 
 /**
  * @swagger
@@ -70,7 +70,7 @@ router.post('/signup', inyectAuthController.signup)
  *       401:
  *         description: Unauthorized
  */
-router.post('/login', inyectAuthController.login)
+AuthRouter.post('/login', inyectAuthController.login)
 
 /**
  * @swagger
@@ -84,6 +84,13 @@ router.post('/login', inyectAuthController.login)
  *       401:
  *         description: Unauthorized
  */
-router.post('/logout', inyectAuthMiddleware, inyectAuthController.logout)
+AuthRouter.post('/logout', inyectAuthMiddleware, inyectAuthController.logout)
 
-export default router
+AuthRouter.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    message: 'Auth service is running'
+  })
+})
+
+export default AuthRouter
