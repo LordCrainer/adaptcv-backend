@@ -1,11 +1,15 @@
 import ApiResponse from '@Shared/utils/apiResponse'
 
 import { USER_MESSAGES } from './constants/users.message'
-import { UserParams } from './interfaces/users.interface'
+import type { UserParams } from './interfaces/users.interface'
 import { UserService } from './users.service'
 
 export class UsersController {
-  constructor(private readonly userService: UserService) {}
+  private readonly userService: UserService;
+
+  constructor(userService: UserService) {
+    this.userService = userService;
+  }
   getUsers: IController<UserParams> = async (req, res, next) => {
     try {
       const args = {

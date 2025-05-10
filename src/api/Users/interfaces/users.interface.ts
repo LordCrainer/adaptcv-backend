@@ -1,14 +1,9 @@
 import type {
-  IUserMethods,
   IUsers,
   RequestUserData,
-  RoleType,
-  UsersOrganizations
-} from '@lanubetv/sed-share-types'
-
-import { Criteria } from '@Shared/utils/criteriaHandle'
-
-export { IUsers, IUserMethods, UsersOrganizations }
+  RoleType
+} from '@lordcrainer/adaptcv-shared-types'
+import type { Criteria } from '@Shared/utils/criteriaHandle'
 
 export interface UserServices {
   find: (page: number, limit: number) => Promise<IUsers[]>

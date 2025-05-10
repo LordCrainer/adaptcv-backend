@@ -1,10 +1,9 @@
-import { IBaseRepository } from '@Shared/domain/base.repository.interface'
-import { MapType } from '@Shared/utils/utilities'
-
-import { IUserMethods, IUsers } from './users.interface'
+import type { IUsers } from '@lordcrainer/adaptcv-shared-types'
+import type { IBaseRepository } from '@Shared/domain/base.repository.interface'
+import type { MapType } from '@Shared/utils/utilities'
 
 interface Repository<T> extends IBaseRepository<T> {}
 
-export interface UserDocument extends IUsers, IUserMethods {}
+export interface UserDocument extends IUsers {}
 
-export type UserRepository = MapType<Repository<IUsers>>
+export type UserRepository = MapType<Repository<UserDocument>>

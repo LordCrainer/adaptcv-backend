@@ -2,7 +2,6 @@ import compress from 'compression'
 import cors from 'cors'
 import express from 'express'
 import rateLimit from 'express-rate-limit'
-// import cors from "cors";
 import helmet from 'helmet'
 import methodOverride from 'method-override'
 
@@ -24,7 +23,6 @@ const expressMiddleware = (app: express.Application) => {
   app.use(compress())
   app.use(methodOverride())
   app.use(morganConfigure)
-  // express middleware
   app.use(
     express.urlencoded({
       extended: false

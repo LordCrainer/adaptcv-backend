@@ -1,10 +1,9 @@
 import jwt from 'jsonwebtoken'
 
+import type { IUsers } from '@lordcrainer/adaptcv-shared-types'
 import type {
-  IUsers,
   UserCreationParams,
-  UserParams,
-  UsersOrganizations
+  UserParams
 } from './interfaces/users.interface'
 import type { UserRepository } from './interfaces/users.repository'
 
@@ -22,8 +21,11 @@ import { validationCreateUser } from './helpers/users.validation'
  * @export
  */
 export class UserService extends BaseService<IUsers> {
-  constructor(private readonly userRepository: UserRepository) {
+  private readonly userRepository: UserRepository
+
+  constructor(userRepository: UserRepository) {
     super(userRepository)
+    this.userRepository = userRepository
   }
 
   async updateUser(
@@ -55,15 +57,6 @@ export class UserService extends BaseService<IUsers> {
     }
 
     const user = await this.registerUser({ ...body, isSuperAdmin })
-
-    if (!isSuperAdmin && body?.organizationId) {
-      await this.hireUserToOrganization({
-        userId: user._id,
-        organizationId: body.organizationId,
-        name: body.name,
-        role
-      })
-    }
 
     return {
       data: user,
@@ -122,37 +115,6 @@ export class UserService extends BaseService<IUsers> {
       data: isDeleted,
       message: USER_MESSAGES.deleted
     }
-  }
-
-  private async hireUserToOrganization(
-    params: { userId: string; _id?: string } & Omit<UsersOrganizations, '_id'>
-  ) {
-    const organzation: UsersOrganizations = {
-      _id: shortId.rnd(),
-      organizationId: params.organizationId,
-      name: params.name,
-      role: params.role,
-      status: params?.status,
-      profile: params?.profile
-    }
-
-    const isHired = await this.userRepository.update(
-      { _id: params.userId },
-      { $push: { organizations: organzation } }
-    )
-
-    if (!isHired) {
-      throw customError('resourceNotFound', 'User not hired')
-    }
-
-    await this.organizationsRepository.update(
-      { _id: params.organizationId },
-      {
-        $set: { updatedAt: new Date() }
-      }
-    )
-
-    return { isHired, organzation }
   }
 
   verifyToken(token: string): jwt.JwtPayload {

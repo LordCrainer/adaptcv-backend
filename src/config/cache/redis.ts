@@ -1,4 +1,6 @@
-import redis, { RedisClientType } from 'redis'
+import redis from 'redis'
+
+import type { RedisClientType } from 'redis'
 
 import Logger from '@src/lib/logger'
 
