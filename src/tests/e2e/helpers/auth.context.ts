@@ -1,7 +1,6 @@
-import { RoleType } from '@lanubetv/sed-share-types'
+import type { RoleType } from '@lordcrainer/adaptcv-shared-types'
 
 import { Roles } from '@src/api/Roles/roles'
-import { organizationsSeeder } from '@src/tests/seeders/organizations.seeder'
 import { usersSeederInput } from '@src/tests/seeders/users.seeder'
 
 import {
@@ -33,31 +32,27 @@ const generateTokenForRole = async (role: RoleType) => {
   }
   if (Roles.isAdmin(roleValue)) {
     const superAdminToken = await getAuthToken('superAdmin')
-    const org = await createOrganization(
-      organizationsSeeder.organization1,
-      superAdminToken
-    )
 
-    await createUserInOrganization({
-      user: usersSeederInput.admin,
-      role: 'admin',
-      organizationId: org._id,
-      token: superAdminToken
-    })
+    // await createUserInOrganization({
+    //   user: usersSeederInput.admin,
+    //   role: 'admin',
+    //   organizationId: org._id,
+    //   token: superAdminToken
+    // })
 
     return loginUser(usersSeederInput.admin)
   }
 
   if (Roles.isUser(roleValue)) {
     const superAdminToken = await getAuthToken('superAdmin')
-    const org = await createOrganization(
-      organizationsSeeder.organization2,
-      superAdminToken
-    )
+    // const org = await createOrganization(
+    //   organizationsSeeder.organization2,
+    //   superAdminToken
+    // )
     await createUserInOrganization({
       user: usersSeederInput.user,
       role: 'user',
-      organizationId: org._id,
+      organizationId: '',
       token: superAdminToken
     })
     return loginUser(usersSeederInput.user)

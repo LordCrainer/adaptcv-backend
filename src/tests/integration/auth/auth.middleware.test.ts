@@ -1,5 +1,3 @@
-import { Organizations, TypeOrganization } from '@lanubetv/sed-share-types'
-import { Response } from 'express'
 import {
   afterAll,
   beforeAll,
@@ -9,6 +7,10 @@ import {
   it,
   vitest
 } from 'vitest'
+
+import type { IUsers } from '@lordcrainer/adaptcv-shared-types'
+import type { RequestExtended } from '@src/global'
+import type { Response } from 'express'
 
 import {
   authService,
@@ -21,11 +23,7 @@ import {
   connectToMemoryDB,
   disconnectFromMemoryDB
 } from '@src/config/db/mongodb-memory-server'
-import { RequestExtended } from '@src/global'
 import { shortId } from '@src/lib/shortId'
-
-import { organizationsService } from '@Api/Organizations/organizations.dependencies'
-import { IUsers } from '@Api/Users/interfaces/users.interface'
 
 const userRepository = new UserRepositoryMongo()
 
@@ -81,65 +79,5 @@ describe('AuthMiddleware', () => {
       expect(error).toBeInstanceOf(Error)
       expect(error.message).toBe('Invalid token')
     }
-  })
-
-  it('should authorize a user', async () => {
-    const organization = {
-      _id: '_id+test+loging+org',
-      name: 'Test Organization',
-      contact: [
-        { name: 'John Doe', type: 'contact', email: 'johndoe@test.com' }
-      ],
-      type: TypeOrganization.PERSONAL
-    } as Organizations
-
-    const otherOrganization = {
-      _id: '_id+test+loging+org+other',
-      name: 'Other Test Organization',
-      contact: [
-        { name: 'John Doe', type: 'contact', email: 'johndoe@test.com' }
-      ],
-      type: TypeOrganization.PERSONAL
-    } as Organizations
-
-    const { data: createdOrg } = await organizationsService.create({
-      body: organization
-    })
-    const { data: createdOtherOrg } = await organizationsService.create({
-      body: otherOrganization
-    })
-
-    await userRepository.update(
-      {
-        _id: user._id
-      },
-      {
-        $set: {
-          organizations: [
-            {
-              _id: shortId.rnd(),
-              organizationId: createdOrg?._id
-            },
-            {
-              _id: shortId.rnd(),
-              organizationId: createdOtherOrg?._id
-            }
-          ]
-        }
-      }
-    )
-
-    const { data: foundUser } = await userService.getUser({
-      userId: user._id,
-      filters: {
-        organizations: { $elemMatch: { organizationId: createdOrg?._id } }
-      }
-    })
-
-    expect(foundUser?.organizations).toHaveLength(2)
-    const currentOrgData = foundUser?.organizations?.find(
-      (o) => o.organizationId === createdOrg?._id
-    )
-    expect(currentOrgData?.organizationId).toStrictEqual(createdOrg?._id)
   })
 })

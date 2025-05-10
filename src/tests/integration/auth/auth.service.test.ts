@@ -8,8 +8,8 @@ import {
   disconnectFromMemoryDB
 } from '@src/config/db/mongodb-memory-server'
 
-import { IUsers } from '@Api/Users/interfaces/users.interface'
 import { UserRepositoryMongo } from '@Api/Users/repository/users.repository.mongo'
+import type { IUsers } from '@lordcrainer/adaptcv-shared-types'
 
 const userRepository = new UserRepositoryMongo()
 

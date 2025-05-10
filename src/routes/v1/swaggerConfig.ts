@@ -2,6 +2,8 @@ import { Router } from 'express'
 import swaggerJSDoc from 'swagger-jsdoc'
 import swaggerUi from 'swagger-ui-express'
 
+import currentEnv from '@src/config/environments'
+
 const swaggerRouterV1 = Router()
 
 const swaggerDefinition = {
@@ -13,7 +15,7 @@ const swaggerDefinition = {
   },
   servers: [
     {
-      url: 'http://localhost:3002/v1',
+      url: `/v1`,
       description: 'Development server'
     }
   ],

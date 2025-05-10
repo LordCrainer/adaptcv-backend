@@ -1,5 +1,5 @@
 // src/tests/seeder.ts
-import { RoleType } from '@lanubetv/sed-share-types'
+import type { RoleType } from '@lordcrainer/adaptcv-shared-types'
 
 import { usersModel } from '@src/api/Users/repository/users.schema'
 

@@ -1,8 +1,8 @@
-import { Organizations, TypeOrganization } from '@lanubetv/sed-share-types'
 import request from 'supertest'
 import { beforeAll, describe, expect, it } from 'vitest'
 
-import { UserCreationParams } from '@src/api/Users/interfaces/users.interface'
+import type { UserCreationParams } from '@src/api/Users/interfaces/users.interface'
+
 import app from '@src/config/server'
 
 import { getAuthToken } from '../helpers/auth.context'
@@ -17,24 +17,6 @@ describe('Users End-to-End Tests', () => {
   })
 
   describe('CRUD Operations by superAdmin', () => {
-    it('Should the SuperAdmin be able to create a new Organization', async () => {
-      const response = await request(app)
-        .post('/v1/organizations')
-        .set('Authorization', `Bearer ${tokenSuperAdmin}`)
-        .send({
-          name: 'Org1',
-          type: TypeOrganization.PERSONAL,
-          contact: [
-            {
-              email: 'test+org1@org1.com',
-              name: 'John Doe',
-              type: 'legal'
-            }
-          ]
-        } as Organizations)
-      expect(response.status).toBe(201)
-      expect(response.body.data).toHaveProperty('_id')
-    })
     it('Should the SuperAdmin be able to create a user', async () => {
       const user = {
         name: 'testuser',

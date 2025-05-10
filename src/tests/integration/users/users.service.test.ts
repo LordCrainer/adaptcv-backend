@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 
-import { organizationsRepositoryMongo } from '@src/api/Organizations/organizations.dependencies'
+import type { UserCreationParams } from '@Api/Users/interfaces/users.interface'
+
 import {
   checkPasswordHash,
   generatePasswordHash
@@ -12,7 +13,6 @@ import {
 } from '@src/config/db/mongodb-memory-server'
 
 import { USER_MESSAGES } from '@Api/Users/constants/users.message'
-import { UserCreationParams } from '@Api/Users/interfaces/users.interface'
 import { UserRepositoryMongo } from '@Api/Users/repository/users.repository.mongo'
 import { usersModel } from '@Api/Users/repository/users.schema'
 import { UserService } from '@Api/Users/users.service'
@@ -22,7 +22,7 @@ let userRepository: UserRepositoryMongo
 
 describe('UserService', () => {
   userRepository = new UserRepositoryMongo()
-  userService = new UserService(userRepository, organizationsRepositoryMongo)
+  userService = new UserService(userRepository)
 
   beforeAll(async () => {
     await connectToMemoryDB('lntv-user-test')

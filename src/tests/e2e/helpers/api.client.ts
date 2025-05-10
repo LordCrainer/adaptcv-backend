@@ -1,10 +1,8 @@
-import { RoleType } from '@lanubetv/sed-share-types'
 import request from 'supertest'
 
-import { IUsers } from '@src/api/Users/interfaces/users.interface'
-import app from '@src/config/server'
+import type { IUsers, RoleType } from '@lordcrainer/adaptcv-shared-types'
 
-import { Organizations } from '@Api/Organizations/interfaces/organizations.interface'
+import app from '@src/config/server'
 
 export const loginUser = async (users: IUsers) => {
   const { email, password } = users
@@ -16,10 +14,7 @@ export const loginUser = async (users: IUsers) => {
   return data.token
 }
 
-export const createOrganization = async (
-  body: Organizations,
-  token: string
-) => {
+export const createOrganization = async (body: any, token: string) => {
   const response = await request(app)
     .post('/v1/organizations')
     .set('Authorization', `Bearer ${token}`)
