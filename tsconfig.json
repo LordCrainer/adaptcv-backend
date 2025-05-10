@@ -1,4 +1,41 @@
 {
-  // https://nuxt.com/docs/guide/concepts/typescript
-  "extends": "./.nuxt/tsconfig.json"
+  "compilerOptions": {
+    "module": "ESNext" /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', 'es2020', or 'ESNext'. */,
+    "target": "ESNext" /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017', 'ES2018', 'ES2019', 'ES2020', or 'ESNEXT'. */,
+    "declaration": false,
+    "moduleResolution": "node",
+    "moduleDetection": "force",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "noEmit": true,
+    "erasableSyntaxOnly": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "allowJs": true,
+    "sourceMap": true,
+    "isolatedModules": true,
+    "strict": true,
+    "strictNullChecks": true,
+    "outDir": "./dist" /* Redirect output structure to the directory. */,
+    "rootDir": "." /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */,
+    "baseUrl": "./",
+    "paths": {
+      "@src/*": ["./src/*"],
+      "@Shared/*": ["./src/Shared/*"],
+      "@Api/*": ["./src/api/*"],
+      "@Prisma/*": ["./prisma/generate/client/*"]
+    },
+    "types": ["node"],
+    "lib": ["ESNext", "DOM"]
+    // "esModuleInterop": true, /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */
+    // "skipLibCheck": false, /* Skip type checking of declaration files. */
+    // "forceConsistentCasingInFileNames": true, /* Disallow inconsistently-cased references to the same file. */
+  },
+  "typeRoots": ["node_modules/@types"],
+  "exclude": ["node_modules", "dist"],
+  "include": ["./src/**/*", "./tests/**/*"]
 }

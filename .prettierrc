@@ -1,0 +1,39 @@
+{
+  "trailingComma": "none",
+  "tabWidth": 2,
+  "semi": false,
+  "singleQuote": true,
+  "plugins": [
+    "@ianvs/prettier-plugin-sort-imports"
+  ],
+  "importOrder": [
+    "<THIRD_PARTY_MODULES>",
+    "",
+    "<BUILTIN_MODULES>",
+    "<TYPES>(node:)",
+    "<TYPES>",
+    "<TYPES>^[.]",
+    "",
+    "^(@src|@Shared)",
+    "",
+    "^(@Api)",
+    "",
+    "^[.]"
+  ],
+  "overrides": [
+    {
+      "files": "*.md",
+      "options": {
+        "tabWidth": 2,
+        "parser": "markdown"
+      }
+    },
+    {
+      "files": "*.json",
+      "options": {
+        "tabWidth": 2,
+        "parser": "json-stringify"
+      }
+    }
+  ]
+}

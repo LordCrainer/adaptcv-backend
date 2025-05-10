@@ -1,0 +1,43 @@
+version: '3.8'
+services:
+  acv-api-backend:
+    build:
+      context: .
+      target: 'dev'
+    container_name: acv-api-backend
+    # depends_on:
+    #   - acv-mongo
+    ports:
+      - '${API_PORT}:3000'
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    networks:
+      - acv-network
+
+  acv-mongo:
+    image: mongo:8.0-rc-jammy
+    container_name: acv-mongo
+    restart: unless-stopped
+    ports:
+      - '${MONGODB_PORT}:27017'
+    volumes:
+      - acv-mongo-data:c
+    networks:
+      - acv-network
+  
+  acv-redis:
+    image: redis:6.2.5
+    container_name: acv-redis
+    restart: unless-stopped
+    ports:
+      - '${REDIS_PORT}:6379'
+    networks:
+      - acv-network
+
+networks:
+  acv-network:
+    driver: bridge
+
+volumes:
+  acv-mongo-data:
