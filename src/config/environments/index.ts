@@ -1,4 +1,4 @@
-// import dotenv from 'dotenv'
+import dotenv from 'dotenv'
 
 import type { Environments, EnvironmentsType } from './environments.interface'
 
@@ -7,7 +7,7 @@ import development from './development'
 import production from './production'
 import test from './test'
 
-// dotenv.config()
+dotenv.config()
 
 const environments: Record<EnvironmentsType, (env: any) => Environments> = {
   development: (env) => development(env),

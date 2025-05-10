@@ -24,7 +24,7 @@ services:
     ports:
       - '${MONGODB_PORT}:27017'
     volumes:
-      - acv-mongo-data:c
+      - acv-mongo-data:/data/db
     networks:
       - acv-network
 
