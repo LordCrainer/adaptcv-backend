@@ -56,6 +56,7 @@ interface Mongo {
 interface Server {
   host: string
   port: number | string
+  url?: string
 }
 
 interface Multer {

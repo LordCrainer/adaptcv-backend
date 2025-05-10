@@ -20,7 +20,8 @@ const defaultEnv = (env: any): Environments => {
     },
     server: {
       host: env?.API_HOST ?? 'localhost',
-      port: env?.API_PORT ?? 3010
+      port: env?.API_PORT ?? 3010,
+      url: `${env?.API_HOST}:${env?.API_PORT}`
     },
     multer: {
       destiny: env?.PATH_ORIGIN ?? './data',

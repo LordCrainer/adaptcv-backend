@@ -9,7 +9,6 @@ import currentEnv from '../environments'
 let redisClient: RedisClientType
 
 const redisConnection = async (uri: string) => {
-  console.log('Redis connection', uri, currentEnv?.dataBase?.redis?.uri)
   if (redisClient) {
     return redisClient
   }
@@ -20,7 +19,7 @@ const redisConnection = async (uri: string) => {
     })
     await redisClient.connect()
 
-    Logger.info(`🫙 Connected to Redis ${uri}`)
+    Logger.info(`🫙  Connected to Redis ${uri}`)
 
     redisClient.on('error', (err: Error) =>
       Logger.error('Redis Client Error', err)
@@ -28,7 +27,6 @@ const redisConnection = async (uri: string) => {
 
     return redisClient
   } catch (error: Error | any) {
-    console.log('Redis connection error', error)
     Logger.error('Redis connection error:', error)
     throw new Error(`Redis connection error: ${error?.message}`)
   }

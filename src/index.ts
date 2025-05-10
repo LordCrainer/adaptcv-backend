@@ -14,7 +14,7 @@ const main = async () => {
     const server: http.Server = http.createServer(app)
 
     server.listen(app.get('port'), () =>
-      Logger.info(`💻 http://${currentEnv.server.host}:${app.get('port')}`)
+      Logger.info(`💻 Connected to ${currentEnv.server.host}:${app.get('port')}`)
     )
   } catch (error) {
     Logger.error(error)

@@ -15,7 +15,7 @@ const swaggerDefinition = {
   },
   servers: [
     {
-      url: `/v1`,
+      url: `${currentEnv.server.url}/v1`,
       description: 'Development server'
     }
   ],
