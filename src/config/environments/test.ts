@@ -5,7 +5,7 @@ const configuration = (env: any): Environments => {
     environment: 'test',
     dataBase: {
       mongo: {
-        url: env.MONGODB_URI || 'mongodb://localhost:27017/lntv',
+        url: env.MONGODB_URI || 'mongodb://localhost:27017/acv-test',
         enableInstance: env.MONGODB_TEST_CREATE_INSTANCE || true,
         enableDbPath: env.MONGODB_TEST_ENABLE_DB_PATH || false
       },
@@ -13,8 +13,8 @@ const configuration = (env: any): Environments => {
         host: env.MYSQL_HOST || 'localhost',
         user: env.MYSQL_USER || 'root',
         password: env.MYSQL_PASSWORD || 'root',
-        database: env.MYSQL_DATABASE || 'lntv',
-        uri: env.MYSQL_URI || 'mysql://root:root@localhost:3306/lntv'
+        database: env.MYSQL_DATABASE || 'acv-test',
+        uri: env.MYSQL_URI || 'mysql://root:root@localhost:3306/acv-test'
       },
       redis: {
         uri: `redis://localhost:6380/1`

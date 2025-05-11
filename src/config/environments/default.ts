@@ -5,14 +5,14 @@ const defaultEnv = (env: any): Environments => {
     environment: 'development',
     dataBase: {
       mongo: {
-        url: env?.MONGODB_URI ?? 'mongodb://localhost:27017/lntv'
+        url: env?.MONGODB_URI ?? 'mongodb://localhost:27017/acv'
       },
       mysql: {
         host: env?.MYSQL_HOST ?? 'localhost',
         user: env?.MYSQL_USER ?? 'root',
         password: env?.MYSQL_PASSWORD ?? 'root',
-        database: env?.MYSQL_DATABASE ?? 'lntv',
-        uri: env?.MYSQL_URI ?? 'mysql://root:root@localhost:3306/lntv'
+        database: env?.MYSQL_DATABASE ?? 'acv',
+        uri: env?.MYSQL_URI ?? 'mysql://root:root@localhost:3306/acv'
       },
       redis: {
         uri: env?.REDIS_URI ?? `redis://localhost:${env?.REDIS_PORT ?? 6379}/0`
