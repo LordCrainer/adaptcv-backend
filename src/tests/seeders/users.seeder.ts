@@ -20,21 +20,21 @@ interface UsersSeederInput {
 export const usersSeederInput: UsersSeederInput = {
   superAdmin: {
     _id: 'id-superAdmin',
-    email: 'superadmin@test.com',
+    email: 'superadmin@acv-test.com',
     password: 'password_superadmin',
     name: 'Super Admin',
     role: 'superAdmin'
   },
   admin: {
     _id: 'admin',
-    email: 'admin@test.com',
+    email: 'admin@acv-test.com',
     password: 'password_admin',
     name: 'Admin',
     role: 'admin'
   },
   user: {
     _id: 'user',
-    email: 'user@test.com',
+    email: 'user@acv-test.com',
     password: 'password_user',
     name: 'User',
     role: 'user'

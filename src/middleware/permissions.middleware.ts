@@ -15,12 +15,11 @@ export const checkPermissions =
   <T extends string>(permissionRules: Record<T, PermissionMethod>) =>
   (action: T): IController => {
     return (req, res, next) => {
-      const { currentRole, currentOrgId } = req.requestUser || {}
+      const { currentRole } = req.requestUser || {}
       if (
         currentRole &&
         !permissionRules[action]?.({
-          role: currentRole,
-          organizationId: currentOrgId
+          role: currentRole
         })
       ) {
         throw customError(

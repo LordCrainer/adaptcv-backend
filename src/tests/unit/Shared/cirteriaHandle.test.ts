@@ -1,9 +1,8 @@
 import { describe, expect, it, test } from 'vitest'
 
-import {
-  Criteria,
-  extractQueryFromCriteria
-} from '@Shared/utils/criteriaHandle'
+import type { Criteria } from '@Shared/utils/criteriaHandle'
+
+import { extractQueryFromCriteria } from '@Shared/utils/criteriaHandle'
 import { decodeHash, encodeHash, generateHash } from '@Shared/utils/utilities'
 
 describe('GenerateHash', () => {
@@ -47,7 +46,7 @@ describe('buildOrFromCriteria function', () => {
   const builderQuery = extractQueryFromCriteria(provider)
 
   it('should return correct filters structure', () => {
-    const query = <Criteria>{
+    const query: Partial<Criteria> = {
       filters: {
         name__like: 'John',
         age__gte: 10,
@@ -73,7 +72,7 @@ describe('buildOrFromCriteria function', () => {
     })
   })
   it('should return correct or structure', () => {
-    const query = <Criteria>{
+    const query: Partial<Criteria> = {
       or: [
         { name__like: 'John' },
         { age__gte: 10 },

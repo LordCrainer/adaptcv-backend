@@ -3,11 +3,7 @@ import type { RoleType } from '@lordcrainer/adaptcv-shared-types'
 import { Roles } from '@src/api/Roles/roles'
 import { usersSeederInput } from '@src/tests/seeders/users.seeder'
 
-import {
-  createOrganization,
-  createUserInOrganization,
-  loginUser
-} from './api.client'
+import { createUser, loginUser } from './api.client'
 
 type AuthTokens = Record<RoleType, string>
 
@@ -32,29 +28,14 @@ const generateTokenForRole = async (role: RoleType) => {
   }
   if (Roles.isAdmin(roleValue)) {
     const superAdminToken = await getAuthToken('superAdmin')
-
-    // await createUserInOrganization({
-    //   user: usersSeederInput.admin,
-    //   role: 'admin',
-    //   organizationId: org._id,
-    //   token: superAdminToken
-    // })
+    await createUser(usersSeederInput.admin, superAdminToken)
 
     return loginUser(usersSeederInput.admin)
   }
 
   if (Roles.isUser(roleValue)) {
     const superAdminToken = await getAuthToken('superAdmin')
-    // const org = await createOrganization(
-    //   organizationsSeeder.organization2,
-    //   superAdminToken
-    // )
-    await createUserInOrganization({
-      user: usersSeederInput.user,
-      role: 'user',
-      organizationId: '',
-      token: superAdminToken
-    })
+
     return loginUser(usersSeederInput.user)
   }
 
