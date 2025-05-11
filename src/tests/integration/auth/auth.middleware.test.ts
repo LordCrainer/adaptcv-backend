@@ -17,13 +17,9 @@ import {
   inyectAuthMiddleware
 } from '@src/api/Auth/auth.dependencies'
 import { UserRepositoryMongo } from '@src/api/Users/repository/users.repository.mongo'
-import { userService } from '@src/api/Users/users.dependencies'
-import {
-  clearDatabase,
-  connectToMemoryDB,
-  disconnectFromMemoryDB
-} from '@src/config/db/mongodb-memory-server'
-import { shortId } from '@src/lib/shortId'
+import { dbStrategy } from '@src/config/db/dbStrategy'
+
+const selectedDb = dbStrategy.mongoMemory
 
 const userRepository = new UserRepositoryMongo()
 
@@ -36,16 +32,16 @@ describe('AuthMiddleware', () => {
   } as IUsers
 
   beforeAll(async () => {
-    await connectToMemoryDB('lntv-user-test')
+    await selectedDb.connect('acv-user-test')
   })
 
   beforeEach(async () => {
-    await clearDatabase()
+    await selectedDb.clear()
     await userRepository.create(user)
   })
 
   afterAll(async () => {
-    await disconnectFromMemoryDB()
+    await selectedDb.disconnect()
   })
 
   it('should authenticate a user', async () => {

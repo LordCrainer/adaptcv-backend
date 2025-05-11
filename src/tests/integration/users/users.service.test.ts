@@ -8,14 +8,17 @@ import {
 } from '@src/api/Users/helpers/users.helpers'
 import {
   clearDatabase,
-  connectToMemoryDB,
-  disconnectFromMemoryDB
+  connection,
+  disconnect
 } from '@src/config/db/mongodb-memory-server'
 
 import { USER_MESSAGES } from '@Api/Users/constants/users.message'
 import { UserRepositoryMongo } from '@Api/Users/repository/users.repository.mongo'
 import { usersModel } from '@Api/Users/repository/users.schema'
 import { UserService } from '@Api/Users/users.service'
+import { dbStrategy } from '@src/config/db/dbStrategy'
+
+const selectedDb = dbStrategy.mongoMemory
 
 let userService: UserService
 let userRepository: UserRepositoryMongo
@@ -25,16 +28,16 @@ describe('UserService', () => {
   userService = new UserService(userRepository)
 
   beforeAll(async () => {
-    await connectToMemoryDB('lntv-user-test')
-    await clearDatabase()
+    await selectedDb.connect('acv-user-test')
+    await selectedDb.clear()
   })
 
   afterAll(async () => {
-    await disconnectFromMemoryDB()
+    await selectedDb.disconnect()
   })
 
   beforeEach(async () => {
-    await clearDatabase()
+    await selectedDb.clear()
   })
 
   describe('UserModel Methods', () => {

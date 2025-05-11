@@ -4,8 +4,8 @@ import { authService } from '@src/api/Auth/auth.dependencies'
 import { userService } from '@src/api/Users/users.dependencies'
 import {
   clearDatabase,
-  connectToMemoryDB,
-  disconnectFromMemoryDB
+  connection,
+  disconnect
 } from '@src/config/db/mongodb-memory-server'
 
 import { UserRepositoryMongo } from '@Api/Users/repository/users.repository.mongo'
@@ -15,12 +15,12 @@ const userRepository = new UserRepositoryMongo()
 
 describe('AuthService', () => {
   beforeAll(async () => {
-    await connectToMemoryDB('lntv-user-test')
+    await connection('acv-user-test')
     await clearDatabase()
   })
 
   afterAll(async () => {
-    await disconnectFromMemoryDB()
+    await disconnect()
   })
 
   it('should login a user', async () => {
