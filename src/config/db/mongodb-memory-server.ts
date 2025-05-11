@@ -2,12 +2,13 @@ import { MongoMemoryServer } from 'mongodb-memory-server'
 import mongoose from 'mongoose'
 
 import currentEnv from '../environments'
+import { BaseDb } from './dbStrategy'
 
 let mongoServer: MongoMemoryServer | null = null
 /**
  * Connect to the in-memory database.
  */
-export const connectToMemoryDB = async (dbName = 'lntv-test') => {
+export const connection = async (dbName = 'acv-test') => {
   try {
     if (mongoServer) {
       return
@@ -25,8 +26,8 @@ export const connectToMemoryDB = async (dbName = 'lntv-test') => {
     await mongoose.connect(uri, {})
     console.log('Connected to MongoDb Memory, db: ', dbName)
   } catch (error) {
-    console.error('Error in connectToMemoryDB', error)
-    throw new Error('Error in connectToMemoryDB')
+    console.error('Error in connection', error)
+    throw new Error('Error in connection')
   }
 }
 
@@ -51,8 +52,56 @@ export const clearDatabase = async () => {
 /**
  * Disconnect from the in-memory database.
  */
-export const disconnectFromMemoryDB = async () => {
+export const disconnect = async () => {
   console.log('Disconnecting from MongoDb Memory')
   await mongoose.disconnect()
   await mongoServer?.stop()
+}
+
+export class MongoMemoryServerStrategy implements BaseDb {
+  private mongoServer!: MongoMemoryServer
+
+  async connect(dbName?: string) {
+    try {
+      if (this.mongoServer) {
+        return
+      }
+      this.mongoServer = await MongoMemoryServer.create({
+        instance: currentEnv.dataBase.mongo?.enableInstance
+          ? {
+              dbName
+              // dbPath: './data/mongodb-memory',
+            }
+          : undefined
+      })
+
+      const uri = this.mongoServer.getUri()
+      await mongoose.connect(uri, {})
+      console.log('Connected to MongoDb Memory, db: ', dbName)
+    } catch (error) {
+      console.error('Error in connection', error)
+      throw new Error('Error in connection')
+    }
+  }
+
+  async disconnect() {
+    await mongoose.disconnect()
+    await this.mongoServer?.stop()
+  }
+
+  async clear(): Promise<void> {
+    try {
+      if (currentEnv.debugs?.skipClear) return
+
+      const collections = mongoose.connection.collections
+      for (const key in collections) {
+        const collection = collections[key]
+        await collection.deleteMany({})
+      }
+      console.log('Cleared all collections in MongoDb Memory')
+    } catch (error) {
+      console.error('Error in clear method', error)
+      throw new Error('Error in clear method')
+    }
+  }
 }

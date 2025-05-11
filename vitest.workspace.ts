@@ -23,12 +23,5 @@ export default defineWorkspace([
       include: ['./src/tests/e2e/**/*.spec.ts'],
       setupFiles: ['./src/tests/e2e/setup-e2e.ts']
     }
-  },
-  {
-    extends: './vite.config.ts',
-    test: {
-      name: 'migration-db',
-      include: ['./src/scripts/migration-db/**/*.test.ts']
-    }
   }
 ])
