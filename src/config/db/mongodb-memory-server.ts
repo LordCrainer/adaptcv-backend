@@ -77,7 +77,6 @@ export class MongoMemoryServerStrategy implements BaseDb {
 
       const uri = this.mongoServer.getUri()
       await mongoose.connect(uri, {})
-      console.log('Connected to MongoDb Memory, db: ', dbName)
     } catch (error) {
       console.error('Error in connection', error)
       throw new Error('Error in connection')

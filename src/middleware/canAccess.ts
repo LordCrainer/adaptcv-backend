@@ -7,7 +7,7 @@ export const canAccess = (
   rolesOrMinRole: RoleType | RoleType[]
 ): IController => {
   return (req, res, next) => {
-    console.log('canAccess', rolesOrMinRole, req.requestUser?.name)
+    // console.log('canAccess', rolesOrMinRole, req.requestUser?.name)
 
     const userRole = req.requestUser?.currentRole
 

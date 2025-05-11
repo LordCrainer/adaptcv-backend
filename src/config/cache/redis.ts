@@ -35,9 +35,6 @@ const redisConnection = async (uri: string) => {
 const closeRedisConnection = async () => {
   if (redisClient) {
     await redisClient.quit()
-    if (currentEnv?.environment === 'test') {
-      console.log('Redis closed')
-    }
     Logger.info('🔌 Redis closed')
   } else {
     Logger.warn('No Redis client to close')
