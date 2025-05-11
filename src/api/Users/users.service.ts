@@ -52,10 +52,6 @@ export class UserService extends BaseService<IUsers> {
     const isSuperAdmin =
       (Roles.isSuperAdmin(role) && requestUser?.isSuperAdmin) || undefined
 
-    if (!isSuperAdmin && !body?.organizationId) {
-      throw customError('resourceNotFound', 'Organization not found')
-    }
-
     const user = await this.registerUser({ ...body, isSuperAdmin })
 
     return {
@@ -65,13 +61,16 @@ export class UserService extends BaseService<IUsers> {
   }
 
   private async registerUser(body: UserCreationParams['body']) {
-    const savedUser: IUsers = await this.userRepository.create({
+    const newUser: IUsers = {
       _id: body._id || shortId.rnd(),
       email: body.email,
       name: body.name,
-      password: body.password,
-      isSuperAdmin: body.isSuperAdmin
-    })
+      password: body.password
+    }
+    if (body?.isSuperAdmin) {
+      newUser.isSuperAdmin = body.isSuperAdmin
+    }
+    const savedUser: IUsers = await this.userRepository.create(newUser)
 
     if (!savedUser) {
       throw customError('resourceNotFound', USER_MESSAGES.not_created)

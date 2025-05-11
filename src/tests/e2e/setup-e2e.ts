@@ -17,8 +17,8 @@ export async function setupE2E() {
     console.log('Starting E2E tests...')
     if (currentEnv.environment === 'test') {
       await redisConnection(currentEnv.dataBase.redis.uri)
-
       await selectedDb.connect('acv-e2e-test')
+      await selectedDb.clear()
       await seedSuperAdminDb()
     }
   })

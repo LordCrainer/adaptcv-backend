@@ -9,11 +9,11 @@ import { getAuthToken } from '../helpers/auth.context'
 
 describe('Users End-to-End Tests', () => {
   let tokenSuperAdmin: string
-  let tokenAdmin: string
+  // let tokenAdmin: string
 
   beforeAll(async () => {
     tokenSuperAdmin = await getAuthToken('superAdmin')
-    tokenAdmin = await getAuthToken('admin')
+    // tokenAdmin = await getAuthToken('admin')
   })
 
   describe('CRUD Operations by superAdmin', () => {
