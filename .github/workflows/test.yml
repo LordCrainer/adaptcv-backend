@@ -23,7 +23,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.SED_SHARED_TYPES_TOKEN }}
+          token: ${{ secrets.ACV_TOKEN }}
           submodules: recursive
 
       # Step 2: Configurate Node.js
