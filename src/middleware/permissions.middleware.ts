@@ -3,13 +3,12 @@ import { customError } from '@src/Shared/utils/errorUtils'
 
 export interface PermissionParams {
   role: number
-  organizationId?: string
 }
 
 export type PermissionMethod = (params: PermissionParams) => boolean
 
 export const basePermissionRules = (params: PermissionParams) =>
-  Roles.isSuperAdmin(params.role) || !!params.organizationId
+  Roles.isSuperAdmin(params.role)
 
 export const checkPermissions =
   <T extends string>(permissionRules: Record<T, PermissionMethod>) =>
