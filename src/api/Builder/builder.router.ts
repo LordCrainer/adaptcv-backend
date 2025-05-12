@@ -4,9 +4,9 @@ import { inyectBuilderController } from './builder.dependencies'
 
 const router = Router()
 
-router.post('/cv', inyectBuilderController.createCV)
-router.get('/cv/:id', inyectBuilderController.getCV)
-router.put('/cv/:id', inyectBuilderController.updateCV)
-router.delete('/cv/:id', inyectBuilderController.deleteCV)
+router.post('/builder', inyectBuilderController.createBuilder)
+router.get('/builder/:builderId', inyectBuilderController.getBuilder)
+router.put('/builder/:builderId', inyectBuilderController.updateBuilder)
+router.delete('/builder/:builderId', inyectBuilderController.deleteBuilder)
 
 export default router

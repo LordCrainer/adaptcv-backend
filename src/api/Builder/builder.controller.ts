@@ -1,5 +1,3 @@
-import { Request, Response } from 'express'
-
 import ApiResponse from '@src/Shared/utils/apiResponse'
 
 import { BuilderService } from './builder.service'
@@ -11,21 +9,21 @@ export class BuilderController {
     this.builderService = builderService
   }
 
-  createCV: IController = async (req, res, next): Promise<void> => {
+  createBuilder: IController = async (req, res, next): Promise<void> => {
     try {
       const args = {
         name: req.body.name,
         requestUser: req.requestUser
       }
-      const newCV = await this.builderService.createBuilder(args)
+      const newBuilder = await this.builderService.createBuilder(args)
 
-      ApiResponse.created(res).json(newCV)
+      ApiResponse.created(res).json(newBuilder)
     } catch (error) {
       next(error)
     }
   }
 
-  getCV: IController = async (req, res, next): Promise<void> => {
+  getBuilder: IController = async (req, res, next): Promise<void> => {
     const { builderId } = req.params
     try {
       const args = {
@@ -38,21 +36,21 @@ export class BuilderController {
     }
   }
 
-  updateCV: IController = async (req, res, next): Promise<void> => {
+  updateBuilder: IController = async (req, res, next): Promise<void> => {
     const { builder } = req.params
     const updates = req.body
     try {
-      const updatedCV = await this.builderService.updateBuilder(
+      const updatedBuilder = await this.builderService.updateBuilder(
         builder,
         updates
       )
-      ApiResponse.success(res).json(updatedCV)
+      ApiResponse.success(res).json(updatedBuilder)
     } catch (error) {
       next(error)
     }
   }
 
-  deleteCV: IController = async (req, res, next): Promise<void> => {
+  deleteBuilder: IController = async (req, res, next): Promise<void> => {
     const { builder } = req.params
     try {
       await this.builderService.deleteBuilder(builder)
