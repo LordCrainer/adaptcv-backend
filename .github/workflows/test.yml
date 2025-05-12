@@ -30,6 +30,12 @@ jobs:
           node-version: 22.x
           cache: 'npm'
 
+      # Step 2.1: Configure .npmrc for GitHub Packages
+      - name: Configure .npmrc for GitHub Packages
+        run: |
+          echo "@lordcrainer:registry=https://npm.pkg.github.com" >> .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_TOKEN }}" >> .npmrc
+
       # Step 3: Install dependencies
       - name: Install dependencies
         run: npm install
