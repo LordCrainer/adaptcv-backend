@@ -14,7 +14,9 @@ const selectedDb = dbStrategy.mongoMemory
 
 export async function setupE2E() {
   beforeAll(async () => {
-    console.log('Starting E2E tests...')
+    if (currentEnv.debugs?.debug) {
+      console.debug('Starting E2E tests...')
+    }
     if (currentEnv.environment === 'test') {
       await redisConnection(currentEnv.dataBase.redis.uri)
       await selectedDb.connect('acv-e2e-test')
@@ -24,7 +26,9 @@ export async function setupE2E() {
   })
 
   afterAll(async () => {
-    console.log('Ending E2E tests...')
+    if (currentEnv.debugs?.debug) {
+      console.debug('Ending E2E tests...')
+    }
     if (redisClient) {
       await closeRedisConnection()
     }

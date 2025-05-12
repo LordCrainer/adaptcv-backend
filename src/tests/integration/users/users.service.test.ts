@@ -6,17 +6,12 @@ import {
   checkPasswordHash,
   generatePasswordHash
 } from '@src/api/Users/helpers/users.helpers'
-import {
-  clearDatabase,
-  connection,
-  disconnect
-} from '@src/config/db/mongodb-memory-server'
+import { dbStrategy } from '@src/config/db/dbStrategy'
 
 import { USER_MESSAGES } from '@Api/Users/constants/users.message'
 import { UserRepositoryMongo } from '@Api/Users/repository/users.repository.mongo'
 import { usersModel } from '@Api/Users/repository/users.schema'
 import { UserService } from '@Api/Users/users.service'
-import { dbStrategy } from '@src/config/db/dbStrategy'
 
 const selectedDb = dbStrategy.mongoMemory
 
@@ -150,7 +145,7 @@ describe('UserService', () => {
     } as UserCreationParams['body']
 
     beforeEach(async () => {
-      await clearDatabase()
+      await selectedDb.clear()
       await userService.createUser({
         body: user,
         requestUser: superAdminRequestUser

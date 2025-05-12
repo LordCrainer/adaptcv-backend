@@ -1,26 +1,24 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 
-import { authService } from '@src/api/Auth/auth.dependencies'
-import { userService } from '@src/api/Users/users.dependencies'
-import {
-  clearDatabase,
-  connection,
-  disconnect
-} from '@src/config/db/mongodb-memory-server'
-
-import { UserRepositoryMongo } from '@Api/Users/repository/users.repository.mongo'
 import type { IUsers } from '@lordcrainer/adaptcv-shared-types'
 
+import { authService } from '@src/api/Auth/auth.dependencies'
+import { userService } from '@src/api/Users/users.dependencies'
+import { dbStrategy } from '@src/config/db/dbStrategy'
+
+import { UserRepositoryMongo } from '@Api/Users/repository/users.repository.mongo'
+
+const selectedDb = dbStrategy.mongoMemory
 const userRepository = new UserRepositoryMongo()
 
 describe('AuthService', () => {
   beforeAll(async () => {
-    await connection('acv-user-test')
-    await clearDatabase()
+    await selectedDb.connect('acv-user-test')
+    await selectedDb.clear()
   })
 
   afterAll(async () => {
-    await disconnect()
+    await selectedDb.disconnect()
   })
 
   it('should login a user', async () => {
