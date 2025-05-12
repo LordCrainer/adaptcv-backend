@@ -1,7 +1,10 @@
 import jwt from 'jsonwebtoken'
 
-import type { IUsers } from '@Api/Users/interfaces/users.interface'
-import type { LoginOutput, RequestUserData } from '@lordcrainer/adaptcv-shared-types'
+import type {
+  IUsers,
+  LoginOutput,
+  RequestUserData
+} from '@lordcrainer/adaptcv-shared-types'
 
 export { RequestUserData }
 
