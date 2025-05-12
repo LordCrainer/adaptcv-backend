@@ -1,0 +1,55 @@
+name: Automate Release
+
+on:
+  push:
+    branches:
+      - main
+      - release/*
+
+jobs:
+  version_publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      packages: write
+
+    steps:
+      # Step 1: Checkout repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.SAE_TOKEN }}
+
+      # Step 2: Cache node_modules
+      - name: Cache node_modules
+        uses: actions/cache@v3
+        id: cache-deps # Identificador único para este cache
+        with:
+          path: |
+            ~/.bun/install/cache
+            node_modules
+          key: ${{ runner.os }}-deps-${{ hashFiles('.releaserc') }}
+          restore-keys: |
+            ${{ runner.os }}-deps-
+
+      # Step 3: Set up Bun
+      - name: Install dependencies
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 'latest'
+
+      # Step 4: Install semantic-release and plugins
+      - name: Install semantic-release and plugins
+        run: |
+          if [ ! -d "node_modules/@semantic-release" ]; then
+            bun add -D semantic-release @semantic-release/changelog @semantic-release/git @semantic-release/npm
+          fi
+
+      # Step 6: Run semantic-release
+      - name: Semantic Release
+        run: bunx semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.SAE_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.SAE_TOKEN }}

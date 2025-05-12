@@ -27,7 +27,7 @@
   "author": "Carlos García <carlosgarcia.cagm@gmail.com>",
   "license": "ISC",
   "dependencies": {
-    "@lordcrainer/adaptcv-shared-types": "^1.9.2",
+    "@lordcrainer/adaptcv-shared-types": "^1.10.0",
     "axios": "^1.9.0",
     "bcrypt": "^5.1.1",
     "compression": "^1.8.0",
@@ -50,6 +50,9 @@
   },
   "devDependencies": {
     "@ianvs/prettier-plugin-sort-imports": "^4.4.1",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/npm": "^12.0.1",
     "@types/bcrypt": "^5.0.2",
     "@types/compression": "^1.7.5",
     "@types/cors": "^2.8.18",
