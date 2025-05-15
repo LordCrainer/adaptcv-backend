@@ -4,7 +4,7 @@ import swaggerUi from 'swagger-ui-express'
 
 import currentEnv from '@src/config/environments'
 
-const swaggerRouterV1 = Router()
+const swaggerRouter = Router()
 
 const swaggerDefinition = {
   openapi: '3.0.0',
@@ -42,6 +42,6 @@ const options = {
 
 const swaggerSpec = swaggerJSDoc(options)
 
-swaggerRouterV1.use('/', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
+swaggerRouter.use('/', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
-export default swaggerRouterV1
+export default swaggerRouter

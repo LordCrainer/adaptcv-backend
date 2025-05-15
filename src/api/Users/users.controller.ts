@@ -1,14 +1,14 @@
+import type { UserParams } from './interfaces/users.interface'
+
 import ApiResponse from '@Shared/utils/apiResponse'
 
-import { USER_MESSAGES } from './constants/users.message'
-import type { UserParams } from './interfaces/users.interface'
 import { UserService } from './users.service'
 
 export class UsersController {
-  private readonly userService: UserService;
+  private readonly userService: UserService
 
   constructor(userService: UserService) {
-    this.userService = userService;
+    this.userService = userService
   }
   getUsers: IController<UserParams> = async (req, res, next) => {
     try {
@@ -53,7 +53,7 @@ export class UsersController {
 
       const user = await this.userService.createUser(args)
 
-      return ApiResponse.created(res).json(user)
+      ApiResponse.created(res).json(user)
     } catch (error) {
       next(error)
     }
@@ -66,7 +66,7 @@ export class UsersController {
 
       const isUpdated = await this.userService.updateUser(id, body)
 
-      return ApiResponse.success(res).json(isUpdated)
+      ApiResponse.success(res).json(isUpdated)
     } catch (error) {
       next(error)
     }
@@ -78,7 +78,7 @@ export class UsersController {
 
       const isDeleted = await this.userService.deleteUser(id)
 
-      return ApiResponse.success(res).json(isDeleted)
+      ApiResponse.success(res).json(isDeleted)
     } catch (error) {
       next(error)
     }
