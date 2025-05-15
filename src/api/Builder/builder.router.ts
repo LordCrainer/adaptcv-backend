@@ -1,12 +1,13 @@
 import { Router } from 'express'
 
+import { inyectAuthMiddleware } from '../Auth/auth.dependencies'
 import { inyectBuilderController } from './builder.dependencies'
 
-const router = Router()
+const BuilderRouter = Router()
+  .use(inyectAuthMiddleware)
+  .post('/builder', inyectBuilderController.createBuilder)
+  .get('/builder/:builderId', inyectBuilderController.getBuilder)
+  .put('/builder/:builderId', inyectBuilderController.updateBuilder)
+  .delete('/builder/:builderId', inyectBuilderController.deleteBuilder)
 
-router.post('/builder', inyectBuilderController.createBuilder)
-router.get('/builder/:builderId', inyectBuilderController.getBuilder)
-router.put('/builder/:builderId', inyectBuilderController.updateBuilder)
-router.delete('/builder/:builderId', inyectBuilderController.deleteBuilder)
-
-export default router
+export default BuilderRouter

@@ -4,6 +4,6 @@ import type { MapType } from '@Shared/utils/utilities'
 
 interface Repository<T> extends IBaseRepository<T> {}
 
-export interface BuilderDocument extends Builder {}
+export interface BuilderExtended extends Builder {}
 
-export type BuilderRepository = MapType<Repository<BuilderDocument>>
+export type BuilderRepository = MapType<Repository<BuilderExtended>>

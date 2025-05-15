@@ -1,6 +1,7 @@
 import { Builder } from '@lordcrainer/adaptcv-shared-types'
 
 import { shortId } from '@src/lib/shortId'
+import { customError } from '@src/Shared/utils/errorUtils'
 
 import { BaseService } from '../sharedApi/domain/base.service'
 import { BuilderMessages } from './constants/builder.messages'
@@ -29,7 +30,9 @@ export class BuilderService extends BaseService<Builder> {
     }
   }
 
-  async getBuilder(body: Partial<BuilderParams>): Promise<IApiResponse<boolean>> {
+  async getBuilder(
+    body: Partial<BuilderParams>
+  ): Promise<IApiResponse<boolean>> {
     const builder = await this.builderRepository.findOne({
       _id: body.builderId
     })
@@ -39,13 +42,22 @@ export class BuilderService extends BaseService<Builder> {
     }
   }
 
-  async createBuilder(body: CreateBuilderPayload['body']): Promise<Builder> {
+  async createBuilder(
+    body: CreateBuilderPayload['body']
+  ): Promise<IApiResponse<Builder>> {
     const newBuilder = {
       _id: body?._id || shortId.rnd(),
       name: body.name,
       status: 'draft'
     } as Builder
-    return this.builderRepository.create(newBuilder)
+    const createdBuilder = await this.builderRepository.create(newBuilder)
+    if (!createdBuilder) {
+      customError('resourceNotFound', BuilderMessages.BUILDER_NOT_CREATED)
+    }
+    return {
+      message: BuilderMessages.BUILDER_CREATED,
+      data: createdBuilder
+    }
   }
 
   async updateBuilder(
