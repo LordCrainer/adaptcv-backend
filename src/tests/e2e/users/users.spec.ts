@@ -23,7 +23,7 @@ describe('Users End-to-End Tests', () => {
         email: 'testuser@org1.com',
         password: 'password123',
         organizationId: 'orga1',
-        role: 'admin'
+        role: 'user'
       } as UserCreationParams['body']
 
       const response = await request(app)

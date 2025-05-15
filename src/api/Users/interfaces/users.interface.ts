@@ -23,7 +23,6 @@ export interface UserCreationParams {
   body: Pick<IUsers, 'email' | 'password' | 'name'> & {
     _id?: string
     role: RoleType
-    organizationId?: string
     isSuperAdmin?: boolean
   }
   requestUser?: RequestUserData
