@@ -13,7 +13,6 @@ interface UsersSeederInputData {
 
 interface UsersSeederInput {
   superAdmin: UsersSeederInputData
-  admin: UsersSeederInputData
   user: UsersSeederInputData
 }
 
@@ -24,13 +23,6 @@ export const usersSeederInput: UsersSeederInput = {
     password: 'password_superadmin',
     name: 'Super Admin',
     role: 'superAdmin'
-  },
-  admin: {
-    _id: 'admin',
-    email: 'admin@acv-test.com',
-    password: 'password_admin',
-    name: 'Admin',
-    role: 'admin'
   },
   user: {
     _id: 'user',
