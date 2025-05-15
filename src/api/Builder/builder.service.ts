@@ -24,7 +24,7 @@ export class BuilderService extends BaseService<Builder> {
     const builders = await this.builderRepository.find({}, queries)
     const pagination = await this.builderRepository.counterDocuments(queries)
     return {
-      message: BuilderMessages.BUILDER_NOT_FOUND,
+      message: BuilderMessages.BUILDER_FOUND,
       data: builders,
       pagination
     }
@@ -32,13 +32,13 @@ export class BuilderService extends BaseService<Builder> {
 
   async getBuilder(
     body: Partial<BuilderParams>
-  ): Promise<IApiResponse<boolean>> {
+  ): Promise<IApiResponse<Builder>> {
     const builder = await this.builderRepository.findOne({
       _id: body.builderId
     })
     return {
-      message: BuilderMessages.BUILDER_NOT_FOUND,
-      data: !!builder
+      message: BuilderMessages.BUILDER_FOUND,
+      data: builder
     }
   }
 
@@ -52,7 +52,7 @@ export class BuilderService extends BaseService<Builder> {
     } as Builder
     const createdBuilder = await this.builderRepository.create(newBuilder)
     if (!createdBuilder) {
-      customError('resourceNotFound', BuilderMessages.BUILDER_NOT_CREATED)
+      throw customError('resourceNotFound', BuilderMessages.BUILDER_NOT_CREATED)
     }
     return {
       message: BuilderMessages.BUILDER_CREATED,
