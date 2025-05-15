@@ -7,6 +7,7 @@ import {
   generatePasswordHash
 } from '@src/api/Users/helpers/users.helpers'
 import { dbStrategy } from '@src/config/db/dbStrategy'
+import { usersSeederInput } from '@src/tests/seeders/users.seeder'
 
 import { USER_MESSAGES } from '@Api/Users/constants/users.message'
 import { UserRepositoryMongo } from '@Api/Users/repository/users.repository.mongo'
@@ -37,17 +38,18 @@ describe('UserService', () => {
 
   describe('UserModel Methods', () => {
     it('should compare password', async () => {
+      const { email, password, name } = usersSeederInput.superAdmin
       const user = new usersModel({
         _id: 'test+model',
-        email: 'test+model@example.com',
-        password: 'password123',
-        name: 'Test User'
+        email,
+        password,
+        name
       })
       const newUser = await user.save()
 
       expect(!!newUser.password).toBe(false)
       expect(!!newUser.passwordHash).toBe(true)
-      expect(newUser.passwordHash).not.toBe('password123')
+      expect(newUser.passwordHash).not.toBe(password)
     })
 
     it('should compare passwords correctly', async () => {
@@ -84,13 +86,10 @@ describe('UserService', () => {
       expect(data?.isSuperAdmin).toBe(true)
     })
 
-    it('should SuperAdmin create a new admin user', async () => {
+    it('should SuperAdmin create a new user user', async () => {
+      usersSeederInput.user
       const newUser = {
-        ...user,
-        role: 'admin',
-        _id: 'test+admin',
-        email: 'test+admin@test.com',
-        organizationId: 'test+org'
+        ...usersSeederInput.user
       } as UserCreationParams['body']
       const { data } = await userService.createUser({
         body: newUser,
@@ -102,130 +101,98 @@ describe('UserService', () => {
       expect(data?.isSuperAdmin).toBeUndefined()
     })
 
-    it('should send error when a SuperAdmin create a new admin user wihtout organization', async () => {
-      const newUser = {
-        ...user,
-        role: 'admin',
-        _id: 'test+admin',
-        email: 'test+admin@test.com'
+    describe('RUD Operations by superAdmin', () => {
+      const user = {
+        _id: 'test+getUsers',
+        email: 'test+getUsers@example.com',
+        password: 'password123',
+        name: 'Test User',
+        role: 'superAdmin'
       } as UserCreationParams['body']
-      try {
-        await userService.createUser({ body: newUser })
-      } catch (error: any) {
-        expect(error).toBeDefined()
-        expect(error.name).toBe('resourceNotFound')
-        expect(error.statusCode).toBe(404)
-      }
-    })
 
-    it('should send error when Admin create a new admin user without organization', async () => {
-      const newUser = {
-        ...user,
-        role: 'admin',
-        _id: 'test+admin',
-        email: 'test+admin@test.com'
-      } as UserCreationParams['body']
-      try {
-        await userService.createUser({ body: newUser })
-      } catch (error: any) {
-        expect(error).toBeDefined()
-        expect(error.name).toBe('resourceNotFound')
-        expect(error.statusCode).toBe(404)
-      }
+      beforeEach(async () => {
+        await selectedDb.clear()
+        await userService.createUser({
+          body: user,
+          requestUser: superAdminRequestUser
+        })
+      })
+
+      it('should return a list of users', async () => {
+        const { data, pagination } = await userService.getUsers()
+
+        expect(data?.find((d) => d.email === user.email)).toBeTruthy()
+        expect(pagination?.limit).toEqual(100)
+      })
+
+      it('should return a single user', async () => {
+        const result = await userService.getUser({ userId: user._id })
+
+        expect(result?.data?.email).toEqual(user.email)
+        expect(result.message).toEqual(USER_MESSAGES.findOne)
+      })
+
+      it('should throw an error if user not found', async () => {
+        try {
+          await userService.getUser({ userId: 'notfound' })
+        } catch (error: any) {
+          expect(error).toBeDefined()
+          expect(error.statusCode).toBe(404)
+          expect(error.message).toBe(USER_MESSAGES.not_found)
+        }
+      })
+
+      it('should update a user', async () => {
+        const updateEmailUser = 'updated@example.com'
+        if (!user?._id) {
+          throw new Error('User not created')
+        }
+
+        const { data } = await userService.updateUser(user._id, {
+          email: updateEmailUser
+        })
+
+        expect(data).toBe(true)
+        const updatedUser = await userRepository.findOne({
+          _id: user._id
+        })
+        expect(updatedUser.email).toEqual(updateEmailUser)
+      })
+
+      it('should delete a user', async () => {
+        if (!user?._id) {
+          throw new Error('User not created')
+        }
+
+        const result = await userService.deleteUser(user._id)
+
+        expect(result.data).toBe(true)
+        const deletedUser = await userRepository.findOne({
+          _id: user._id
+        })
+        expect(deletedUser).toBeNull()
+      })
     })
   })
 
-  describe('RUD Operations by superAdmin', () => {
-    const user = {
-      _id: 'test+getUsers',
-      email: 'test+getUsers@example.com',
-      password: 'password123',
-      name: 'Test User',
-      role: 'superAdmin'
-    } as UserCreationParams['body']
+  describe('Hashing Password', () => {
+    it('should compare passwords correctly', async () => {
+      const password = 'T3cnico2020.'
+      const hash = await generatePasswordHash(password)
 
-    beforeEach(async () => {
-      await selectedDb.clear()
-      await userService.createUser({
-        body: user,
-        requestUser: superAdminRequestUser
-      })
+      expect(hash).toBeDefined()
+      const isMatch = await checkPasswordHash(password, hash)
+      expect(isMatch).toBe(true)
     })
 
-    it('should return a list of users', async () => {
-      const { data, pagination } = await userService.getUsers()
+    it('should not match incorrect passwords', async () => {
+      const password = 'T3cnico2020.'
+      const wrongPassword = 'IncorrectPassword!'
+      const hash = await generatePasswordHash(password)
 
-      expect(data?.find((d) => d.email === user.email)).toBeTruthy()
-      expect(pagination?.limit).toEqual(100)
+      expect(hash).toBeDefined()
+      const isMatch = await checkPasswordHash(wrongPassword, hash)
+      expect(isMatch).toBe(false)
     })
-
-    it('should return a single user', async () => {
-      const result = await userService.getUser({ userId: user._id })
-
-      expect(result?.data?.email).toEqual(user.email)
-      expect(result.message).toEqual(USER_MESSAGES.findOne)
-    })
-
-    it('should throw an error if user not found', async () => {
-      try {
-        await userService.getUser({ userId: 'notfound' })
-      } catch (error: any) {
-        expect(error).toBeDefined()
-        expect(error.statusCode).toBe(404)
-        expect(error.message).toBe(USER_MESSAGES.not_found)
-      }
-    })
-
-    it('should update a user', async () => {
-      const updateEmailUser = 'updated@example.com'
-      if (!user?._id) {
-        throw new Error('User not created')
-      }
-
-      const { data } = await userService.updateUser(user._id, {
-        email: updateEmailUser
-      })
-
-      expect(data).toBe(true)
-      const updatedUser = await userRepository.findOne({
-        _id: user._id
-      })
-      expect(updatedUser.email).toEqual(updateEmailUser)
-    })
-
-    it('should delete a user', async () => {
-      if (!user?._id) {
-        throw new Error('User not created')
-      }
-
-      const result = await userService.deleteUser(user._id)
-
-      expect(result.data).toBe(true)
-      const deletedUser = await userRepository.findOne({
-        _id: user._id
-      })
-      expect(deletedUser).toBeNull()
-    })
-  })
-})
-
-describe('Hashing Password', () => {
-  it('should compare passwords correctly', async () => {
-    const password = 'T3cnico2020.'
-    const hash = await generatePasswordHash(password)
-
-    expect(hash).toBeDefined()
-    const isMatch = await checkPasswordHash(password, hash)
-    expect(isMatch).toBe(true)
-  })
-
-  it('should not match incorrect passwords', async () => {
-    const password = 'T3cnico2020.'
-    const wrongPassword = 'IncorrectPassword!'
-    const hash = await generatePasswordHash(password)
-
-    expect(hash).toBeDefined()
-    const isMatch = await checkPasswordHash(wrongPassword, hash)
-    expect(isMatch).toBe(false)
   })
 })

@@ -10,7 +10,7 @@ describe('Auth End-to-End Tests', () => {
   const signupEndpoint = '/v1/signup'
   const loginEndpoint = '/v1/auth/login'
   let tokenSuperAdmin: string
-  let tokenAdmin: string
+  let tokenUser: string
 
   beforeAll(async () => {
     try {
@@ -22,8 +22,8 @@ describe('Auth End-to-End Tests', () => {
     }
 
     try {
-      tokenAdmin = await getAuthToken('admin')
-      expect(tokenAdmin).toBeDefined()
+      tokenUser = await getAuthToken('user')
+      expect(tokenUser).toBeDefined()
     } catch (error: any) {
       console.error('Failed to get token for admin', error.message)
       throw new Error(error)
@@ -54,11 +54,11 @@ describe('Auth End-to-End Tests', () => {
     })
   })
 
-  describe('CRUD Operations by Admin', () => {
-    it('Should be able to log in with admin credentials ', async () => {
+  describe('CRUD Operations by User', () => {
+    it('Should be able to log in with user credentials ', async () => {
       const response = await request(app)
         .post(loginEndpoint)
-        .send(usersSeederInput.admin)
+        .send(usersSeederInput.user)
 
       expect(response.status).toBe(200)
       expect(response.body.data).toHaveProperty('token')
