@@ -1,7 +1,7 @@
-import { Builder } from '@lordcrainer/adaptcv-shared-types'
+import type { IBuilder } from '@lordcrainer/adaptcv-shared-types'
 import { model, Schema } from 'mongoose'
 
-const CVSchema = new Schema<Builder>(
+const CVSchema = new Schema<IBuilder>(
   {
     _id: { type: String, required: true },
     name: { type: String, required: true },
@@ -22,4 +22,4 @@ const CVSchema = new Schema<Builder>(
   }
 )
 
-export const BuilderModel = model<Builder>('Builder', CVSchema)
+export const BuilderModel = model<IBuilder>('Builder', CVSchema)

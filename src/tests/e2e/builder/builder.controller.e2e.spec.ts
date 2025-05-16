@@ -1,4 +1,4 @@
-import { Builder } from '@lordcrainer/adaptcv-shared-types'
+import { IBuilder } from '@lordcrainer/adaptcv-shared-types'
 import request from 'supertest'
 import { beforeAll, describe, expect, it } from 'vitest'
 
@@ -37,7 +37,7 @@ describe('Builder Controller E2E Tests', () => {
         name: 'Fetch Builder',
         description: 'E2E Test',
         status: 'draft'
-      } as Builder
+      } as IBuilder
       const createResponse = await request(app)
         .post('/v1/builders')
         .send(builderData)

@@ -1,19 +1,19 @@
 import type {
-  Builder,
+  IBuilder,
   RequestUserData
 } from '@lordcrainer/adaptcv-shared-types'
 
 import { Criteria } from '@src/Shared/utils/criteriaHandle'
 
-export interface BuilderParams extends Omit<Builder, '_id'>, Criteria<Builder> {
+export interface BuilderParams extends Omit<IBuilder, '_id'>, Criteria<IBuilder> {
   builderId: string
   requestUser?: RequestUserData
 }
 
 export interface CreateBuilderPayload {
-  body: Pick<Builder, 'name' | '_id'>
+  body: Pick<IBuilder, 'name' | '_id'>
   requestUser?: RequestUserData
 }
-export type UpdateBuilderPayload = Partial<Builder> & {
+export type UpdateBuilderPayload = Partial<IBuilder> & {
   requestUser?: RequestUserData
 }

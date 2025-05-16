@@ -1,4 +1,4 @@
-import { Builder } from '@lordcrainer/adaptcv-shared-types'
+import type { IBuilder } from '@lordcrainer/adaptcv-shared-types'
 
 import { shortId } from '@src/lib/shortId'
 import { customError } from '@src/Shared/utils/errorUtils'
@@ -11,7 +11,7 @@ import {
 } from './interfaces/builder.interface'
 import { BuilderRepository } from './interfaces/builder.repository'
 
-export class BuilderService extends BaseService<Builder> {
+export class BuilderService extends BaseService<IBuilder> {
   private readonly builderRepository: BuilderRepository
 
   constructor(builderRepository: BuilderRepository) {
@@ -19,7 +19,9 @@ export class BuilderService extends BaseService<Builder> {
     this.builderRepository = builderRepository
   }
 
-  async getBuilders(body?: BuilderParams): Promise<IApiResponse<Builder[]>> {
+  async getBuilders(
+    body?: Partial<BuilderParams>
+  ): Promise<IApiResponse<IBuilder[]>> {
     const queries = this.extractQuery(body)
     const builders = await this.builderRepository.find({}, queries)
     const pagination = await this.builderRepository.counterDocuments(queries)
@@ -32,7 +34,7 @@ export class BuilderService extends BaseService<Builder> {
 
   async getBuilder(
     body: Partial<BuilderParams>
-  ): Promise<IApiResponse<Builder>> {
+  ): Promise<IApiResponse<IBuilder>> {
     const builder = await this.builderRepository.findOne({
       _id: body.builderId
     })
@@ -44,12 +46,12 @@ export class BuilderService extends BaseService<Builder> {
 
   async createBuilder(
     body: CreateBuilderPayload['body']
-  ): Promise<IApiResponse<Builder>> {
+  ): Promise<IApiResponse<IBuilder>> {
     const newBuilder = {
       _id: body?._id || shortId.rnd(),
       name: body.name,
       status: 'draft'
-    } as Builder
+    } as IBuilder
     const createdBuilder = await this.builderRepository.create(newBuilder)
     if (!createdBuilder) {
       throw customError('resourceNotFound', BuilderMessages.BUILDER_NOT_CREATED)
@@ -62,7 +64,7 @@ export class BuilderService extends BaseService<Builder> {
 
   async updateBuilder(
     builderId: string,
-    updates: Partial<Builder>
+    updates: Partial<IBuilder>
   ): Promise<IApiResponse<boolean>> {
     const isUpdated = await this.builderRepository.update(
       { _id: builderId },
