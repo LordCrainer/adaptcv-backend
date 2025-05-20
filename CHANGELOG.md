@@ -1,3 +1,15 @@
+# [1.2.0](https://github.com/LordCrainer/adaptcv-backend/compare/v1.1.1...v1.2.0) (2025-05-20)
+
+
+### Bug Fixes
+
+* ensure package is marked as private in package.json ([0a53603](https://github.com/LordCrainer/adaptcv-backend/commit/0a536034196e186a2aea2e91c5fd266caa533b14))
+
+
+### Features
+
+* add @semantic-release/npm to release workflow and configuration ([7b0fde6](https://github.com/LordCrainer/adaptcv-backend/commit/7b0fde628c514544d8d158f16a834b4dc32f6e46))
+
 ## [1.1.1](https://github.com/LordCrainer/adaptcv-backend/compare/v1.1.0...v1.1.1) (2025-05-20)
 
 # [1.1.0](https://github.com/LordCrainer/adaptcv-backend/compare/v1.0.0...v1.1.0) (2025-05-20)
