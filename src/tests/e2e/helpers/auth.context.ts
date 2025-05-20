@@ -26,15 +26,9 @@ const generateTokenForRole = async (role: RoleType) => {
   if (Roles.isSuperAdmin(roleValue)) {
     return loginUser(usersSeederInput.superAdmin)
   }
-  if (Roles.isAdmin(roleValue)) {
-    const superAdminToken = await getAuthToken('superAdmin')
-    await createUser(usersSeederInput.admin, superAdminToken)
-
-    return loginUser(usersSeederInput.admin)
-  }
-
   if (Roles.isUser(roleValue)) {
     const superAdminToken = await getAuthToken('superAdmin')
+    await createUser(usersSeederInput.user, superAdminToken)
 
     return loginUser(usersSeederInput.user)
   }
