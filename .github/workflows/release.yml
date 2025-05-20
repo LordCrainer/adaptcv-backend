@@ -41,13 +41,7 @@ jobs:
           node-version: 22.x
           cache: 'npm'
 
-      # Step 3: Configure .npmrc for GitHub Packages
-      - name: Configure .npmrc for GitHub Packages
-        run: |
-          echo "@lordcrainer:registry=https://npm.pkg.github.com" >> .npmrc
-          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> .npmrc
-
-      # Step 4: Install semantic-release and plugins
+      # Step 3: Install semantic-release and plugins
       - name: Install ONLY release dependencies
         run: |
           npm install --no-package-lock --no-save \
@@ -56,7 +50,7 @@ jobs:
             @semantic-release/git@^10.x \
             @semantic-release/npm@^12.x
 
-      # Step 5: Run semantic-release
+      # Step 4: Run semantic-release
       - name: Semantic Release
         run: npx semantic-release
         env:
