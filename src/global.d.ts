@@ -59,7 +59,7 @@ declare global {
   interface IApiResponse<T> {
     success?: boolean
     message?: string
-    data?: T
+    data: T
     pagination?: Pagination
     errorCode?: string
   }
