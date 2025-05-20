@@ -18,9 +18,6 @@ jobs:
       # Step 1: Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          token: ${{ secrets.NPM_TOKEN }}
 
       # Step 2: Cache node_modules
       - name: Cache node_modules
@@ -34,22 +31,22 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-deps-
 
-      # Step 3: Set up Bun
-      - name: Install dependencies
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: 'latest'
+      # Step 2.1: Configure .npmrc for GitHub Packages
+      - name: Configure .npmrc for GitHub Packages
+        run: |
+          echo "@lordcrainer:registry=https://npm.pkg.github.com" >> .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_TOKEN }}" >> .npmrc
 
       # Step 4: Install semantic-release and plugins
       - name: Install semantic-release and plugins
         run: |
           if [ ! -d "node_modules/@semantic-release" ]; then
-            bun add -D semantic-release @semantic-release/changelog @semantic-release/git @semantic-release/npm
+            npm i -D semantic-release @semantic-release/changelog @semantic-release/git @semantic-release/npm
           fi
 
       # Step 6: Run semantic-release
       - name: Semantic Release
-        run: bunx semantic-release
+        run: npx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.NPM_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
