@@ -5,6 +5,7 @@
   "type": "module",
   "description": "API for AdaptCV.",
   "exports": "./dist/index.cjs",
+  "private": true,
   "scripts": {
     "dev": "cross-env NODE_ENV=development tsx watch src/index.ts",
     "build": "pkgroll --minify",
