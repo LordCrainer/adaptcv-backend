@@ -19,30 +19,25 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Step 2: Cache node_modules
-      - name: Cache node_modules
-        uses: actions/cache@v3
-        id: cache-deps # Identificador único para este cache
+      # Step 2: Configurate Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
         with:
-          path: |
-            ~/.bun/install/cache
-            node_modules
-          key: ${{ runner.os }}-deps-${{ hashFiles('.releaserc') }}
-          restore-keys: |
-            ${{ runner.os }}-deps-
+          node-version: 22.x
+          cache: 'npm'
 
-      # Step 2.1: Configure .npmrc for GitHub Packages
+      # Step 3: Configure .npmrc for GitHub Packages
       - name: Configure .npmrc for GitHub Packages
         run: |
           echo "@lordcrainer:registry=https://npm.pkg.github.com" >> .npmrc
           echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_TOKEN }}" >> .npmrc
 
       # Step 4: Install semantic-release and plugins
+      - name: Install dependencies
+        run: npm ci
+
       - name: Install semantic-release and plugins
-        run: |
-          if [ ! -d "node_modules/@semantic-release" ]; then
-            npm i -D semantic-release @semantic-release/changelog @semantic-release/git @semantic-release/npm
-          fi
+        run: npm i -D semantic-release @semantic-release/changelog @semantic-release/git @semantic-release/npm
 
       # Step 6: Run semantic-release
       - name: Semantic Release
