@@ -44,11 +44,7 @@ jobs:
       # Step 3: Install semantic-release and plugins
       - name: Install ONLY release dependencies
         run: |
-          npm install --no-package-lock --no-save \
-            semantic-release@^23.x \
-            @semantic-release/changelog@^6.x \
-            @semantic-release/git@^10.x \
-            @semantic-release/npm@^12.x
+          npm install -D semantic-release @semantic-release/changelog @semantic-release/git @semantic-release/npm
 
       # Step 4: Run semantic-release
       - name: Semantic Release
