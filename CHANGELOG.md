@@ -1,3 +1,15 @@
+# [1.1.0](https://github.com/LordCrainer/adaptcv-backend/compare/v1.0.0...v1.1.0) (2025-05-20)
+
+
+### Bug Fixes
+
+* update Node.js engine requirement to >=20.0.0 in package.json ([4744430](https://github.com/LordCrainer/adaptcv-backend/commit/474443084caacbee285a455ff1537f72db29cd2c))
+
+
+### Features
+
+* add authentication middleware to BuilderRouter ([2046052](https://github.com/LordCrainer/adaptcv-backend/commit/204605212768dac12b247525dd192bf90d645a28))
+
 # 1.0.0 (2025-05-20)
 
 
