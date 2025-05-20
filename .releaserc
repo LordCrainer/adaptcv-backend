@@ -15,14 +15,7 @@
       }
     ],
     "@semantic-release/release-notes-generator",
-    [
-      "@semantic-release/npm",
-      {
-        "registry": "https://npm.pkg.github.com",
-        "pkgRoot": ".",
-         "npmPublish": true
-      }
-    ],
+     "@semantic-release/npm",
     [
       "@semantic-release/changelog",
       {
