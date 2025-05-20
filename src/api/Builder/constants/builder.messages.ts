@@ -1,6 +1,9 @@
 export const BuilderMessages = {
-    BUILDER_NOT_FOUND: 'Builder not found.',
-    BUILDER_CREATED: 'Builder successfully created.',
-    BUILDER_UPDATED: 'Builder successfully updated.',
-    BUILDER_DELETED: 'Builder successfully deleted.',
-};
+  BUILDER_NOT_FOUND: 'Builder not found.',
+  BUILDER_NOT_DELETED: 'Builder not deleted.',
+  BUILDER_FOUND: 'Builder found.',
+  BUILDER_CREATED: 'Builder successfully created.',
+  BUILDER_UPDATED: 'Builder successfully updated.',
+  BUILDER_DELETED: 'Builder successfully deleted.',
+  BUILDER_NOT_CREATED: 'Builder not created.'
+}
