@@ -44,10 +44,11 @@ jobs:
       # Step 3: Install semantic-release and plugins
       - name: Install ONLY release dependencies
         run: |
-          npm install -D semantic-release @semantic-release/changelog @semantic-release/git
+          npm install -D semantic-release @semantic-release/changelog @semantic-release/git @semantic-release/npm
 
       # Step 4: Run semantic-release
       - name: Semantic Release
         run: npx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
