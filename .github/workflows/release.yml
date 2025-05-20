@@ -5,6 +5,9 @@ on:
     branches:
       - main
       - release/*
+  pull_request:
+    branches:
+      - main
 
 jobs:
   version_publish:
@@ -13,11 +16,23 @@ jobs:
       contents: write
       issues: write
       packages: write
+      pull-requests: write
 
     steps:
       # Step 1: Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Step 1.1: Configure Git
+      - name: Cache Node.js modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
       # Step 2: Configurate Node.js
       - name: Set up Node.js
@@ -30,18 +45,15 @@ jobs:
       - name: Configure .npmrc for GitHub Packages
         run: |
           echo "@lordcrainer:registry=https://npm.pkg.github.com" >> .npmrc
-          echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_TOKEN }}" >> .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> .npmrc
 
       # Step 4: Install semantic-release and plugins
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --include=dev
 
-      - name: Install semantic-release and plugins
-        run: npm i -D semantic-release @semantic-release/changelog @semantic-release/git @semantic-release/npm
-
-      # Step 6: Run semantic-release
+      # Step 5: Run semantic-release
       - name: Semantic Release
         run: npx semantic-release
         env:
-          GITHUB_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
