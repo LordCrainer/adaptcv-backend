@@ -63,5 +63,23 @@ describe('Auth End-to-End Tests', () => {
       expect(response.status).toBe(200)
       expect(response.body.data).toHaveProperty('token')
     })
+
+    it('should logout user', async () => {
+      const response = await request(app)
+        .post('/v1/auth/logout')
+        .set('Authorization', `Bearer ${tokenUser}`)
+        .send({ userId: usersSeederInput.user._id })
+
+      expect(response.status).toBe(200)
+      expect(response.body?.message.match(/Logout/i)).toBeTruthy()
+    })
+
+    it('should throw error on logout', async () => {
+      const response = await request(app)
+        .post('/v1/auth/logout')
+        .set('Authorization', `Bearer ${tokenUser}`)
+      expect(response.status).toBe(500)
+      expect(response.body).toHaveProperty('name', 'internalServerError')
+    })
   })
 })
