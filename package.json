@@ -14,7 +14,8 @@
     "test:unit": "cross-env NODE_ENV=test vitest --project unit",
     "test:int": "cross-env NODE_ENV=test vitest --project integration",
     "test:e2e": "cross-env NODE_ENV=test vitest --project e2e",
-    "test:e2e:w": "cross-env NODE_ENV=test vitest --project e2e --watch"
+    "test:e2e:w": "cross-env NODE_ENV=test vitest --project e2e --watch",
+    "create:user": "cross-env NODE_ENV=development tsx scripts/create-test-user.ts"
   },
   "engines": {
     "node": ">=20.0.0"
@@ -28,7 +29,7 @@
   "author": "Carlos García <carlosgarcia.cagm@gmail.com>",
   "license": "ISC",
   "dependencies": {
-    "@lordcrainer/adaptcv-shared-types": "^1.13.1",
+    "@lordcrainer/adaptcv-shared-types": "^1.17.3",
     "axios": "^1.9.0",
     "bcrypt": "^5.1.1",
     "compression": "^1.8.0",
