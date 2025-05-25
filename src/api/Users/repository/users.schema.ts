@@ -15,7 +15,10 @@ const UsersSchema: Schema = new Schema<IUsers>(
     password: String,
     passwordHash: { type: String },
     timezone: { type: String, required: false },
-    isSuperAdmin: { type: Boolean, required: false }
+    isSuperAdmin: { type: Boolean, required: false },
+    authProvider: { type: String, default: 'local' },
+    status: { type: String, default: 'pending' },
+    role: { type: Number, default: 10 },
   },
   { versionKey: false, _id: false, timestamps: true }
 )
