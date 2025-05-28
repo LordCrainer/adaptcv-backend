@@ -14,14 +14,19 @@ const selectedDb = dbStrategy.mongoMemory
 
 export async function setupE2E() {
   beforeAll(async () => {
-    if (currentEnv.debugs?.debug) {
-      console.debug('Starting E2E tests...')
-    }
-    if (currentEnv.environment === 'test') {
-      await redisConnection(currentEnv.dataBase.redis.uri)
-      await selectedDb.connect('acv-e2e-test')
-      await selectedDb.clear()
-      await seedSuperAdminDb()
+    try {
+      if (currentEnv.debugs?.debug) {
+        console.debug('Starting E2E tests...')
+      }
+      if (currentEnv.environment === 'test') {
+        await redisConnection(currentEnv.dataBase.redis.uri)
+        await selectedDb.connect('acv-e2e-test')
+        await selectedDb.clear()
+        await seedSuperAdminDb()
+      }
+    } catch (error: Error | any) {
+      console.error('Error during setup:', error?.stack)
+      throw new Error(`Failed to set up E2E tests: ${error?.message}`)
     }
   })
 

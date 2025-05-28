@@ -54,7 +54,7 @@ class ApiResponse {
       // status: 'success',
       pagination,
       data,
-      others
+      ...others
     })
     return this
   }

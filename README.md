@@ -1,0 +1,80 @@
+# AdaptCV Backend
+
+AdaptCV Backend is a Node.js REST API for authentication and CV management, built with Express, TypeScript, MongoDB, and Redis. This project is designed to be run in a Dockerized environment and uses private npm packages from GitHub Packages.
+
+## Table of Contents
+- [AdaptCV Backend](#adaptcv-backend)
+  - [Table of Contents](#table-of-contents)
+  - [Installation](#installation)
+  - [Configuration](#configuration)
+    - [.npmrc for Private Packages](#npmrc-for-private-packages)
+    - [Environment Variables](#environment-variables)
+    - [Docker](#docker)
+  - [Running the Project](#running-the-project)
+  - [License](#license)
+
+---
+
+## Installation
+
+1. **Clone the repository:**
+   ```sh
+   git clone <your-repo-url>
+   cd adaptcv-backend
+   ```
+
+2. **Install dependencies:**
+   ```sh
+   npm install
+   ```
+
+## Configuration
+
+### .npmrc for Private Packages
+This project uses private npm packages from GitHub Packages. Ensure you have a `.npmrc` file in the root directory with the following content:
+
+```
+@lordcrainer:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=<YOUR_GITHUB_TOKEN>
+```
+Replace `<YOUR_GITHUB_TOKEN>` with a valid GitHub personal access token with `read:packages` scope.
+
+### Environment Variables
+Copy the example environment file and edit as needed:
+```sh
+cp .env.example .env
+```
+Set the following variables in your `.env` file:
+- `API_PORT`
+- `MONGODB_PORT`
+- `REDIS_PORT`
+- ... (add other required variables)
+
+### Docker
+
+For **development**, only MongoDB and Redis are started with Docker Compose. Run your backend locally with `npm run dev`.
+
+Start MongoDB and Redis for development:
+```sh
+docker-compose up
+```
+
+For **production**, use the Docker Compose profile to start the backend, MongoDB, and Redis as containers:
+```sh
+docker-compose --profile prod up --build
+```
+
+## Running the Project
+
+- **Development:**
+  ```sh
+  npm run dev
+  ```
+- **Production:**
+  ```sh
+  npm run start
+  ```
+
+## License
+
+This project is licensed under the ISC License.

@@ -23,7 +23,6 @@ export const errorHandler = (
       status: undefined
     })
   )
-
   if (currentEnv.debugs?.debug) {
     console.error(err?.stack)
   }

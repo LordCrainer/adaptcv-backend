@@ -65,7 +65,9 @@ export class UserService extends BaseService<IUsers> {
       _id: body._id || shortId.rnd(),
       email: body.email,
       name: body.name,
-      password: body.password
+      password: body.password,
+      status: 'pending',
+      authProvider: 'local',
     }
     if (body?.isSuperAdmin) {
       newUser.isSuperAdmin = body.isSuperAdmin

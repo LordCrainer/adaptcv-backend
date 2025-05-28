@@ -1,10 +1,10 @@
 import request from 'supertest'
 
-import type { IUsers, RoleType } from '@lordcrainer/adaptcv-shared-types'
+import type { IUsers, RoleType, LoginInput } from '@lordcrainer/adaptcv-shared-types'
 
 import app from '@src/config/server'
 
-export const loginUser = async (users: IUsers) => {
+export const login = async (users: LoginInput) => {
   try {
     const { email, password } = users
     const response = await request(app)

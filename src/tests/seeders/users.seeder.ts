@@ -1,7 +1,8 @@
-// src/tests/seeder.ts
 import type { RoleType } from '@lordcrainer/adaptcv-shared-types'
 
 import { usersModel } from '@src/api/Users/repository/users.schema'
+
+import { Roles } from './../../api/Roles/roles'
 
 interface UsersSeederInputData {
   _id: string
@@ -13,7 +14,6 @@ interface UsersSeederInputData {
 
 interface UsersSeederInput {
   superAdmin: UsersSeederInputData
-  admin: UsersSeederInputData
   user: UsersSeederInputData
 }
 
@@ -25,13 +25,6 @@ export const usersSeederInput: UsersSeederInput = {
     name: 'Super Admin',
     role: 'superAdmin'
   },
-  admin: {
-    _id: 'admin',
-    email: 'admin@acv-test.com',
-    password: 'password_admin',
-    name: 'Admin',
-    role: 'admin'
-  },
   user: {
     _id: 'user',
     email: 'user@acv-test.com',
@@ -42,8 +35,10 @@ export const usersSeederInput: UsersSeederInput = {
 }
 
 export const seedSuperAdminDb = async () => {
+  const role = Roles.byName(usersSeederInput.superAdmin.role!)
   await usersModel.create({
     ...usersSeederInput.superAdmin,
+    role,
     isSuperAdmin: true
   })
 }

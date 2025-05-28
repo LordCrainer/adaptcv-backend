@@ -18,7 +18,7 @@ UsersRouter.get('/health', (req, res) => {
   })
 })
 
-UsersRouter.use(inyectAuthMiddleware, canAccess('admin'))
+UsersRouter.use(inyectAuthMiddleware, canAccess('user'))
 
 /**
  * @swagger

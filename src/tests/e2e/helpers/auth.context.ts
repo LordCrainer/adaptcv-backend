@@ -3,7 +3,7 @@ import type { RoleType } from '@lordcrainer/adaptcv-shared-types'
 import { Roles } from '@src/api/Roles/roles'
 import { usersSeederInput } from '@src/tests/seeders/users.seeder'
 
-import { createUser, loginUser } from './api.client'
+import { createUser, login } from './api.client'
 
 type AuthTokens = Record<RoleType, string>
 
@@ -24,19 +24,13 @@ export const getAuthToken = async (role: RoleType): Promise<string> => {
 const generateTokenForRole = async (role: RoleType) => {
   const roleValue = Roles.byName(role)
   if (Roles.isSuperAdmin(roleValue)) {
-    return loginUser(usersSeederInput.superAdmin)
+    return login(usersSeederInput.superAdmin)
   }
-  if (Roles.isAdmin(roleValue)) {
-    const superAdminToken = await getAuthToken('superAdmin')
-    await createUser(usersSeederInput.admin, superAdminToken)
-
-    return loginUser(usersSeederInput.admin)
-  }
-
   if (Roles.isUser(roleValue)) {
     const superAdminToken = await getAuthToken('superAdmin')
+    await createUser(usersSeederInput.user, superAdminToken)
 
-    return loginUser(usersSeederInput.user)
+    return login(usersSeederInput.user)
   }
 
   throw new Error(`Role ${role} not supported`)

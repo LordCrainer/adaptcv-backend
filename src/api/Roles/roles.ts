@@ -3,9 +3,6 @@ import type { RoleConfig, RoleType } from '@lordcrainer/adaptcv-shared-types'
 export class Roles {
   private static readonly ROLES: RoleConfig = {
     superAdmin: 50,
-    admin: 40,
-    manager: 30,
-    provider: 20,
     user: 10
   }
 
@@ -14,7 +11,7 @@ export class Roles {
 
   /**
    * Gets the numeric value of a role.
-   * @param role - The role type (e.g., 'superAdmin', 'admin').
+   * @param role - The role type (e.g., 'superAdmin', 'user').
    * @returns The numeric value of the role.
    */
   public static byName(role: RoleType): number {
@@ -69,18 +66,6 @@ export class Roles {
    */
   public static isSuperAdmin(userRole: number): boolean {
     return userRole === Roles.byName('superAdmin')
-  }
-
-  public static isAdmin(userRole: number): boolean {
-    return userRole === Roles.byName('admin')
-  }
-
-  public static isManager(userRole: number): boolean {
-    return userRole === Roles.byName('manager')
-  }
-
-  public static isProvider(userRole: number): boolean {
-    return userRole === Roles.byName('provider')
   }
 
   public static isUser(userRole: number): boolean {

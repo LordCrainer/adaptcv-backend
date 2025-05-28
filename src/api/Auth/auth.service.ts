@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken'
 
 import type { RequestUserData } from '@Api/Auth/interfaces/auth.interface'
 import type { UserRepository } from '@Api/Users/interfaces/users.repository'
-import type { IUsers } from '@lordcrainer/adaptcv-shared-types'
+import type { IUsers, LoginInput } from '@lordcrainer/adaptcv-shared-types'
 
 import { customError } from '@Shared/utils/errorUtils'
 import { redisClient } from '@src/config/cache/redis'
@@ -26,7 +26,7 @@ export class AuthService {
   }
 
   async login(
-    params: IUsers
+    params: LoginInput
   ): Promise<IApiResponse<Partial<{ user: IUsers; token: any }>>> {
     if (!params.email || !params.password) {
       throw customError('validationParams', AUTH_MESSAGES.params_missing)
@@ -63,9 +63,14 @@ export class AuthService {
 
     const expireSec = getTokenExpirationInSeconds(tokenData.expiresAt)
 
-    await redisClient.set(`requestUser-${user._id}`, JSON.stringify(user), {
-      EX: expireSec
-    })
+    await Promise.all([
+      redisClient.set(`requestUser-${user._id}`, JSON.stringify(user), {
+        EX: expireSec
+      }),
+      redisClient.set(`token-user-${user._id}`, tokenData.token, {
+        EX: expireSec
+      })
+    ])
 
     return {
       data: { user, token: tokenData?.token },
@@ -74,10 +79,13 @@ export class AuthService {
   }
 
   async logOut(p: { userId: string }): Promise<IApiResponse<{}>> {
+    if (!p.userId) {
+      throw customError('validationParams', AUTH_MESSAGES.params_missing)
+    }
+
     await Promise.all([
       redisClient.del(`token-user-${p.userId}`),
-      redisClient.del(`requestUser-${p.userId}`),
-      redisClient.del(`organization-${p.userId}`)
+      redisClient.del(`requestUser-${p.userId}`)
     ])
     Logger.info(`Token deleted from Redis for user ${p.userId}`)
     return {
