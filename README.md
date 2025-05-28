@@ -12,6 +12,7 @@ AdaptCV Backend is a Node.js REST API for authentication and CV management, buil
     - [Docker](#docker)
   - [Running the Project](#running-the-project)
   - [License](#license)
+  - [Author](#author)
 
 ---
 
@@ -78,3 +79,9 @@ docker-compose --profile prod up --build
 ## License
 
 This project is licensed under the ISC License.
+
+## Author
+
+[LordCrainer](https://github.com/LordCrainer)
+
+---
