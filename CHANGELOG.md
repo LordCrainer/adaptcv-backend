@@ -1,3 +1,18 @@
+# [1.3.0](https://github.com/LordCrainer/adaptcv-backend/compare/v1.2.0...v1.3.0) (2025-05-28)
+
+
+### Bug Fixes
+
+* update @lordcrainer/adaptcv-shared-types to version 1.17.4 and refactor login function usage in auth context ([5f8d230](https://github.com/LordCrainer/adaptcv-backend/commit/5f8d2303bf93289331a1759e358505b27db77867))
+
+
+### Features
+
+* add default values for status and authProvider in user creation ([393c92b](https://github.com/LordCrainer/adaptcv-backend/commit/393c92bdc74164d229eb632f316629ea2ea1e93e))
+* add README and update docker-compose for production profile ([1d8790e](https://github.com/LordCrainer/adaptcv-backend/commit/1d8790e47c97ba9300bf63f4caae68b225405c96))
+* add script to create a test user in the database ([d1c5299](https://github.com/LordCrainer/adaptcv-backend/commit/d1c5299df6153c05be7d2a65b4c0a69faa933dbb))
+* update login method to use LoginInput type and enhance logout error handling in auth service tests ([bef9f1a](https://github.com/LordCrainer/adaptcv-backend/commit/bef9f1a5f48dc96d17ed082c42c0e120b038f100))
+
 # [1.2.0](https://github.com/LordCrainer/adaptcv-backend/compare/v1.1.1...v1.2.0) (2025-05-20)
 
 
