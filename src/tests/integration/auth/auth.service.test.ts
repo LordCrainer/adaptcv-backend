@@ -29,7 +29,10 @@ describe('AuthService', () => {
       name: 'Test User'
     } as IUsers
     await userRepository.create(user)
-    const { data } = await authService.login(user)
+    const { data } = await authService.login({
+      email: user.email,
+      password: user.password as string
+    })
     expect(data?.user?.email).toBe(user.email)
   })
 
@@ -39,20 +42,14 @@ describe('AuthService', () => {
         _id: 'test+token',
         email: 'test+token@example.com',
         password: 'password123',
-        name: 'Test User',
-        organizations: [
-          {
-            _id: 'test+token+org',
-            organizationId: 'test+token+org'
-          }
-        ]
+        name: 'Test User'
       } as IUsers
       const expireSeconds = 1000
 
       const tokenData = await authService.generateToken(user, {
         expireSeconds
       })
-      const payload = await userService.verifyToken(tokenData.token)
+      const payload = await authService.verifyToken(tokenData.token)
       if (!payload?.exp || !payload?.iat) {
         throw new Error('Token not decoded')
       }

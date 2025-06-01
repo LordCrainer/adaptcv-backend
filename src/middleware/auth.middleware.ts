@@ -1,6 +1,7 @@
 import type { RequestUserData } from '@lordcrainer/adaptcv-shared-types'
 import type { userService as UserService } from '@src/api/Users/users.dependencies'
 
+import { AuthService } from '@src/api/Auth/auth.service'
 import { AUTH_MESSAGES } from '@src/api/Auth/constants/auth.messages'
 import { Roles } from '@src/api/Roles/roles'
 import { USER_MESSAGES } from '@src/api/Users/constants/users.message'
@@ -9,7 +10,7 @@ import { getTokenExpirationInSeconds } from '@src/Shared/utils/auth.utils'
 import { customError } from '@src/Shared/utils/errorUtils'
 
 const AuthMiddleware =
-  (userService: typeof UserService): IController =>
+  (userService: typeof UserService, authService: AuthService): IController =>
   async (req, res, next) => {
     const tokenReq = (req.headers.authorization ||
       req.headers.Authorization ||
@@ -21,7 +22,7 @@ const AuthMiddleware =
         throw customError('unauthorized', AUTH_MESSAGES.unauthorized)
       }
 
-      const tokenData = await userService.verifyToken(token)
+      const tokenData = await authService.verifyToken(token)
       if (!tokenData?._id) {
         throw customError('accessDenied', AUTH_MESSAGES.invalid_token)
       }
