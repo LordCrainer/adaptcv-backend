@@ -1,5 +1,3 @@
-import jwt from 'jsonwebtoken'
-
 import type { IUsers } from '@lordcrainer/adaptcv-shared-types'
 import type {
   UserCreationParams,
@@ -67,7 +65,7 @@ export class UserService extends BaseService<IUsers> {
       name: body.name,
       password: body.password,
       status: 'pending',
-      authProvider: 'local',
+      authProvider: 'local'
     }
     if (body?.isSuperAdmin) {
       newUser.isSuperAdmin = body.isSuperAdmin
@@ -115,15 +113,6 @@ export class UserService extends BaseService<IUsers> {
     return {
       data: isDeleted,
       message: USER_MESSAGES.deleted
-    }
-  }
-
-  verifyToken(token: string): jwt.JwtPayload {
-    try {
-      const decoded = jwt.verify(token, config.jwtSecret)
-      return decoded as jwt.JwtPayload
-    } catch (error) {
-      throw customError('invalidToken', AUTH_MESSAGES.invalid_token)
     }
   }
 }
