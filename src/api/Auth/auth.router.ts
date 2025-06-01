@@ -86,6 +86,12 @@ AuthRouter.post('/login', inyectAuthController.login)
  */
 AuthRouter.post('/logout', inyectAuthMiddleware, inyectAuthController.logout)
 
+AuthRouter.post(
+  '/refresh-token',
+  inyectAuthMiddleware,
+  inyectAuthController.refreshToken
+)
+
 AuthRouter.get('/health', (req, res) => {
   res.status(200).json({
     status: 'ok',

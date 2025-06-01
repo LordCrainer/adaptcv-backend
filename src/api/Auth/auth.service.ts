@@ -114,6 +114,29 @@ export class AuthService {
     }
   }
 
+  async refreshToken(
+    user: IUsers
+  ): Promise<IApiResponse<{ token: string; expiresAt: number }>> {
+    if (!user?._id) {
+      throw customError('validationParams', AUTH_MESSAGES.params_missing)
+    }
+
+    const tokenData = this.generateToken(user, {
+      expireSeconds: 60 * 60 // 1 hour
+    })
+
+    const expireSec = getTokenExpirationInSeconds(tokenData.expiresAt)
+
+    await redisClient.set(`token-user-${user._id}`, tokenData.token, {
+      EX: expireSec
+    })
+
+    return {
+      data: { token: tokenData.token, expiresAt: tokenData.expiresAt },
+      message: AUTH_MESSAGES.refresh_token
+    }
+  }
+
   generateToken(
     user: IUsers,
     options?: jwt.SignOptions & { expireSeconds?: number }
@@ -134,6 +157,15 @@ export class AuthService {
       }
     } catch (error) {
       throw customError('internalServerError', 'Error generating token')
+    }
+  }
+
+  verifyToken(token: string): jwt.JwtPayload {
+    try {
+      const decoded = jwt.verify(token, config.jwtSecret)
+      return decoded as jwt.JwtPayload
+    } catch (error) {
+      throw customError('invalidToken', AUTH_MESSAGES.invalid_token)
     }
   }
 }

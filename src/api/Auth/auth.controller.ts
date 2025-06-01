@@ -49,4 +49,13 @@ export class AuthController {
       next(error)
     }
   }
+
+  refreshToken: IController = async (req, res, next) => {
+    try {
+      const user = await this.authService.refreshToken(req.body)
+      return ApiResponse.success(res).json({ ...user })
+    } catch (error) {
+      next(error)
+    }
+  }
 }

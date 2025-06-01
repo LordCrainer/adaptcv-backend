@@ -12,4 +12,4 @@ export const authService = new AuthService(userRepository)
 
 export const inyectAuthController = new AuthController(authService)
 
-export const inyectAuthMiddleware = AuthMiddleware(userService)
+export const inyectAuthMiddleware = AuthMiddleware(userService, authService)

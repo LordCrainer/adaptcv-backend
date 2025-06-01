@@ -6,6 +6,7 @@ interface authMessages {
   sing_up: string
   sign_out: string
   is_authenticated: string
+  refresh_token: string
   no_token: string
   invalid_credentials: string
   invalid_token: string
@@ -20,6 +21,7 @@ export const AUTH_MESSAGES: authMessages = {
   is_authenticated: 'Authenticated',
   sing_up: 'Sign Up successful',
   sign_out: 'Session closed',
+  refresh_token: 'Refresh token successful',
   no_token: 'No token provided',
   invalid_credentials: 'Invalid credentials',
   invalid_token: 'Invalid token',
