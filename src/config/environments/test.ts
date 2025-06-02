@@ -40,8 +40,9 @@ const configuration = (env: any): Environments => {
         secret: env.DO_SPACES_SECRET || 'localhost'
       }
     },
-    secret: env.SECRET || 'develop',
-    jwtSecret: env.JWT_SECRET || 'develop',
+    secret: env.SECRET || 'test',
+    jwtSecret: env.JWT_SECRET || 'test',
+    cookieSecret: env.COOKIE_SECRET || 'test',
     bcryptSaltRounds: env.BCRYPT_SALT_ROUNDS || 10,
     configGeneral: {
       trustProxy: env?.TRUST_PROXY ?? false

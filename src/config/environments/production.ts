@@ -25,6 +25,7 @@ const configuration = (env: any): Environments => {
     },
     secret: env.SECRET || 'production',
     jwtSecret: env.JWT_SECRET,
+    cookieSecret: env.COOKIE_SECRET || 'production',
     bcryptSaltRounds: env.BCRYPT_SALT_ROUNDS || 10
   }
 }
