@@ -105,12 +105,4 @@ describe('AuthService', () => {
       expect(error).toBeInstanceOf(Error)
     }
   })
-
-  // it('should sign up a user', async () => {
-  //   // Test implementation
-  // })
-
-  // it('should check if a user is authenticated', async () => {
-  //   // Test implementation
-  // })
 })
