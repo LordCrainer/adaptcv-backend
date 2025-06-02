@@ -3,7 +3,6 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import type { IUsers } from '@lordcrainer/adaptcv-shared-types'
 
 import { authService } from '@src/api/Auth/auth.dependencies'
-import { userService } from '@src/api/Users/users.dependencies'
 import { dbStrategy } from '@src/config/db/dbStrategy'
 
 import { UserRepositoryMongo } from '@Api/Users/repository/users.repository.mongo'
@@ -58,6 +57,51 @@ describe('AuthService', () => {
       expect(payload?._id).toBe(user._id)
       expect(rangeTime).toBe(expireSeconds)
     } catch (error) {
+      expect(error).toBeInstanceOf(Error)
+    }
+  })
+
+  it('should verify a valid token (decoded)', async () => {
+    const user = {
+      _id: 'test+token',
+      email: 'test+token@example.com',
+      password: 'password123',
+      name: 'Test User'
+    } as IUsers
+    const expireSeconds = 1000
+
+    const tokenData = await authService.generateToken(user, {
+      expireSeconds
+    })
+    const payload = await authService.decodeToken(tokenData.token)
+
+    if (!payload?.exp || !payload?.iat) {
+      throw new Error('Token not decoded')
+    }
+
+    const rangeTime = payload.exp - payload.iat
+    expect(payload?._id).toBe(user._id)
+    expect(rangeTime).toBe(expireSeconds)
+  })
+
+  it('should fail to verify an expired token', async () => {
+    try {
+      const user = {
+        _id: 'test+expired',
+        email: 'test+expired@example.com',
+        password: 'password123',
+        name: 'Test User'
+      } as IUsers
+      const expireSeconds = 1
+      const tokenData = await authService.generateToken(user, { expireSeconds })
+
+      await new Promise((res) => setTimeout(res, 1100))
+      await expect(
+        authService.verifyToken(tokenData.token)
+      ).rejects.toHaveProperty('statusCode', 401)
+    } catch (error) {
+      expect(error).toHaveProperty('statusCode', 401)
+      expect(error).toHaveProperty('name', 'invalidToken')
       expect(error).toBeInstanceOf(Error)
     }
   })

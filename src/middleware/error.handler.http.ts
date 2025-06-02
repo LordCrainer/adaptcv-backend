@@ -11,21 +11,17 @@ export const errorHandler = (
   next: NextFunction
 ): void => {
   const response = err?.statusCode
-    ? err.formalize()
+    ? err
     : customError(
         'internalServerError',
         'An unexpected error occurred. Please try again later.'
-      ).formalize()
+      )
+  const formalizedError = response.formalize()
+  Logger.error(JSON.stringify({ ...formalizedError, stack: err?.stack }))
 
-  Logger.error(
-    JSON.stringify({
-      ...response,
-      status: undefined
-    })
-  )
   if (currentEnv.debugs?.debug) {
     console.error(err?.stack)
   }
 
-  res.status(response.statusCode).json(response)
+  res.status(response.statusCode).json(formalizedError)
 }
