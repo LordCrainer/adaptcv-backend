@@ -1,4 +1,5 @@
 import compress from 'compression'
+import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import express from 'express'
 import rateLimit from 'express-rate-limit'
@@ -19,6 +20,8 @@ const expressMiddleware = (app: express.Application) => {
       })
     )
   }
+
+  app.use(cookieParser(currentEnv.cookieSecret))
 
   app.use(compress())
   app.use(methodOverride())
