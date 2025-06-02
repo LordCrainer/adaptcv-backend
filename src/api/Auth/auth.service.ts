@@ -124,11 +124,21 @@ export class AuthService {
       throw customError('validationParams', AUTH_MESSAGES.params_missing)
     }
 
-    const user = this.verifyToken(currentRefreshToken) as IUsers
+    const user = this.verifyToken(currentRefreshToken) as {
+      _id: string
+      email: string
+    }
 
-    const tokenData = this.generateToken(user, {
-      expireSeconds: 60 * 60 // 1 hour
-    })
+    if (!user?._id || !user?.email) {
+      throw customError('invalidToken', AUTH_MESSAGES.invalid_token)
+    }
+
+    const tokenData = this.generateToken(
+      {},
+      {
+        expireSeconds: 60 * 60 // 1 hour
+      }
+    )
 
     const expireSec = getTokenExpirationInSeconds(tokenData.expiresAt)
 
@@ -143,15 +153,14 @@ export class AuthService {
   }
 
   generateToken(
-    { _id, email }: IUsers,
-    options?: jwt.SignOptions & { expireSeconds?: number,  }
+    payload: any,
+    options?: jwt.SignOptions & { expireSeconds?: number }
   ): TokenLoginResponse {
     try {
       const now = new Date().getTime()
       const expiresAt =
         Math.floor(now) + (options?.expireSeconds || 24 * 60 * 60) * 1000
 
-      const payload = { _id, email }
       const token = jwt.sign(payload, config.jwtSecret, {
         expiresIn: options?.expireSeconds || options?.expiresIn || '1d'
       })
