@@ -1,16 +1,16 @@
 import type { RequestUserData } from '@lordcrainer/adaptcv-shared-types'
-import type { userService as UserService } from '@src/api/Users/users.dependencies'
 
 import { AuthService } from '@src/api/Auth/auth.service'
 import { AUTH_MESSAGES } from '@src/api/Auth/constants/auth.messages'
 import { Roles } from '@src/api/Roles/roles'
 import { USER_MESSAGES } from '@src/api/Users/constants/users.message'
+import { UserService } from '@src/api/Users/users.service'
 import { redisClient } from '@src/config/cache/redis'
 import { getTokenExpirationInSeconds } from '@src/Shared/utils/auth.utils'
 import { customError } from '@src/Shared/utils/errorUtils'
 
 const AuthMiddleware =
-  (userService: typeof UserService, authService: AuthService): IController =>
+  (userService: UserService, authService: AuthService): IController =>
   async (req, res, next) => {
     const tokenReq = (req.headers.authorization ||
       req.headers.Authorization ||

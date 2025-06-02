@@ -1,8 +1,11 @@
 import jwt from 'jsonwebtoken'
 
-import type { RequestUserData } from '@Api/Auth/interfaces/auth.interface'
+import type {
+  RequestUserData,
+  TokenLoginResponse
+} from '@Api/Auth/interfaces/auth.interface'
 import type { UserRepository } from '@Api/Users/interfaces/users.repository'
-import type { IUsers, LoginInput } from '@lordcrainer/adaptcv-shared-types'
+import type { IUsers, LoginRequest } from '@lordcrainer/adaptcv-shared-types'
 
 import { customError } from '@Shared/utils/errorUtils'
 import { redisClient } from '@src/config/cache/redis'
@@ -26,7 +29,7 @@ export class AuthService {
   }
 
   async login(
-    params: LoginInput
+    params: LoginRequest
   ): Promise<IApiResponse<Partial<{ user: IUsers; token: any }>>> {
     if (!params.email || !params.password) {
       throw customError('validationParams', AUTH_MESSAGES.params_missing)
@@ -115,11 +118,13 @@ export class AuthService {
   }
 
   async refreshToken(
-    user: IUsers
+    currentRefreshToken: string
   ): Promise<IApiResponse<{ token: string; expiresAt: number }>> {
-    if (!user?._id) {
+    if (!currentRefreshToken) {
       throw customError('validationParams', AUTH_MESSAGES.params_missing)
     }
+
+    const user = this.verifyToken(currentRefreshToken) as IUsers
 
     const tokenData = this.generateToken(user, {
       expireSeconds: 60 * 60 // 1 hour
@@ -138,15 +143,15 @@ export class AuthService {
   }
 
   generateToken(
-    user: IUsers,
-    options?: jwt.SignOptions & { expireSeconds?: number }
-  ): { token: string; expiresAt: number; createdAt: number } {
+    { _id, email }: IUsers,
+    options?: jwt.SignOptions & { expireSeconds?: number,  }
+  ): TokenLoginResponse {
     try {
       const now = new Date().getTime()
       const expiresAt =
         Math.floor(now) + (options?.expireSeconds || 24 * 60 * 60) * 1000
 
-      const payload = { _id: user._id, email: user.email }
+      const payload = { _id, email }
       const token = jwt.sign(payload, config.jwtSecret, {
         expiresIn: options?.expireSeconds || options?.expiresIn || '1d'
       })
@@ -157,6 +162,18 @@ export class AuthService {
       }
     } catch (error) {
       throw customError('internalServerError', 'Error generating token')
+    }
+  }
+
+  decodeToken(token: string): jwt.JwtPayload {
+    try {
+      const decoded = jwt.decode(token, { complete: true })
+      if (!decoded || typeof decoded === 'string') {
+        throw customError('invalidToken', AUTH_MESSAGES.invalid_token)
+      }
+      return decoded.payload as jwt.JwtPayload
+    } catch (error) {
+      throw customError('invalidToken', AUTH_MESSAGES.invalid_token)
     }
   }
 

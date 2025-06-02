@@ -52,7 +52,7 @@ export class AuthController {
 
   refreshToken: IController = async (req, res, next) => {
     try {
-      const user = await this.authService.refreshToken(req.body)
+      const user = await this.authService.refreshToken(req.body.refreshToken)
       return ApiResponse.success(res).json({ ...user })
     } catch (error) {
       next(error)

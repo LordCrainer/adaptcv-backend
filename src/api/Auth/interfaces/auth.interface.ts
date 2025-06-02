@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken'
 
 import type {
   IUsers,
-  LoginOutput,
+  LoginResponse,
   RequestUserData
 } from '@lordcrainer/adaptcv-shared-types'
 
@@ -18,7 +18,7 @@ export interface IAuthService {
    * @returns {Promise<IUsers>}
    * @memberof AuthService
    */
-  login: (params: IUsers) => Promise<IApiResponse<LoginOutput>>
+  login: (params: IUsers) => Promise<IApiResponse<LoginResponse>>
   /**
    * @param {User} user
    * @returns {Promise<IUsers>}
@@ -32,4 +32,10 @@ export interface IAuthService {
     user: IUsers,
     options?: jwt.SignOptions & { expireSeconds?: number }
   ) => { token: string; expiresAt: number; createdAt: number }
+}
+
+export interface TokenLoginResponse {
+  token: string
+  expiresAt: number
+  createdAt: number
 }
