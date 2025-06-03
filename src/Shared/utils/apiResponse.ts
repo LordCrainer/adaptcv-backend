@@ -1,4 +1,10 @@
-import type { Response } from 'express'
+import type { CookieOptions, Response } from 'express'
+
+interface IResponse {
+  message: string
+  data: any
+  error?: Error | null
+}
 
 export class ResponseUseCase {
   success: boolean
@@ -48,13 +54,34 @@ class ApiResponse {
     return this
   }
 
-  json({ message, data, pagination, ...others }: any): ApiResponse {
+  setCookie(key: string, value: string, options?: CookieOptions) {
+    const ONE_DAY = 24 * 3600 * 1000
+    this.res.cookie(key, value, {
+      httpOnly: options?.httpOnly ?? true,
+      secure: options?.secure ?? true,
+      expires: options?.expires ?? new Date(Date.now() + ONE_DAY)
+    })
+    return this
+  }
+
+  clearCookie(key: string) {
+    this.res.clearCookie(key)
+    return this
+  }
+
+  json({
+    message,
+    data,
+    pagination
+  }: {
+    message: string
+    data: any
+    pagination?: Pagination
+  }): ApiResponse {
     this.res.json({
       message,
-      // status: 'success',
       pagination,
-      data,
-      ...others
+      data
     })
     return this
   }
