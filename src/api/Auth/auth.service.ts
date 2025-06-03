@@ -144,12 +144,21 @@ export class AuthService {
   ): TokenLoginResponse {
     try {
       const now = new Date().getTime()
-      const expiresAt =
-        Math.floor(now) + (options?.expireSeconds || 24 * 60 * 60) * 1000
+      let expiresAt = 0
+
+      expiresAt =
+        options?.expireSeconds && !options?.expiresIn
+          ? Math.floor(now) + options?.expireSeconds * 1000
+          : Math.floor(now) + 24 * 60 * 60 * 1000
 
       const token = jwt.sign(payload, config.jwtSecret, {
-        expiresIn: options?.expireSeconds || options?.expiresIn || '1d'
+        expiresIn: options?.expiresIn || expiresAt
       })
+
+      if (options?.expiresIn) {
+        const decodedToken = jwt.decode(token) as jwt.JwtPayload
+        expiresAt = (decodedToken.exp as number) * 1000
+      }
       return {
         token,
         expiresAt,

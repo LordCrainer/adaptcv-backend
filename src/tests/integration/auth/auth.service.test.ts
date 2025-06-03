@@ -33,6 +33,7 @@ describe('AuthService', () => {
       password: user.password as string
     })
     expect(auth?.user?.email).toBe(user.email)
+    expect(auth?.token).toBeDefined()
   })
 
   it('should not login a user with invalid credentials', async () => {
