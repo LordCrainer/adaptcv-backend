@@ -15,7 +15,8 @@ export class AuthController {
         message: AUTH_MESSAGES.login,
         data: new AuthResponseDto(auth)
       }
-      return ApiResponse.success(res)
+      new ApiResponse(res)
+        .setName('success')
         .setCookie('refreshToken', auth.refreshToken.token, {
           expires: new Date(auth.refreshToken?.expiresAt)
         })
@@ -31,7 +32,7 @@ export class AuthController {
         userId: req.body.userId
       }
       const isLogout = await this.authService.logOut(args)
-      return ApiResponse.success(res).clearCookie('refreshToken').json({
+      new ApiResponse(res).setName('success').clearCookie('refreshToken').json({
         message: AUTH_MESSAGES.logout,
         data: isLogout
       })
@@ -43,7 +44,7 @@ export class AuthController {
   signup: IController = async (req, res, next) => {
     try {
       const user = await this.authService.signUp(req.body)
-      return ApiResponse.success(res).json({
+      new ApiResponse(res).setName('success').json({
         message: AUTH_MESSAGES.sing_up,
         data: user
       })
@@ -68,7 +69,7 @@ export class AuthController {
     try {
       const refreshToken = req.cookies?.refreshToken
       const user = await this.authService.refreshToken(refreshToken)
-      return ApiResponse.success(res).json({
+      new ApiResponse(res).setName('success').json({
         data: user,
         message: AUTH_MESSAGES.refresh_token
       })

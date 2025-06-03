@@ -1,31 +1,13 @@
+import { HttpStatusCode } from 'axios'
+
 import type { CookieOptions, Response } from 'express'
 
-interface IResponse {
+import { generateHttpMessage, HttpKeys } from './http.utils'
+
+interface IResponseJson {
   message: string
   data: any
-  error?: Error | null
-}
-
-export class ResponseUseCase {
-  success: boolean
-  message: string
-  data: any
-  error: Error | null
-  constructor(data = null, message: string, success = true, error = null) {
-    this.success = success
-    this.message = message
-    this.data = data ?? {}
-    this.error = error
-  }
-
-  response() {
-    return {
-      success: this.success,
-      message: this.message,
-      data: this.data,
-      ...(this.error ? { error: this.error } : {})
-    }
-  }
+  pagination?: Pagination
 }
 
 class ApiResponse {
@@ -35,18 +17,29 @@ class ApiResponse {
   }
 
   static success(res: Response): ApiResponse {
-    return new ApiResponse(res).status(200)
+    return new ApiResponse(res).status(HttpStatusCode.Ok)
   }
 
   static created(res: Response): ApiResponse {
-    return new ApiResponse(res).status(201)
+    return new ApiResponse(res).status(HttpStatusCode.Created)
   }
 
   static accepted(res: Response): ApiResponse {
-    return new ApiResponse(res).status(202)
+    return new ApiResponse(res).status(HttpStatusCode.Accepted)
   }
   static noContent(res: Response): ApiResponse {
-    return new ApiResponse(res).status(204)
+    return new ApiResponse(res).status(HttpStatusCode.NoContent)
+  }
+
+  static setName(res: Response, label: HttpKeys) {
+    return new ApiResponse(res).status(generateHttpMessage(label).status)
+  }
+
+  setName(key: HttpKeys) {
+    const { status, nameType } = generateHttpMessage(key)
+    this.res.status(status)
+    this.res.setHeader('x-status-name', nameType)
+    return this
   }
 
   status(code: number): ApiResponse {
@@ -69,15 +62,7 @@ class ApiResponse {
     return this
   }
 
-  json({
-    message,
-    data,
-    pagination
-  }: {
-    message: string
-    data: any
-    pagination?: Pagination
-  }): ApiResponse {
+  json({ message, data, pagination }: IResponseJson): ApiResponse {
     this.res.json({
       message,
       pagination,
@@ -88,35 +73,3 @@ class ApiResponse {
 }
 
 export default ApiResponse
-
-/* export default class ApiResponse {
-  static result = (res: Response, data: object,
-                   status: number = 200,
-                   cookie: ICookie = null) => {
-    res.status(status);
-    if (cookie) {
-      res.cookie(cookie.key, cookie.value);
-    }
-    res.json({
-      data,
-      success: true,
-    });
-  }
-
-  static error = (res: Response,
-                  status: number = 400,
-                  error: string = httpStatusCodes.getStatusText(status),
-                  override: IOverrideRequest = null) => {
-    res.status(status).json({
-      override,
-      error: {
-        message: error,
-      },
-      success: false,
-    });
-  }
-
-  static setCookie = (res: Response, key: string, value: string) => {
-    res.cookie(key, value);
-  }
-} */
