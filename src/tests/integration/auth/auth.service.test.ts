@@ -28,11 +28,11 @@ describe('AuthService', () => {
       name: 'Test User'
     } as IUsers
     await userRepository.create(user)
-    const { data } = await authService.login({
+    const auth = await authService.login({
       email: user.email,
       password: user.password as string
     })
-    expect(data?.user?.email).toBe(user.email)
+    expect(auth?.user?.email).toBe(user.email)
   })
 
   it('should not login a user with invalid credentials', async () => {
