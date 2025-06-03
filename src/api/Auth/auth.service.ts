@@ -1,11 +1,11 @@
 import jwt from 'jsonwebtoken'
 
+import type { UserRepository } from '@Api/Users/interfaces/users.repository'
+import type { IUsers, LoginRequest } from '@lordcrainer/adaptcv-shared-types'
 import type {
   RequestUserData,
   TokenLoginResponse
-} from '@Api/Auth/interfaces/auth.interface'
-import type { UserRepository } from '@Api/Users/interfaces/users.repository'
-import type { IUsers, LoginRequest } from '@lordcrainer/adaptcv-shared-types'
+} from '@src/api/Auth/dto/auth.interface'
 
 import { customError } from '@Shared/utils/errorUtils'
 import { redisClient } from '@src/config/cache/redis'
@@ -28,19 +28,14 @@ export class AuthService {
     this.userRepository = userRepository
   }
 
-  async login(
-    params: LoginRequest
-  ): Promise<IApiResponse<Partial<{ user: IUsers; token: any }>>> {
+  async login(params: LoginRequest) {
     if (!params.email || !params.password) {
       throw customError('validationParams', AUTH_MESSAGES.params_missing)
     }
 
-    const foundUser = await this.userRepository.findOne(
-      {
-        email: params.email
-      },
-      { select: { password: 0 } }
-    )
+    const foundUser = await this.userRepository.findOne({
+      email: params.email
+    })
 
     if (!foundUser || !foundUser?.passwordHash) {
       throw customError('invalidCredentials', AUTH_MESSAGES.invalid_credentials)
@@ -54,7 +49,13 @@ export class AuthService {
       throw new Error(AUTH_MESSAGES.invalid_credentials)
     }
 
-    const tokenData = this.generateToken(foundUser)
+    const payload = {
+      _id: foundUser._id,
+      email: foundUser.email
+    }
+
+    const tokenData = this.generateToken(payload, { expiresIn: '1h' })
+    const refreshToken = this.generateToken(payload, { expiresIn: '7d' })
 
     const user = <RequestUserData>{
       _id: foundUser._id,
@@ -66,47 +67,38 @@ export class AuthService {
 
     const expireSec = getTokenExpirationInSeconds(tokenData.expiresAt)
 
-    await Promise.all([
-      redisClient.set(`requestUser-${user._id}`, JSON.stringify(user), {
-        EX: expireSec
-      }),
-      redisClient.set(`token-user-${user._id}`, tokenData.token, {
-        EX: expireSec
-      })
-    ])
+    redisClient.set(`requestUser-${user._id}`, JSON.stringify(user), {
+      EX: expireSec
+    })
+    redisClient.set(`token-user-${user._id}`, tokenData.token, {
+      EX: expireSec
+    })
 
     return {
-      data: { user, token: tokenData?.token },
-      message: AUTH_MESSAGES.login
+      user,
+      refreshToken,
+      token: tokenData.token
     }
   }
 
-  async logOut(p: { userId: string }): Promise<IApiResponse<{}>> {
+  async logOut(p: { userId: string }) {
     if (!p.userId) {
       throw customError('validationParams', AUTH_MESSAGES.params_missing)
     }
 
-    await Promise.all([
-      redisClient.del(`token-user-${p.userId}`),
-      redisClient.del(`requestUser-${p.userId}`)
-    ])
+    redisClient.del(`token-user-${p.userId}`)
+    redisClient.del(`requestUser-${p.userId}`)
     Logger.info(`Token deleted from Redis for user ${p.userId}`)
-    return {
-      data: {},
-      message: AUTH_MESSAGES.logout
-    }
+    return true
   }
 
-  async signUp(User: IUsers): Promise<IApiResponse<IUsers>> {
+  async signUp(User: IUsers) {
     const user = await this.userRepository.create(User)
     if (!user) {
       throw customError('notFound', USER_MESSAGES.not_created)
     }
 
-    return {
-      data: user,
-      message: AUTH_MESSAGES.sing_up
-    }
+    return { user }
   }
 
   async isAuthenticated(User: IUsers): Promise<IApiResponse<IUsers>> {
@@ -119,7 +111,7 @@ export class AuthService {
 
   async refreshToken(
     currentRefreshToken: string
-  ): Promise<IApiResponse<{ token: string; expiresAt: number }>> {
+  ): Promise<{ token: string; expiresAt: number }> {
     if (!currentRefreshToken) {
       throw customError('validationParams', AUTH_MESSAGES.params_missing)
     }
@@ -133,12 +125,9 @@ export class AuthService {
       throw customError('invalidToken', AUTH_MESSAGES.invalid_token)
     }
 
-    const tokenData = this.generateToken(
-      {},
-      {
-        expireSeconds: 60 * 60 // 1 hour
-      }
-    )
+    const tokenData = this.generateToken(user, {
+      expiresIn: '1h'
+    })
 
     const expireSec = getTokenExpirationInSeconds(tokenData.expiresAt)
 
@@ -146,10 +135,7 @@ export class AuthService {
       EX: expireSec
     })
 
-    return {
-      data: { token: tokenData.token, expiresAt: tokenData.expiresAt },
-      message: AUTH_MESSAGES.refresh_token
-    }
+    return { token: tokenData.token, expiresAt: tokenData.expiresAt }
   }
 
   generateToken(
