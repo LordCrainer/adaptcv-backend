@@ -144,26 +144,16 @@ export class AuthService {
     options?: jwt.SignOptions & { expireSeconds?: number }
   ): TokenLoginResponse {
     try {
-      const now = new Date().getTime()
-      let expiresAt = 0
-
-      expiresAt =
-        options?.expireSeconds && !options?.expiresIn
-          ? Math.floor(now) + options?.expireSeconds * 1000
-          : Math.floor(now) + 24 * 60 * 60 * 1000
-
       const token = jwt.sign(payload, config.jwtSecret, {
-        expiresIn: options?.expiresIn || expiresAt
+        expiresIn: options?.expiresIn || options?.expireSeconds || 24 * 60 * 60
       })
 
-      if (options?.expiresIn) {
-        const decodedToken = jwt.decode(token) as jwt.JwtPayload
-        expiresAt = (decodedToken.exp as number) * 1000
-      }
+      const decodedToken = jwt.decode(token) as jwt.JwtPayload
+
       return {
         token,
-        expiresAt,
-        createdAt: now
+        expiresAt: (decodedToken.exp as number) * 1000,
+        createdAt: (decodedToken.iat as number) * 1000
       }
     } catch (error) {
       throw customError('internalServerError', 'Error generating token')

@@ -69,7 +69,7 @@ describe('AuthService', () => {
       password: 'password123',
       name: 'Test User'
     } as IUsers
-    const expireSeconds = 1000
+    const expireSeconds = 1
 
     const tokenData = await authService.generateToken(user, {
       expireSeconds
