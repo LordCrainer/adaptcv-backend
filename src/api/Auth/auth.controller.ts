@@ -2,25 +2,23 @@ import ApiResponse from '@Shared/utils/apiResponse'
 
 import { AuthService } from './auth.service'
 import { AUTH_MESSAGES } from './constants/auth.messages'
-import { AuthResponseDto } from './dto/auth.dto'
 
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   login: IController = async (req, res, next) => {
     try {
-      const auth = await this.authService.login(req.body)
+      const { refreshToken, ...rest } = await this.authService.login(req.body)
 
-      const response = {
-        message: AUTH_MESSAGES.login,
-        data: new AuthResponseDto(auth)
-      }
       new ApiResponse(res)
         .setName('success')
-        .setCookie('refreshToken', auth.refreshToken.token, {
-          expires: new Date(auth.refreshToken?.expiresAt)
+        .setCookie('refreshToken', refreshToken.token, {
+          expires: new Date(refreshToken?.expiresAt)
         })
-        .json({ ...response })
+        .json({
+          data: rest,
+          message: AUTH_MESSAGES.login
+        })
     } catch (error) {
       next(error)
     }

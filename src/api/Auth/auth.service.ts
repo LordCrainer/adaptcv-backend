@@ -16,6 +16,7 @@ import { getTokenExpirationInSeconds } from '@src/Shared/utils/auth.utils'
 import { USER_MESSAGES } from '../Users/constants/users.message'
 import { checkPasswordHash } from '../Users/helpers/users.helpers'
 import { AUTH_MESSAGES } from './constants/auth.messages'
+import { AuthResponseDto } from './dto/auth.dto'
 
 /**
  * @export
@@ -74,11 +75,11 @@ export class AuthService {
       EX: expireSec
     })
 
-    return {
+    return new AuthResponseDto({
       user,
-      refreshToken,
-      token: tokenData.token
-    }
+      token: tokenData.token,
+      refreshToken
+    })
   }
 
   async logOut(p: { userId: string }) {
