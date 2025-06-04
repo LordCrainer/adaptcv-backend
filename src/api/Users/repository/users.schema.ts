@@ -18,13 +18,13 @@ const UsersSchema: Schema = new Schema<IUsers>(
     isSuperAdmin: { type: Boolean, required: false },
     authProvider: { type: String, default: 'local' },
     status: { type: String, default: 'pending' },
-    role: { type: Number, default: 10 },
+    role: { type: Number, default: 10 }
   },
   { versionKey: false, _id: false, timestamps: true }
 )
 
 UsersSchema.pre(
-  'save',
+  'save' as any,
   async function (
     this: HydratedDocument<IUsers>,
     next: NextFunction
