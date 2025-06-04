@@ -56,7 +56,7 @@ declare global {
     skip?: number
   }
 
-  interface IApiResponse<T> {
+  interface IApiResponse<T = any> {
     success?: boolean
     message?: string
     data: T

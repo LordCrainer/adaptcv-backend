@@ -4,12 +4,6 @@ import type { CookieOptions, Response } from 'express'
 
 import { generateHttpMessage, HttpKeys } from './http.utils'
 
-interface IResponseJson {
-  message: string
-  data: any
-  pagination?: Pagination
-}
-
 class ApiResponse {
   res: Response
   constructor(res: Response) {
@@ -49,11 +43,12 @@ class ApiResponse {
 
   setCookie(key: string, value: string, options?: CookieOptions) {
     const ONE_DAY = 24 * 3600 * 1000
-    this.res.cookie(key, value, {
-      httpOnly: options?.httpOnly ?? true,
-      secure: options?.secure ?? true,
-      expires: options?.expires ?? new Date(Date.now() + ONE_DAY)
-    })
+    const defaultOptions: CookieOptions = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      expires: new Date(Date.now() + ONE_DAY)
+    }
+    this.res.cookie(key, value, { ...defaultOptions, ...options })
     return this
   }
 
@@ -62,7 +57,7 @@ class ApiResponse {
     return this
   }
 
-  json({ message, data, pagination }: IResponseJson): ApiResponse {
+  json({ message, data, pagination }: IApiResponse): ApiResponse {
     this.res.json({
       message,
       pagination,

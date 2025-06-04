@@ -20,7 +20,7 @@ export const errorHandler = (
   Logger.error(JSON.stringify({ ...formalizedError, stack: err?.stack }))
 
   if (currentEnv.debugs?.debug) {
-    console.error(err?.stack)
+    console.error(err?.message, err?.stack)
   }
 
   res.status(response.statusCode).json(formalizedError)
