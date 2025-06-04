@@ -17,7 +17,7 @@ export class BuilderController {
       }
       const newBuilder = await this.builderService.createBuilder(args)
 
-      ApiResponse.created(res).json({ ...newBuilder })
+      new ApiResponse(res).setName('created').json({ ...newBuilder })
     } catch (error) {
       next(error)
     }
@@ -35,7 +35,7 @@ export class BuilderController {
         builderId: req.params.builderId
       }
       const cv = await this.builderService.getBuilders(args)
-      ApiResponse.success(res).json(cv)
+      new ApiResponse(res).setName('success').json(cv)
     } catch (error) {
       next(error)
     }
@@ -48,7 +48,7 @@ export class BuilderController {
         builderId
       }
       const cv = await this.builderService.getBuilder(args)
-      ApiResponse.success(res).json(cv)
+      new ApiResponse(res).setName('success').json(cv)
     } catch (error) {
       next(error)
     }
@@ -60,7 +60,7 @@ export class BuilderController {
         req.params.builderId,
         req.body
       )
-      ApiResponse.success(res).json(updatedBuilder)
+      new ApiResponse(res).setName('success').json(updatedBuilder)
     } catch (error) {
       next(error)
     }
@@ -72,7 +72,7 @@ export class BuilderController {
       const isDeleted = await this.builderService.deleteBuilder(
         req.params.builderId
       )
-      ApiResponse.success(res).json(isDeleted)
+      new ApiResponse(res).setName('success').json(isDeleted)
     } catch (error) {
       next(error)
     }

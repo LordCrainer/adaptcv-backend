@@ -1,6 +1,15 @@
-import { HttpStatusCode } from 'axios'
-
-type StatusCode = 200 | 400 | 401 | 403 | 404 | 405 | 413 | 500
+type StatusCode =
+  | 200
+  | 201
+  | 202
+  | 204
+  | 400
+  | 401
+  | 403
+  | 404
+  | 405
+  | 413
+  | 500
 type StatusLabel<T extends StatusCode> = keyof (typeof statusCodeHandle)[T]
 export type HttpKeys = { [K in StatusCode]: StatusLabel<K> }[StatusCode]
 
@@ -8,6 +17,18 @@ const statusCodeHandle = {
   200: {
     ok: 'OK',
     success: 'Success'
+  },
+  201: {
+    created: 'Created',
+    resourceCreated: 'Resource Created'
+  },
+  202: {
+    accepted: 'Accepted',
+    resourceAccepted: 'Resource Accepted'
+  },
+  204: {
+    noContent: 'No Content',
+    resourceDeleted: 'Resource Deleted'
   },
   413: {
     tooLarge: 'Request Entity Too Large'

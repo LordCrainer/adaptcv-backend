@@ -54,7 +54,7 @@ export class AuthController {
   isAuthenticated: IController = async (req, res, next) => {
     try {
       const user = await this.authService.isAuthenticated(req.body)
-      return ApiResponse.success(res).json({
+      new ApiResponse(res).setName('success').json({
         message: AUTH_MESSAGES.login,
         data: user
       })

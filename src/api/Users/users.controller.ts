@@ -23,7 +23,7 @@ export class UsersController {
 
       const users = await this.userService.getUsers(args)
 
-      return ApiResponse.success(res).json(users)
+      new ApiResponse(res).setName('success').json(users)
     } catch (error) {
       next(error)
     }
@@ -38,7 +38,7 @@ export class UsersController {
 
       const user = await this.userService.getUser(args)
 
-      return ApiResponse.success(res).json(user)
+      new ApiResponse(res).setName('success').json(user)
     } catch (error) {
       next(error)
     }
@@ -53,7 +53,7 @@ export class UsersController {
 
       const user = await this.userService.createUser(args)
 
-      ApiResponse.created(res).json(user)
+      new ApiResponse(res).setName('created').json(user)
     } catch (error) {
       next(error)
     }
@@ -66,7 +66,7 @@ export class UsersController {
 
       const isUpdated = await this.userService.updateUser(id, body)
 
-      ApiResponse.success(res).json(isUpdated)
+      new ApiResponse(res).setName('success').json(isUpdated)
     } catch (error) {
       next(error)
     }
@@ -78,7 +78,7 @@ export class UsersController {
 
       const isDeleted = await this.userService.deleteUser(id)
 
-      ApiResponse.success(res).json(isDeleted)
+      new ApiResponse(res).setName('success').json(isDeleted)
     } catch (error) {
       next(error)
     }
