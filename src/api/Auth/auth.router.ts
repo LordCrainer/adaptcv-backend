@@ -86,11 +86,19 @@ AuthRouter.post('/login', inyectAuthController.login)
  */
 AuthRouter.post('/logout', inyectAuthMiddleware, inyectAuthController.logout)
 
-AuthRouter.post(
-  '/refresh-token',
-  inyectAuthMiddleware,
-  inyectAuthController.refreshToken
-)
+/**
+ * @swagger
+ * /auth/refresh-token:
+ *   post:
+ *     summary: Refresh the authentication token
+ *     tags: [Auth]
+ *     responses:
+ *       200:
+ *         description: The new authentication token
+ *       401:
+ *         description: Unauthorized
+ */
+AuthRouter.post('/refresh-token', inyectAuthController.refreshToken)
 
 AuthRouter.get('/health', (req, res) => {
   res.status(200).json({
