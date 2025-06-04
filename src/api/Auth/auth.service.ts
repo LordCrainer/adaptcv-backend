@@ -126,9 +126,12 @@ export class AuthService {
       throw customError('invalidToken', AUTH_MESSAGES.invalid_token)
     }
 
-    const tokenData = this.generateToken(user, {
-      expiresIn: '1h'
-    })
+    const tokenData = this.generateToken(
+      { _id: user._id, email: user.email },
+      {
+        expiresIn: '1h'
+      }
+    )
 
     const expireSec = getTokenExpirationInSeconds(tokenData.expiresAt)
 
@@ -156,6 +159,7 @@ export class AuthService {
         createdAt: (decodedToken.iat as number) * 1000
       }
     } catch (error) {
+      console.log('Error generating token:', error)
       throw customError('internalServerError', 'Error generating token')
     }
   }

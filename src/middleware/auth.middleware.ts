@@ -23,7 +23,7 @@ const AuthMiddleware =
       }
 
       const tokenData = await authService.verifyToken(token)
-      if (!tokenData?._id) {
+      if (!tokenData?._id && !tokenData?.exp) {
         throw customError('accessDenied', AUTH_MESSAGES.invalid_token)
       }
 
@@ -33,19 +33,21 @@ const AuthMiddleware =
       if (userCache) {
         user = JSON.parse(userCache)
       } else {
-        const { data } = await userService.getUser({
+        const response = await userService.getUser({
           userId: tokenData._id
         })
+        user = response.data
 
-        if (!data) {
+        if (!user) {
           throw customError('accessDenied', USER_MESSAGES.not_found)
         }
 
-        user = data
-
-        const expireSec = getTokenExpirationInSeconds(tokenData.expiresAt)
+        const expireSec = getTokenExpirationInSeconds(tokenData?.exp as number)
         await redisClient.set(`requestUser-${user._id}`, JSON.stringify(user), {
-          EX: expireSec
+          expiration: {
+            type: 'EX',
+            value: expireSec
+          }
         })
       }
 
