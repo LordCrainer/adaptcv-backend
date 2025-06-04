@@ -1,15 +1,16 @@
 import type { RequestUserData } from '@lordcrainer/adaptcv-shared-types'
-import type { userService as UserService } from '@src/api/Users/users.dependencies'
 
+import { AuthService } from '@src/api/Auth/auth.service'
 import { AUTH_MESSAGES } from '@src/api/Auth/constants/auth.messages'
 import { Roles } from '@src/api/Roles/roles'
 import { USER_MESSAGES } from '@src/api/Users/constants/users.message'
+import { UserService } from '@src/api/Users/users.service'
 import { redisClient } from '@src/config/cache/redis'
 import { getTokenExpirationInSeconds } from '@src/Shared/utils/auth.utils'
 import { customError } from '@src/Shared/utils/errorUtils'
 
 const AuthMiddleware =
-  (userService: typeof UserService): IController =>
+  (userService: UserService, authService: AuthService): IController =>
   async (req, res, next) => {
     const tokenReq = (req.headers.authorization ||
       req.headers.Authorization ||
@@ -21,8 +22,8 @@ const AuthMiddleware =
         throw customError('unauthorized', AUTH_MESSAGES.unauthorized)
       }
 
-      const tokenData = await userService.verifyToken(token)
-      if (!tokenData?._id) {
+      const tokenData = await authService.verifyToken(token)
+      if (!tokenData?._id && !tokenData?.exp) {
         throw customError('accessDenied', AUTH_MESSAGES.invalid_token)
       }
 
@@ -32,19 +33,21 @@ const AuthMiddleware =
       if (userCache) {
         user = JSON.parse(userCache)
       } else {
-        const { data } = await userService.getUser({
+        const response = await userService.getUser({
           userId: tokenData._id
         })
+        user = response.data
 
-        if (!data) {
+        if (!user) {
           throw customError('accessDenied', USER_MESSAGES.not_found)
         }
 
-        user = data
-
-        const expireSec = getTokenExpirationInSeconds(tokenData.expiresAt)
+        const expireSec = getTokenExpirationInSeconds(tokenData?.exp as number)
         await redisClient.set(`requestUser-${user._id}`, JSON.stringify(user), {
-          EX: expireSec
+          expiration: {
+            type: 'EX',
+            value: expireSec
+          }
         })
       }
 

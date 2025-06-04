@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 
-import { RequestUserData } from '@Api/Auth/interfaces/auth.interface'
+import { RequestUserData } from '@src/api/Auth/dto/auth.interface'
 import { IUsers } from '@Api/Users/interfaces/users.interface'
 
 interface RequestExtended<T = any> extends Request {
@@ -56,7 +56,7 @@ declare global {
     skip?: number
   }
 
-  interface IApiResponse<T> {
+  interface IApiResponse<T = any> {
     success?: boolean
     message?: string
     data: T

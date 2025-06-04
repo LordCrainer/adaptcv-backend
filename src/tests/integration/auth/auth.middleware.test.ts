@@ -24,12 +24,13 @@ const selectedDb = dbStrategy.mongoMemory
 const userRepository = new UserRepositoryMongo()
 
 describe('AuthMiddleware', () => {
-  const user = {
+  const user: IUsers = {
     _id: 'test+AuthMiddleware',
     email: 'test+AuthMiddleware@example.com',
     password: 'password123',
-    name: 'Test User'
-  } as IUsers
+    name: 'Test User',
+    status: 'pending'
+  }
 
   beforeAll(async () => {
     await selectedDb.connect('acv-user-test')
@@ -45,11 +46,14 @@ describe('AuthMiddleware', () => {
   })
 
   it('should authenticate a user', async () => {
-    const { data } = await authService.login(user)
+    const auth = await authService.login({
+      email: user.email,
+      password: user.password
+    })
 
     const req = {
       headers: {
-        authorization: data?.token
+        authorization: auth?.token
       }
     } as RequestExtended
     const res = {} as Response

@@ -1,26 +1,8 @@
-import type { Response } from 'express'
+import { HttpStatusCode } from 'axios'
 
-export class ResponseUseCase {
-  success: boolean
-  message: string
-  data: any
-  error: Error | null
-  constructor(data = null, message: string, success = true, error = null) {
-    this.success = success
-    this.message = message
-    this.data = data ?? {}
-    this.error = error
-  }
+import type { CookieOptions, Response } from 'express'
 
-  response() {
-    return {
-      success: this.success,
-      message: this.message,
-      data: this.data,
-      ...(this.error ? { error: this.error } : {})
-    }
-  }
-}
+import { generateHttpMessage, HttpKeys } from './http.utils'
 
 class ApiResponse {
   res: Response
@@ -29,18 +11,29 @@ class ApiResponse {
   }
 
   static success(res: Response): ApiResponse {
-    return new ApiResponse(res).status(200)
+    return new ApiResponse(res).status(HttpStatusCode.Ok)
   }
 
   static created(res: Response): ApiResponse {
-    return new ApiResponse(res).status(201)
+    return new ApiResponse(res).status(HttpStatusCode.Created)
   }
 
   static accepted(res: Response): ApiResponse {
-    return new ApiResponse(res).status(202)
+    return new ApiResponse(res).status(HttpStatusCode.Accepted)
   }
   static noContent(res: Response): ApiResponse {
-    return new ApiResponse(res).status(204)
+    return new ApiResponse(res).status(HttpStatusCode.NoContent)
+  }
+
+  static setName(res: Response, label: HttpKeys) {
+    return new ApiResponse(res).status(generateHttpMessage(label).status)
+  }
+
+  setName(key: HttpKeys) {
+    const { status, nameType } = generateHttpMessage(key)
+    this.res.status(status)
+    this.res.setHeader('x-status-name', nameType)
+    return this
   }
 
   status(code: number): ApiResponse {
@@ -48,48 +41,30 @@ class ApiResponse {
     return this
   }
 
-  json({ message, data, pagination, ...others }: any): ApiResponse {
+  setCookie(key: string, value: string, options?: CookieOptions) {
+    const ONE_DAY = 24 * 3600 * 1000
+    const defaultOptions: CookieOptions = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      expires: new Date(Date.now() + ONE_DAY)
+    }
+    this.res.cookie(key, value, { ...defaultOptions, ...options })
+    return this
+  }
+
+  clearCookie(key: string) {
+    this.res.clearCookie(key)
+    return this
+  }
+
+  json({ message, data, pagination }: IApiResponse): ApiResponse {
     this.res.json({
       message,
-      // status: 'success',
       pagination,
-      data,
-      ...others
+      data
     })
     return this
   }
 }
 
 export default ApiResponse
-
-/* export default class ApiResponse {
-  static result = (res: Response, data: object,
-                   status: number = 200,
-                   cookie: ICookie = null) => {
-    res.status(status);
-    if (cookie) {
-      res.cookie(cookie.key, cookie.value);
-    }
-    res.json({
-      data,
-      success: true,
-    });
-  }
-
-  static error = (res: Response,
-                  status: number = 400,
-                  error: string = httpStatusCodes.getStatusText(status),
-                  override: IOverrideRequest = null) => {
-    res.status(status).json({
-      override,
-      error: {
-        message: error,
-      },
-      success: false,
-    });
-  }
-
-  static setCookie = (res: Response, key: string, value: string) => {
-    res.cookie(key, value);
-  }
-} */

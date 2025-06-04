@@ -1,8 +1,11 @@
 import jwt from 'jsonwebtoken'
 
-import type { RequestUserData } from '@Api/Auth/interfaces/auth.interface'
 import type { UserRepository } from '@Api/Users/interfaces/users.repository'
-import type { IUsers, LoginInput } from '@lordcrainer/adaptcv-shared-types'
+import type { IUsers, LoginRequest } from '@lordcrainer/adaptcv-shared-types'
+import type {
+  RequestUserData,
+  TokenLoginResponse
+} from '@src/api/Auth/dto/auth.interface'
 
 import { customError } from '@Shared/utils/errorUtils'
 import { redisClient } from '@src/config/cache/redis'
@@ -13,6 +16,7 @@ import { getTokenExpirationInSeconds } from '@src/Shared/utils/auth.utils'
 import { USER_MESSAGES } from '../Users/constants/users.message'
 import { checkPasswordHash } from '../Users/helpers/users.helpers'
 import { AUTH_MESSAGES } from './constants/auth.messages'
+import { AuthResponseDto } from './dto/auth.dto'
 
 /**
  * @export
@@ -25,19 +29,14 @@ export class AuthService {
     this.userRepository = userRepository
   }
 
-  async login(
-    params: LoginInput
-  ): Promise<IApiResponse<Partial<{ user: IUsers; token: any }>>> {
+  async login(params: LoginRequest) {
     if (!params.email || !params.password) {
       throw customError('validationParams', AUTH_MESSAGES.params_missing)
     }
 
-    const foundUser = await this.userRepository.findOne(
-      {
-        email: params.email
-      },
-      { select: { password: 0 } }
-    )
+    const foundUser = await this.userRepository.findOne({
+      email: params.email
+    })
 
     if (!foundUser || !foundUser?.passwordHash) {
       throw customError('invalidCredentials', AUTH_MESSAGES.invalid_credentials)
@@ -51,7 +50,13 @@ export class AuthService {
       throw new Error(AUTH_MESSAGES.invalid_credentials)
     }
 
-    const tokenData = this.generateToken(foundUser)
+    const payload = {
+      _id: foundUser._id,
+      email: foundUser.email
+    }
+
+    const tokenData = this.generateToken(payload, { expiresIn: '1h' })
+    const refreshToken = this.generateToken(payload, { expiresIn: '7d' })
 
     const user = <RequestUserData>{
       _id: foundUser._id,
@@ -63,47 +68,38 @@ export class AuthService {
 
     const expireSec = getTokenExpirationInSeconds(tokenData.expiresAt)
 
-    await Promise.all([
-      redisClient.set(`requestUser-${user._id}`, JSON.stringify(user), {
-        EX: expireSec
-      }),
-      redisClient.set(`token-user-${user._id}`, tokenData.token, {
-        EX: expireSec
-      })
-    ])
+    redisClient.set(`requestUser-${user._id}`, JSON.stringify(user), {
+      EX: expireSec
+    })
+    redisClient.set(`token-user-${user._id}`, tokenData.token, {
+      EX: expireSec
+    })
 
-    return {
-      data: { user, token: tokenData?.token },
-      message: AUTH_MESSAGES.login
-    }
+    return new AuthResponseDto({
+      user,
+      token: tokenData.token,
+      refreshToken
+    })
   }
 
-  async logOut(p: { userId: string }): Promise<IApiResponse<{}>> {
+  async logOut(p: { userId: string }) {
     if (!p.userId) {
       throw customError('validationParams', AUTH_MESSAGES.params_missing)
     }
 
-    await Promise.all([
-      redisClient.del(`token-user-${p.userId}`),
-      redisClient.del(`requestUser-${p.userId}`)
-    ])
+    redisClient.del(`token-user-${p.userId}`)
+    redisClient.del(`requestUser-${p.userId}`)
     Logger.info(`Token deleted from Redis for user ${p.userId}`)
-    return {
-      data: {},
-      message: AUTH_MESSAGES.logout
-    }
+    return true
   }
 
-  async signUp(User: IUsers): Promise<IApiResponse<IUsers>> {
+  async signUp(User: IUsers) {
     const user = await this.userRepository.create(User)
     if (!user) {
       throw customError('notFound', USER_MESSAGES.not_created)
     }
 
-    return {
-      data: user,
-      message: AUTH_MESSAGES.sing_up
-    }
+    return { user }
   }
 
   async isAuthenticated(User: IUsers): Promise<IApiResponse<IUsers>> {
@@ -114,26 +110,78 @@ export class AuthService {
     }
   }
 
-  generateToken(
-    user: IUsers,
-    options?: jwt.SignOptions & { expireSeconds?: number }
-  ): { token: string; expiresAt: number; createdAt: number } {
-    try {
-      const now = new Date().getTime()
-      const expiresAt =
-        Math.floor(now) + (options?.expireSeconds || 24 * 60 * 60) * 1000
+  async refreshToken(
+    currentRefreshToken: string
+  ): Promise<{ token: string; expiresAt: number }> {
+    if (!currentRefreshToken) {
+      throw customError('validationParams', AUTH_MESSAGES.params_missing)
+    }
 
-      const payload = { _id: user._id, email: user.email }
+    const user = this.verifyToken(currentRefreshToken) as {
+      _id: string
+      email: string
+    }
+
+    if (!user?._id || !user?.email) {
+      throw customError('invalidToken', AUTH_MESSAGES.invalid_token)
+    }
+
+    const tokenData = this.generateToken(
+      { _id: user._id, email: user.email },
+      {
+        expiresIn: '1h'
+      }
+    )
+
+    const expireSec = getTokenExpirationInSeconds(tokenData.expiresAt)
+
+    await redisClient.set(`token-user-${user._id}`, tokenData.token, {
+      EX: expireSec
+    })
+
+    return { token: tokenData.token, expiresAt: tokenData.expiresAt }
+  }
+
+  generateToken(
+    payload: any,
+    options?: jwt.SignOptions & { expireSeconds?: number }
+  ): TokenLoginResponse {
+    try {
       const token = jwt.sign(payload, config.jwtSecret, {
-        expiresIn: options?.expireSeconds || options?.expiresIn || '1d'
+        expiresIn: options?.expiresIn || options?.expireSeconds || 24 * 60 * 60
       })
+
+      const decodedToken = jwt.decode(token) as jwt.JwtPayload
+
       return {
         token,
-        expiresAt,
-        createdAt: now
+        expiresAt: (decodedToken.exp as number) * 1000,
+        createdAt: (decodedToken.iat as number) * 1000
       }
     } catch (error) {
+      console.log('Error generating token:', error)
       throw customError('internalServerError', 'Error generating token')
+    }
+  }
+
+  decodeToken(token: string): jwt.JwtPayload {
+    try {
+      const decoded = jwt.decode(token, { complete: true })
+      if (!decoded || typeof decoded === 'string') {
+        throw customError('invalidToken', AUTH_MESSAGES.invalid_token)
+      }
+      return decoded.payload as jwt.JwtPayload
+    } catch (error) {
+      throw customError('invalidToken', AUTH_MESSAGES.invalid_token)
+    }
+  }
+
+  verifyToken(token: string): jwt.JwtPayload {
+    try {
+      const decoded = jwt.verify(token, config.jwtSecret)
+      return decoded as jwt.JwtPayload
+    } catch (error) {
+      throw customError('invalidToken', AUTH_MESSAGES.invalid_token)
     }
   }
 }

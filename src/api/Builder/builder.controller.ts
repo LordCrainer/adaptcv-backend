@@ -17,7 +17,7 @@ export class BuilderController {
       }
       const newBuilder = await this.builderService.createBuilder(args)
 
-      ApiResponse.created(res).json(newBuilder)
+      ApiResponse.created(res).json({ ...newBuilder })
     } catch (error) {
       next(error)
     }
@@ -69,7 +69,9 @@ export class BuilderController {
   deleteBuilder: IController = async (req, res, next): Promise<void> => {
     try {
       console.log('deleteBuilder', req.params.builderId)
-      const isDeleted = await this.builderService.deleteBuilder(req.params.builderId)
+      const isDeleted = await this.builderService.deleteBuilder(
+        req.params.builderId
+      )
       ApiResponse.success(res).json(isDeleted)
     } catch (error) {
       next(error)
