@@ -53,7 +53,7 @@ class ApiResponse {
   }
 
   clearCookie(key: string) {
-    this.res.clearCookie(key)
+    this.res.cookie(key, '')
     return this
   }
 
