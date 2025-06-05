@@ -28,7 +28,7 @@ const redisConnection = async (uri: string) => {
 
     return redisClient
   } catch (error: Error | any) {
-    Logger.error('Redis connection error:', error, selectedUri)
+    Logger.error(`Redis connection error:  ${error} ${selectedUri}`)
     throw new Error(`Redis connection error: ${error?.message}`)
   }
 }
