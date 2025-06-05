@@ -28,7 +28,7 @@
   "author": "Carlos García <carlosgarcia.cagm@gmail.com>",
   "license": "ISC",
   "dependencies": {
-    "@lordcrainer/adaptcv-shared-types": "^1.17.5",
+    "@lordcrainer/adaptcv-shared-types": "^1.17.6",
     "axios": "^1.9.0",
     "bcrypt": "^5.1.1",
     "compression": "^1.8.0",

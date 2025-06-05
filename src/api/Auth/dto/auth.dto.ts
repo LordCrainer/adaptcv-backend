@@ -4,12 +4,12 @@ import { TokenLoginResponse } from './auth.interface'
 
 export class AuthResponseDto {
   user!: IUsers
-  token!: string
-  refreshToken!: TokenLoginResponse
+  accessToken!: string
+  refreshToken!: string
 
   constructor(partial: AuthResponseDto) {
-    this.token = partial.token || ''
+    this.accessToken = partial.accessToken || ''
     this.user = partial.user || ({} as IUsers)
-    this.refreshToken = partial.refreshToken || ({} as TokenLoginResponse)
+    this.refreshToken = partial.refreshToken || ''
   }
 }

@@ -12,9 +12,7 @@ export class AuthController {
 
       new ApiResponse(res)
         .setName('success')
-        .setCookie('refreshToken', refreshToken.token, {
-          expires: new Date(refreshToken?.expiresAt)
-        })
+        .setCookie('refreshToken', refreshToken)
         .json({
           data: rest,
           message: AUTH_MESSAGES.login
@@ -66,11 +64,14 @@ export class AuthController {
   refreshToken: IController = async (req, res, next) => {
     try {
       const refreshToken = req.cookies?.refreshToken
-      const user = await this.authService.refreshToken(refreshToken)
-      new ApiResponse(res).setName('success').json({
-        data: user,
-        message: AUTH_MESSAGES.refresh_token
-      })
+      const tokens = await this.authService.refreshToken(refreshToken)
+      new ApiResponse(res)
+        .setName('success')
+        .setCookie('refreshToken', tokens.refreshToken)
+        .json({
+          data: tokens,
+          message: AUTH_MESSAGES.refresh_token
+        })
     } catch (error) {
       next(error)
     }

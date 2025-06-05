@@ -3,8 +3,10 @@ import jwt from 'jsonwebtoken'
 import type { UserRepository } from '@Api/Users/interfaces/users.repository'
 import type { IUsers, LoginRequest } from '@lordcrainer/adaptcv-shared-types'
 import type {
+  ProfileCache,
   RequestUserData,
-  TokenLoginResponse
+  TokenLoginResponse,
+  TokenResponse
 } from '@src/api/Auth/dto/auth.interface'
 
 import { customError } from '@Shared/utils/errorUtils'
@@ -50,36 +52,34 @@ export class AuthService {
       throw new Error(AUTH_MESSAGES.invalid_credentials)
     }
 
-    const payload = {
-      _id: foundUser._id,
-      email: foundUser.email
-    }
+    const user = this.buildUser(foundUser)
+    const userCache = this.buildUserCache(foundUser)
+    const { accessToken, refreshToken } = this.buildTokenPayload(userCache)
 
-    const tokenData = this.generateToken(payload, { expiresIn: '1h' })
-    const refreshToken = this.generateToken(payload, { expiresIn: '7d' })
+    return new AuthResponseDto({
+      user,
+      accessToken,
+      refreshToken
+    })
+  }
 
-    const user = <RequestUserData>{
+  private buildUser(foundUser: any): RequestUserData {
+    return {
       _id: foundUser._id,
       name: foundUser.name,
       email: foundUser.email,
       timezone: foundUser?.timezone,
-      isSuperAdmin: foundUser?.isSuperAdmin
+      status: foundUser.status
     }
+  }
 
-    const expireSec = getTokenExpirationInSeconds(tokenData.expiresAt)
-
-    redisClient.set(`requestUser-${user._id}`, JSON.stringify(user), {
-      EX: expireSec
-    })
-    redisClient.set(`token-user-${user._id}`, tokenData.token, {
-      EX: expireSec
-    })
-
-    return new AuthResponseDto({
-      user,
-      token: tokenData.token,
-      refreshToken
-    })
+  private buildUserCache(foundUser: any): ProfileCache {
+    return {
+      userId: foundUser._id,
+      email: foundUser.email,
+      name: foundUser.name,
+      role: foundUser.role || 0
+    }
   }
 
   async logOut(p: { userId: string }) {
@@ -87,7 +87,6 @@ export class AuthService {
       throw customError('validationParams', AUTH_MESSAGES.params_missing)
     }
 
-    redisClient.del(`token-user-${p.userId}`)
     redisClient.del(`requestUser-${p.userId}`)
     Logger.info(`Token deleted from Redis for user ${p.userId}`)
     return true
@@ -110,39 +109,46 @@ export class AuthService {
     }
   }
 
-  async refreshToken(
-    currentRefreshToken: string
-  ): Promise<{ token: string; expiresAt: number }> {
+  async refreshToken(currentRefreshToken: string): Promise<TokenResponse> {
     if (!currentRefreshToken) {
       throw customError('validationParams', AUTH_MESSAGES.params_missing)
     }
 
-    const user = this.verifyToken(currentRefreshToken) as {
-      _id: string
-      email: string
-    }
+    const user = this.verifyToken(currentRefreshToken) as IUsers
 
     if (!user?._id || !user?.email) {
       throw customError('invalidToken', AUTH_MESSAGES.invalid_token)
     }
 
-    const tokenData = this.generateToken(
-      { _id: user._id, email: user.email },
-      {
-        expiresIn: '1h'
-      }
-    )
-
-    const expireSec = getTokenExpirationInSeconds(tokenData.expiresAt)
-
-    await redisClient.set(`token-user-${user._id}`, tokenData.token, {
-      EX: expireSec
-    })
-
-    return { token: tokenData.token, expiresAt: tokenData.expiresAt }
+    const cacheUser = await this.getUserFromCache(user)
+    return this.buildTokenPayload(cacheUser)
   }
 
-  generateToken(
+  private async getUserFromCache(user: IUsers): Promise<ProfileCache> {
+    const cachedUser = await redisClient.get(`requestUser-${user._id}`)
+    if (!cachedUser) {
+      throw customError('notFound', 'User not found in cache')
+    }
+
+    const parsedCacheUser: ProfileCache = JSON.parse(cachedUser)
+    this.refreshCacheExpiration(parsedCacheUser)
+    return parsedCacheUser
+  }
+
+  private refreshCacheExpiration(user: ProfileCache) {
+    redisClient.set(`requestUser-${user.userId}`, JSON.stringify(user), {
+      EX: 60 * 60 * 24 * 60
+    })
+  }
+
+  private buildTokenPayload(payload: ProfileCache): TokenResponse {
+    return {
+      accessToken: this.generateToken(payload, { expiresIn: '1h' }).token,
+      refreshToken: this.generateToken(payload, { expiresIn: '7d' }).token
+    }
+  }
+
+  private generateToken(
     payload: any,
     options?: jwt.SignOptions & { expireSeconds?: number }
   ): TokenLoginResponse {

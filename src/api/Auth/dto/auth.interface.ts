@@ -39,3 +39,15 @@ export interface TokenLoginResponse {
   expiresAt: number
   createdAt: number
 }
+
+export interface TokenResponse {
+  accessToken: string
+  refreshToken: string
+}
+
+export interface ProfileCache {
+  userId: string
+  email: string
+  name: string
+  role: number
+}

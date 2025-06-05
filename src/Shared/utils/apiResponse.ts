@@ -42,11 +42,11 @@ class ApiResponse {
   }
 
   setCookie(key: string, value: string, options?: CookieOptions) {
-    const ONE_DAY = 24 * 3600 * 1000
+    const SEVEN_DAYS = 24 * 3600 * 1000 * 7
     const defaultOptions: CookieOptions = {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      expires: new Date(Date.now() + ONE_DAY)
+      expires: new Date(Date.now() + SEVEN_DAYS)
     }
     this.res.cookie(key, value, { ...defaultOptions, ...options })
     return this
