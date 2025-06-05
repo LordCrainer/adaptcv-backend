@@ -5,7 +5,7 @@ import { customError } from '@src/Shared/utils/errorUtils'
 
 import { BaseService } from '../sharedApi/domain/base.service'
 import { BuilderMessages } from './constants/builders.messages'
-import { BuilderRepository } from './interfaces/builder.repository'
+import { BuilderRepository } from './interfaces/builders.repository'
 import {
   BuilderParams,
   CreateBuilderPayload
