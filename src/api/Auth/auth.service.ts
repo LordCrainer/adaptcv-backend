@@ -148,7 +148,7 @@ export class AuthService {
     }
   }
 
-  private generateToken(
+  generateToken(
     payload: any,
     options?: jwt.SignOptions & { expireSeconds?: number }
   ): TokenLoginResponse {

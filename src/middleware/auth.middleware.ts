@@ -27,14 +27,14 @@ const AuthMiddleware =
         throw customError('accessDenied', AUTH_MESSAGES.invalid_token)
       }
 
-      const userCache = await redisClient.get(`requestUser-${tokenData._id}`)
+      const userCache = await redisClient.get(`requestUser-${tokenData.userId}`)
       let user: RequestUserData
 
       if (userCache) {
         user = JSON.parse(userCache)
       } else {
         const response = await userService.getUser({
-          userId: tokenData._id
+          userId: tokenData.userId
         })
         user = response.data
 

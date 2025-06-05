@@ -36,10 +36,10 @@ describe('Auth End-to-End Tests', () => {
         .post(loginEndpoint)
         .send(usersSeederInput.superAdmin)
 
-      tokenSuperAdmin = response.body.token
+      tokenSuperAdmin = response.body.accessToken
 
       expect(response.status).toBe(200)
-      expect(response.body.data).toHaveProperty('token')
+      expect(response.body.data).toHaveProperty('accessToken')
     })
 
     it('should fail to log in with incorrect credentials', async () => {
@@ -61,7 +61,7 @@ describe('Auth End-to-End Tests', () => {
         .send(usersSeederInput.user)
 
       expect(response.status).toBe(200)
-      expect(response.body.data).toHaveProperty('token')
+      expect(response.body.data).toHaveProperty('accessToken')
     })
 
     it('should logout user', async () => {

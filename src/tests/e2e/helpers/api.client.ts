@@ -12,7 +12,7 @@ export const login = async (users: LoginRequest) => {
       .send({ email, password })
 
     const data = response.body.data
-    return data.token
+    return data.accessToken
   } catch (error) {
     console.error('Error logging in user:', error)
     throw new Error('Failed to log in user')
