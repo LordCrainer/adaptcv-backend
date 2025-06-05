@@ -1,3 +1,10 @@
+/**
+ * @swagger
+ * tags:
+ *   name: Builder
+ *   description: Builder management
+ */
+
 import { Router } from 'express'
 
 import { inyectAuthMiddleware } from '../Auth/auth.dependencies'
@@ -5,10 +12,106 @@ import { inyectBuilderController } from './builder.dependencies'
 
 const BuilderRouter = Router()
   .use(inyectAuthMiddleware)
+
+/**
+ * @swagger
+ * /builder:
+ *   post:
+ *     summary: Create a new builder
+ *     tags: [Builder]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Builder'
+ *     responses:
+ *       201:
+ *         description: The created builder
+ *       400:
+ *         description: Bad request
+ */
   .post('/', inyectBuilderController.createBuilder)
+
+/**
+ * @swagger
+ * /builder:
+ *   get:
+ *     summary: Get all builders
+ *     tags: [Builder]
+ *     responses:
+ *       200:
+ *         description: List of builders
+ */
   .get('/', inyectBuilderController.getBuilders)
+
+/**
+ * @swagger
+ * /builder/{builderId}:
+ *   get:
+ *     summary: Get a builder by ID
+ *     tags: [Builder]
+ *     parameters:
+ *       - in: path
+ *         name: builderId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the builder
+ *     responses:
+ *       200:
+ *         description: The builder details
+ *       404:
+ *         description: Builder not found
+ */
   .get('/:builderId', inyectBuilderController.getBuilder)
+
+/**
+ * @swagger
+ * /builder/{builderId}:
+ *   put:
+ *     summary: Update a builder by ID
+ *     tags: [Builder]
+ *     parameters:
+ *       - in: path
+ *         name: builderId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the builder
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Builder'
+ *     responses:
+ *       200:
+ *         description: The updated builder
+ *       404:
+ *         description: Builder not found
+ */
   .put('/:builderId', inyectBuilderController.updateBuilder)
+
+/**
+ * @swagger
+ * /builder/{builderId}:
+ *   delete:
+ *     summary: Delete a builder by ID
+ *     tags: [Builder]
+ *     parameters:
+ *       - in: path
+ *         name: builderId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the builder
+ *     responses:
+ *       200:
+ *         description: Builder deleted
+ *       404:
+ *         description: Builder not found
+ */
   .delete('/:builderId', inyectBuilderController.deleteBuilder)
 
 export default BuilderRouter
