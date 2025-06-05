@@ -53,13 +53,14 @@ describe('AuthMiddleware', () => {
 
     const req = {
       headers: {
-        authorization: auth?.token
+        authorization: `Bearer ${auth?.accessToken}`
       }
     } as RequestExtended
     const res = {} as Response
     const next = vitest.fn()
     await inyectAuthMiddleware(req, res, next)
     expect(next).toHaveBeenCalled()
+    expect(next).toHaveBeenCalledWith()
   })
 
   it('should not authenticate a user with invalid token', async () => {
