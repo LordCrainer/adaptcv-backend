@@ -14,7 +14,9 @@ app.set('secret', env.secret)
 app.set('trust proxy', env.configGeneral?.trustProxy)
 
 expressMiddleware(app)
-app.use('/docs', swaggerRouter)
+if (currentEnv.environment !== 'production') {
+  app.use('/docs', swaggerRouter)
+}
 
 app.get('/', (req, res, next) => {
   if (currentEnv.environment === 'production') {

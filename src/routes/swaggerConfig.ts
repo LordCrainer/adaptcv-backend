@@ -17,6 +17,10 @@ const swaggerDefinition = {
     {
       url: `${currentEnv.server.url}/v1`,
       description: 'Development server'
+    },
+    {
+      url: 'https://adaptcv-backend.onrender.com/v1',
+      description: 'Production server'
     }
   ],
   components: {
