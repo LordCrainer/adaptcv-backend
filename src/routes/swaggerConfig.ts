@@ -40,7 +40,7 @@ const options = {
   apis: [
     './src/api/Auth/auth.router.ts',
     './src/api/Users/users.router.ts',
-    './src/api/Builder/builder.router.ts'
+    './src/api/Builders/builders.router.ts'
   ]
 }
 
