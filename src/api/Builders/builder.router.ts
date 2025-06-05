@@ -8,14 +8,14 @@
 import { Router } from 'express'
 
 import { inyectAuthMiddleware } from '../Auth/auth.dependencies'
-import { inyectBuilderController } from './builder.dependencies'
+import { inyectBuilderController } from './builders.dependencies'
 
 const BuilderRouter = Router()
   .use(inyectAuthMiddleware)
 
 /**
  * @swagger
- * /builder:
+ * /builders:
  *   post:
  *     summary: Create a new builder
  *     tags: [Builder]
@@ -35,7 +35,7 @@ const BuilderRouter = Router()
 
 /**
  * @swagger
- * /builder:
+ * /builders:
  *   get:
  *     summary: Get all builders
  *     tags: [Builder]
@@ -47,7 +47,7 @@ const BuilderRouter = Router()
 
 /**
  * @swagger
- * /builder/{builderId}:
+ * /builders/{builderId}:
  *   get:
  *     summary: Get a builder by ID
  *     tags: [Builder]
@@ -68,7 +68,7 @@ const BuilderRouter = Router()
 
 /**
  * @swagger
- * /builder/{builderId}:
+ * /builders/{builderId}:
  *   put:
  *     summary: Update a builder by ID
  *     tags: [Builder]
@@ -95,7 +95,7 @@ const BuilderRouter = Router()
 
 /**
  * @swagger
- * /builder/{builderId}:
+ * /builders/{builderId}:
  *   delete:
  *     summary: Delete a builder by ID
  *     tags: [Builder]

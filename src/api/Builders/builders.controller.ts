@@ -1,6 +1,6 @@
 import ApiResponse from '@src/Shared/utils/apiResponse'
 
-import { BuilderService } from './builder.service'
+import { BuilderService } from './builders.service'
 
 export class BuilderController {
   private readonly builderService: BuilderService

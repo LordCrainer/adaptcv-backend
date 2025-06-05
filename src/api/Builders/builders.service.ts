@@ -4,12 +4,12 @@ import { shortId } from '@src/lib/shortId'
 import { customError } from '@src/Shared/utils/errorUtils'
 
 import { BaseService } from '../sharedApi/domain/base.service'
-import { BuilderMessages } from './constants/builder.messages'
+import { BuilderMessages } from './constants/builders.messages'
+import { BuilderRepository } from './interfaces/builder.repository'
 import {
   BuilderParams,
   CreateBuilderPayload
-} from './interfaces/builder.interface'
-import { BuilderRepository } from './interfaces/builder.repository'
+} from './interfaces/builders.interface'
 
 export class BuilderService extends BaseService<IBuilder> {
   private readonly builderRepository: BuilderRepository

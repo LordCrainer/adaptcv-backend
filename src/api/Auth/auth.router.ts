@@ -28,8 +28,8 @@ const AuthRouter: Router = Router()
  *           type: string
  *           description: The password of the user
  *       example:
- *         email: john.doe@example.com
- *         password: password123
+ *         email: test@example.com
+ *         password: Password.123
  */
 
 /**
