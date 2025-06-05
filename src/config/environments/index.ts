@@ -19,5 +19,9 @@ const { NODE_ENV = 'development' } = process.env
 
 const env = environments[NODE_ENV as EnvironmentsType](process.env)
 const currentEnv = { ...defaultEnv(process.env), ...env }
-
+console.log(
+  `Current environment: ${NODE_ENV}`,
+  currentEnv.server,
+  currentEnv.dataBase
+)
 export default currentEnv
