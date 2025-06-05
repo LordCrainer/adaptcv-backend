@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 
-import { BuilderRepository } from '@src/api/Builder/builder.repository'
-import { BuilderService } from '@src/api/Builder/builder.service'
+import { BuilderRepository } from '@src/api/Builders/builders.repository'
+import { BuilderService } from '@src/api/Builders/builders.service'
 import { dbStrategy } from '@src/config/db/dbStrategy'
 
 const selectedDb = dbStrategy.mongoMemory
