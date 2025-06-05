@@ -22,7 +22,10 @@ const configuration = (env: any): Environments => {
     },
     server: {
       host: env.API_HOST || 'localhost',
-      port: env.API_PORT || 3010
+      port: env.API_PORT || 3010,
+      url:
+        env.API_URL ||
+        `${env.API_HOST || 'localhost'}:${env.API_PORT || 3010}`
     },
     multer: {
       destiny: env.PATH_ORIGIN || './data',
