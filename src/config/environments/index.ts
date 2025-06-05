@@ -20,6 +20,9 @@ const { NODE_ENV = 'development' } = process.env
 const env = environments[NODE_ENV as EnvironmentsType](process.env)
 const currentEnv = { ...defaultEnv(process.env), ...env }
 
-currentEnv.server.url = `${currentEnv.server.host}:${currentEnv.server.port}`
-
+currentEnv.server.url = [currentEnv.server.host, currentEnv.server.port].join(
+  ':'
+)
+console.log(`Current environment: ${currentEnv.environment}`)
+console.log('Server', currentEnv.server)
 export default currentEnv

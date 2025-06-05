@@ -5,15 +5,16 @@ const configuration = (env: any): Environments => {
     environment: 'production',
     dataBase: {
       mongo: {
-        url: '' + env.MONGODB_URI
+        url: env.MONGODB_URI
       },
       redis: {
-        uri: '' + env.REDIS_URI
+        uri: env?.REDIS_URI
       }
     },
     server: {
       host: '' + env.API_HOST,
-      port: '' + env.API_PORT
+      port: '' + env.API_PORT,
+      url: env.API_URL
     },
     multer: {
       destiny: env.MULTER_DESTINY || './data',
@@ -23,9 +24,9 @@ const configuration = (env: any): Environments => {
       origin: env.API_CORS_ORIGIN || '*',
       optionsSuccessStatus: 200
     },
-    secret: env.SECRET || 'production',
+    secret: env.SECRET,
     jwtSecret: env.JWT_SECRET,
-    cookieSecret: env.COOKIE_SECRET || 'production',
+    cookieSecret: env.COOKIE_SECRET,
     bcryptSaltRounds: env.BCRYPT_SALT_ROUNDS || 10
   }
 }
