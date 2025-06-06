@@ -139,7 +139,7 @@ export class AuthService {
     return parsedCacheUser
   }
 
-  private refreshCacheExpiration(user: ProfileCache) {
+  refreshCacheExpiration(user: ProfileCache) {
     redisClient.set(`requestUser-${user.userId}`, JSON.stringify(user), {
       EX: 60 * 60 * 24 * 60
     })

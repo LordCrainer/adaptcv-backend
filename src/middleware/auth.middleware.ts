@@ -42,13 +42,7 @@ const AuthMiddleware =
           throw customError('accessDenied', USER_MESSAGES.not_found)
         }
 
-        const expireSec = getTokenExpirationInSeconds(tokenData?.exp as number)
-        await redisClient.set(`requestUser-${user._id}`, JSON.stringify(user), {
-          expiration: {
-            type: 'EX',
-            value: expireSec
-          }
-        })
+        await authService.refreshCacheExpiration(tokenData.userId)
       }
 
       req.requestUser = user

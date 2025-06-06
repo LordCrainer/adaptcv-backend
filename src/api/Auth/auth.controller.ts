@@ -82,7 +82,6 @@ export class AuthController {
     }
   }
 
-  // Métodos de registro
   register: IController = async (req, res, next) => {
     try {
       const { name, email, password } = req.body
