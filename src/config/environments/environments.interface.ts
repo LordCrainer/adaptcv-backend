@@ -19,6 +19,7 @@ export interface Environments {
   cookieSecret?: string
   multer: Multer
   cors: Cors
+  email?: Email
   secret: string
   bcryptSaltRounds: number
   storage?: Storage
@@ -68,4 +69,16 @@ interface Multer {
 interface Cors {
   origin: string | string[]
   optionsSuccessStatus: number
+}
+
+interface Email {
+  smtp: {
+    host: string
+    port: number
+    secure: boolean
+    user: string
+    password: string
+  }
+  from: string
+  verificationBaseUrl: string
 }
