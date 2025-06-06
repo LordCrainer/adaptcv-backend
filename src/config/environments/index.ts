@@ -9,6 +9,10 @@ import test from './test'
 
 dotenv.config()
 
+interface EnvExtension extends Environments {
+  isProduction: boolean
+}
+
 const environments: Record<EnvironmentsType, (env: any) => Environments> = {
   development: (env) => development(env),
   production: (env) => production(env),
@@ -18,6 +22,12 @@ const environments: Record<EnvironmentsType, (env: any) => Environments> = {
 const { NODE_ENV = 'development' } = process.env
 
 const env = environments[NODE_ENV as EnvironmentsType](process.env)
-const currentEnv = { ...defaultEnv(process.env), ...env }
+const isProduction = NODE_ENV === 'production'
 
-export default currentEnv
+const selectedEnv: EnvExtension = {
+  ...defaultEnv(process.env),
+  ...env,
+  isProduction
+}
+
+export default selectedEnv

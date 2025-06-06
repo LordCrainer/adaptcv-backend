@@ -41,6 +41,17 @@ const configuration = (env: any): Environments => {
         secret: env?.DO_SPACES_SECRET || 'localhost'
       }
     },
+    email: {
+      smtp: {
+        host: env?.SMTP_HOST || 'localhost',
+        port: env?.SMTP_PORT || 587,
+        secure: env?.SMTP_SECURE === 'true' || false,
+        user: env?.SMTP_USER || 'development@adaptcv.com',
+        password: env?.SMTP_PASSWORD || 'development-password'
+      },
+      from: env?.EMAIL_FROM || 'AdaptCV Development <dev@adaptcv.com>',
+      verificationBaseUrl: env?.EMAIL_VERIFICATION_BASE_URL || 'http://localhost:3000'
+    },
     secret: env?.SECRET || 'develop',
     jwtSecret: env?.JWT_SECRET || 'develop',
     cookieSecret: env?.COOKIE_SECRET || 'develop',
