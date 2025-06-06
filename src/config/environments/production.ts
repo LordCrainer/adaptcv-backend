@@ -22,7 +22,7 @@ const configuration = (env: any): Environments => {
     },
     cors: {
       origin: env.API_CORS_ORIGIN?.split(',') || [
-        'adaptcv-frontend.vercel.app'
+        'https://adaptcv-frontend.vercel.app'
       ],
       optionsSuccessStatus: 200
     },
