@@ -43,6 +43,11 @@ export class AuthService {
     if (!foundUser || !foundUser?.passwordHash) {
       throw customError('invalidCredentials', AUTH_MESSAGES.invalid_credentials)
     }
+
+    if (foundUser.status === 'pending') {
+      throw customError('unauthorized', AUTH_MESSAGES.account_not_verified)
+    }
+
     const match = await checkPasswordHash(
       params.password,
       foundUser.passwordHash
