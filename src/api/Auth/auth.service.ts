@@ -13,7 +13,6 @@ import { customError } from '@Shared/utils/errorUtils'
 import { redisClient } from '@src/config/cache/redis'
 import config from '@src/config/environments'
 import Logger from '@src/lib/logger'
-import { getTokenExpirationInSeconds } from '@src/Shared/utils/auth.utils'
 
 import { USER_MESSAGES } from '../Users/constants/users.message'
 import { checkPasswordHash } from '../Users/helpers/users.helpers'
