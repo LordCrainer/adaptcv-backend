@@ -8,6 +8,8 @@ type StatusCode =
   | 403
   | 404
   | 405
+  | 408
+  | 409
   | 413
   | 500
 type StatusLabel<T extends StatusCode> = keyof (typeof statusCodeHandle)[T]
@@ -53,6 +55,13 @@ const statusCodeHandle = {
   },
   405: {
     methodNotAllowed: 'Method Not Allowed'
+  },
+  408: {
+    requestTimeout: 'Request Timeout'
+  },
+  409: {
+    conflict: 'Conflict',
+    resourceConflict: 'Resource Conflict'
   },
   500: {
     internalServerError: 'Internal Server Error'

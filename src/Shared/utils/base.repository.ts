@@ -20,14 +20,17 @@ export class BaseRepository<T extends { _id?: string }>
     this.model = _model
   }
 
-  updateMany?(
+  updateMany(
     filter: FilterQuery<T>,
     params: UpdateQuery<T> | UpdateWithAggregationPipeline
   ): Promise<boolean> {
-    throw new Error('Method not implemented.')
+    return this.model.updateMany(filter, params).then((result) => {
+      return result.modifiedCount > 0
+    })
   }
-  deleteMany?(filter?: FilterQuery<T> | undefined): Promise<boolean> {
-    throw new Error('Method not implemented.')
+  async deleteMany(filter?: FilterQuery<T> | undefined): Promise<boolean> {
+    const isDeleted = await this.model.deleteMany(filter)
+    return isDeleted.deletedCount > 0
   }
 
   async counterDocuments(queries?: QueryFromCriteria): Promise<Pagination> {
