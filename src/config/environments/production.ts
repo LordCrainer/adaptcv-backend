@@ -21,7 +21,9 @@ const configuration = (env: any): Environments => {
       fileSize: 1.5 * 1000 * 1000 * 2000
     },
     cors: {
-      origin: env.API_CORS_ORIGIN || '*',
+      origin: env.API_CORS_ORIGIN?.split(',') || [
+        'adaptcv-frontend.vercel.app'
+      ],
       optionsSuccessStatus: 200
     },
     secret: env.SECRET,

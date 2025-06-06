@@ -9,8 +9,10 @@ import methodOverride from 'method-override'
 import currentEnv from '../environments'
 import morganConfigure from './morgan.config'
 
+const env = currentEnv.environment
+
 const expressMiddleware = (app: express.Application) => {
-  if (currentEnv.environment === 'production') {
+  if (env === 'production') {
     app.use(
       rateLimit({
         windowMs: 5 * 60 * 1000,
@@ -35,7 +37,7 @@ const expressMiddleware = (app: express.Application) => {
   app.use(helmet())
   app.use(
     cors({
-      origin: true,
+      origin: currentEnv.cors.origin,
       credentials: true,
       allowedHeaders: [
         'Origin',
@@ -43,7 +45,8 @@ const expressMiddleware = (app: express.Application) => {
         'Content-Type',
         'Accept',
         'Authorization'
-      ]
+      ],
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH']
     })
   )
   app.use((req, res, next) => {

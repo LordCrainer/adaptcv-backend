@@ -66,6 +66,6 @@ interface Multer {
 }
 
 interface Cors {
-  origin: string
+  origin: string | string[]
   optionsSuccessStatus: number
 }

@@ -46,6 +46,7 @@ class ApiResponse {
     const defaultOptions: CookieOptions = {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
+      sameSite: 'none',
       expires: new Date(Date.now() + SEVEN_DAYS)
     }
     this.res.cookie(key, value, { ...defaultOptions, ...options })
