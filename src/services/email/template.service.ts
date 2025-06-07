@@ -1,7 +1,9 @@
-import fs from 'fs/promises'
-import path from 'path'
 import handlebars from 'handlebars'
 
+import fs from 'fs/promises'
+import path from 'path'
+
+import { getDirname } from '@src/api/sharedApi/fileSystems'
 import Logger from '@src/lib/logger'
 import { customError } from '@src/Shared/utils/errorUtils'
 
@@ -14,6 +16,7 @@ export class TemplateService {
   private templateCache: Map<string, HandlebarsTemplateDelegate> = new Map()
 
   constructor() {
+    const __dirname = getDirname(import.meta.url)
     this.templatesPath = path.join(__dirname, 'templates')
   }
 
@@ -31,11 +34,16 @@ export class TemplateService {
       return { html, text }
     } catch (error) {
       Logger.error(`Failed to render template: ${templateName}`, error)
-      throw customError('internalServerError', 'Failed to render email template')
+      throw customError(
+        'internalServerError',
+        'Failed to render email template'
+      )
     }
   }
 
-  private async getTemplate(templateFile: string): Promise<HandlebarsTemplateDelegate> {
+  private async getTemplate(
+    templateFile: string
+  ): Promise<HandlebarsTemplateDelegate> {
     if (this.templateCache.has(templateFile)) {
       return this.templateCache.get(templateFile)!
     }
@@ -44,7 +52,7 @@ export class TemplateService {
       const templatePath = path.join(this.templatesPath, templateFile)
       const templateContent = await fs.readFile(templatePath, 'utf-8')
       const compiledTemplate = handlebars.compile(templateContent)
-      
+
       this.templateCache.set(templateFile, compiledTemplate)
       return compiledTemplate
     } catch (error) {
