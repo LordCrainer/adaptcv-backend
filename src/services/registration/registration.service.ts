@@ -1,12 +1,12 @@
 import type { UserRepository } from '@Api/Users/interfaces/users.repository'
 import type { IUsers } from '@lordcrainer/adaptcv-shared-types'
+import type { IEmailProvider } from '@src/services/email/interfaces/email-provider.interface'
 
 import { AUTH_MESSAGES } from '@src/api/Auth/constants/auth.messages'
 import { USER_MESSAGES } from '@src/api/Users/constants/users.message'
 import Logger from '@src/lib/logger'
 import { shortId } from '@src/lib/shortId'
 import { EmailProviderFactory } from '@src/services/email/email-provider.factory'
-import type { IEmailProvider } from '@src/services/email/interfaces/email-provider.interface'
 import { TemplateService } from '@src/services/email/template.service'
 import { VerificationService } from '@src/services/verification/verification.service'
 import { customError } from '@src/Shared/utils/errorUtils'
@@ -28,11 +28,15 @@ export class RegistrationService {
   private readonly templateService: TemplateService
   private readonly verificationService: VerificationService
 
-  constructor(userRepository: UserRepository, emailProvider?: IEmailProvider) {
+  constructor(
+    userRepository: UserRepository,
+    verificationService: VerificationService,
+    emailProvider?: IEmailProvider
+  ) {
     this.userRepository = userRepository
     this.emailProvider = emailProvider || EmailProviderFactory.create()
     this.templateService = new TemplateService()
-    this.verificationService = new VerificationService()
+    this.verificationService = verificationService
   }
 
   /**

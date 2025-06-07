@@ -1,12 +1,10 @@
 import jwt from 'jsonwebtoken'
 
-import crypto from 'crypto'
 import type { IUsers } from '@lordcrainer/adaptcv-shared-types'
+import type { RedisService } from '@src/services/cache/redis.service'
 
-import { redisClient } from '@src/config/cache/redis'
 import config from '@src/config/environments'
 import Logger from '@src/lib/logger'
-import { customError } from '@src/Shared/utils/errorUtils'
 
 export interface VerificationTokenData {
   userId: string
@@ -26,6 +24,11 @@ export interface VerificationResult {
 export class VerificationService {
   private readonly tokenExpiration = 24 * 60 * 60
   private readonly redisPrefix = 'email_verification:'
+  private readonly redisService: RedisService
+
+  constructor(redisService: RedisService) {
+    this.redisService = redisService
+  }
 
   /**
    * Generate a unique verification token for the user
@@ -68,7 +71,7 @@ export class VerificationService {
       }
 
       // Check if the token exists in Redis (has not been invalidated)
-      const storedToken = await redisClient.get(
+      const storedToken = await this.redisService.get(
         `${this.redisPrefix}${decoded.userId}`
       )
 
@@ -121,12 +124,11 @@ export class VerificationService {
     token: string
   ): Promise<void> {
     try {
-      await redisClient.set(`${this.redisPrefix}${userId}`, token, {
-        expiration: {
-          type: 'EX',
-          value: this.tokenExpiration
-        }
-      })
+      await this.redisService.set(
+        `${this.redisPrefix}${userId}`,
+        token,
+        this.tokenExpiration
+      )
     } catch (error) {
       Logger.error('Failed to store verification token in Redis', error)
     }
@@ -138,7 +140,7 @@ export class VerificationService {
    */
   async invalidateToken(userId: string): Promise<void> {
     try {
-      await redisClient.del(`${this.redisPrefix}${userId}`)
+      await this.redisService.del(`${this.redisPrefix}${userId}`)
       Logger.info(`Verification token invalidated for user: ${userId}`)
     } catch (error) {
       Logger.error('Failed to invalidate verification token', error)
@@ -152,7 +154,7 @@ export class VerificationService {
    */
   async hasPendingToken(userId: string): Promise<boolean> {
     try {
-      const token = await redisClient.get(`${this.redisPrefix}${userId}`)
+      const token = await this.redisService.get(`${this.redisPrefix}${userId}`)
       return !!token
     } catch (error) {
       Logger.error('Failed to check pending token', error)
