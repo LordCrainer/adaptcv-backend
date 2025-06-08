@@ -1,4 +1,4 @@
-import type { RoleType } from '@lordcrainer/adaptcv-shared-types'
+import type { RoleType, UserStatus } from '@lordcrainer/adaptcv-shared-types'
 
 import { usersModel } from '@src/api/Users/repository/users.schema'
 
@@ -10,7 +10,7 @@ interface UsersSeederInputData {
   password: string
   name: string
   role?: RoleType
-  status: 'active' | 'inactive' | 'deleted'
+  status: UserStatus
 }
 
 interface UsersSeederInput {
