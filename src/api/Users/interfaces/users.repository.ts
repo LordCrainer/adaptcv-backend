@@ -4,6 +4,6 @@ import type { MapType } from '@src/Shared/utils/hash.handle'
 
 interface Repository<T> extends IBaseRepository<T> {}
 
-export interface UserDocument extends IUsers {}
+export interface IUserExtend extends IUsers {}
 
-export type UserRepository = MapType<Repository<UserDocument>>
+export type UserRepository = MapType<Repository<IUserExtend>>

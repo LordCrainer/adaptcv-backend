@@ -1,13 +1,13 @@
 import type { UserRepository } from '@Api/Users/interfaces/users.repository'
 import type { IUsers } from '@lordcrainer/adaptcv-shared-types'
 import type { IEmailProvider } from '@src/services/email/interfaces/email-provider.interface'
+import type { VerificationService } from '@src/services/verification/verification.service'
 
 import { AUTH_MESSAGES } from '@src/api/Auth/constants/auth.messages'
 import { USER_MESSAGES } from '@src/api/Users/constants/users.message'
 import Logger from '@src/lib/logger'
 import { shortId } from '@src/lib/shortId'
 import { TemplateService } from '@src/services/email/template.service'
-import type { VerificationService } from '@src/services/verification/verification.service'
 import { customError } from '@src/Shared/utils/errorUtils'
 
 export interface RegisterData {
@@ -147,7 +147,7 @@ export class RegistrationService {
       // 1. Buscar el usuario
       const user = await this.userRepository.findOne({ email })
 
-      if (!user) {
+      if (!user?._id) {
         throw customError('notFound', USER_MESSAGES.not_found)
       }
 
