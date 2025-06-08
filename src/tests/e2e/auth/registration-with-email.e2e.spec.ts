@@ -24,7 +24,6 @@ describe('Registration with Email E2E Tests', () => {
   })
 
   afterAll(async () => {
-    await closeRedisConnection()
     await selectedDb.disconnect()
   })
 

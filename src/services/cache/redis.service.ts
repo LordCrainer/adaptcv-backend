@@ -11,7 +11,7 @@ export class RedisService {
 
   async set(key: string, value: string, ttl?: number): Promise<void> {
     if (ttl) {
-      await this.redis.setEx(key, ttl, value)
+      await this.redis.SETEX(key, ttl, value)
     } else {
       await this.redis.set(key, value)
     }
