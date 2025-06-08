@@ -1,5 +1,6 @@
 import type { PermissionMethod } from '@src/middleware/permissions.middleware'
 
+import { Roles } from '@src/api/Roles/roles'
 import {
   basePermissionRules,
   checkPermissions
@@ -12,9 +13,13 @@ type UserPermissionType =
   | 'deleteUser'
   | 'updateUser'
 
+const viewUserPermission: PermissionMethod = (params) => {
+  return Roles.isSuperAdmin(params.role) || Roles.isUser(params.role)
+}
+
 const userPermissionRules: Record<UserPermissionType, PermissionMethod> = {
-  getUser: basePermissionRules,
-  getUsers: basePermissionRules,
+  getUser: viewUserPermission,
+  getUsers: viewUserPermission,
   createUser: basePermissionRules,
   deleteUser: basePermissionRules,
   updateUser: basePermissionRules
