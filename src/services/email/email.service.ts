@@ -1,11 +1,14 @@
 import nodemailer from 'nodemailer'
 
 import type { SendMailOptions } from 'nodemailer'
+import type {
+  EmailData,
+  IEmailProvider
+} from './interfaces/email-provider.interface'
 
 import config from '@src/config/environments'
 import Logger from '@src/lib/logger'
 import { customError } from '@src/Shared/utils/errorUtils'
-import type { EmailData, IEmailProvider } from './interfaces/email-provider.interface'
 
 export class EmailService implements IEmailProvider {
   private transporter: nodemailer.Transporter

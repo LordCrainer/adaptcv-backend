@@ -3,6 +3,7 @@ import cron from 'node-cron'
 import type { ScheduledTask } from 'node-cron'
 
 import Logger from '@src/lib/logger'
+import { customError } from '@src/Shared/utils/errorUtils'
 
 export interface CronJob {
   name: string
@@ -164,6 +165,7 @@ export class CronManager {
       Logger.info(`Completed immediate run of cron job: ${jobName}`)
     } catch (error) {
       Logger.error(`Error in immediate cron job '${jobName}':`, error)
+      throw error
     }
   }
 }

@@ -24,7 +24,7 @@ export class CronJobsInitializer {
     })
 
     // Start all jobs if in production
-    if (config.isProduction) {
+    if (config?.isProduction) {
       cronManager.startAllJobs()
       Logger.info('All cron jobs started for production environment')
     } else {

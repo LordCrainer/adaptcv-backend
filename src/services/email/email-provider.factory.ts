@@ -15,7 +15,7 @@ export class EmailProviderFactory {
     const environment = config.environment || process.env.NODE_ENV || 'development'
 
     // Use mock email service for testing
-    if (environment === 'test') {
+    if (environment === 'test' || !config.email?.smtp) {
       return new MockEmailService()
     }
 
