@@ -17,7 +17,8 @@ vi.mock('@src/config/environments', () => ({
 vi.mock('@Api/Users/repository/users.repository.mongo', () => ({
   UserRepositoryMongo: vi.fn().mockImplementation(() => ({
     find: vi.fn(),
-    deleteMany: vi.fn()
+    deleteMany: vi.fn(),
+    findUnverifiedUsersOlderThan: vi.fn()
   }))
 }))
 
@@ -29,12 +30,12 @@ describe('CronJobsInitializer Integration', () => {
   beforeEach(() => {
     // Reset config mock to default state
     vi.mocked(config).isProduction = false
-    
+
     // Create fresh instances
     mockUserRepository = new UserRepositoryMongo()
     cleanupService = new CleanupService(mockUserRepository)
     cronJobsInitializer = new CronJobsInitializer(cleanupService)
-    
+
     // Clear any existing jobs from the singleton cronManager
     cronJobsInitializer.getCronManager().reset()
   })
@@ -42,7 +43,7 @@ describe('CronJobsInitializer Integration', () => {
   afterEach(() => {
     // Clean up after each test
     cronJobsInitializer.getCronManager().reset()
-    
+
     // Reset mock to default state
     vi.mocked(config).isProduction = false
   })
@@ -91,9 +92,10 @@ describe('CronJobsInitializer Integration', () => {
 
   describe('manual job execution', () => {
     it('should be able to run cleanup job manually', async () => {
-      mockUserRepository.find.mockResolvedValue([
+      mockUserRepository.findUnverifiedUsersOlderThan.mockResolvedValue([
         { _id: 'user1', email: 'test@example.com', status: 'pending' }
       ])
+
       mockUserRepository.deleteMany.mockResolvedValue({ deletedCount: 1 })
 
       cronJobsInitializer.initializeJobs()
@@ -101,14 +103,14 @@ describe('CronJobsInitializer Integration', () => {
       const cronManager = cronJobsInitializer.getCronManager()
       await cronManager.runJobNow('cleanup-unverified-users')
 
-      expect(mockUserRepository.find).toHaveBeenCalled()
+      expect(mockUserRepository.findUnverifiedUsersOlderThan).toHaveBeenCalled()
       expect(mockUserRepository.deleteMany).toHaveBeenCalled()
     })
   })
 
   describe('error handling', () => {
     it('should handle cleanup service errors gracefully', async () => {
-      mockUserRepository.find.mockRejectedValue(
+      mockUserRepository.findUnverifiedUsersOlderThan.mockRejectedValue(
         new Error('Database connection failed')
       )
 
@@ -119,7 +121,7 @@ describe('CronJobsInitializer Integration', () => {
       // Should not throw error, but log it
       await expect(
         cronManager.runJobNow('cleanup-unverified-users')
-      ).resolves.not.toThrow('Database connection failed')
+      ).rejects.toThrow(/Database connection failed/gi)
     })
   })
 })

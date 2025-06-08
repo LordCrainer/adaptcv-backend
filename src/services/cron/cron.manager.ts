@@ -163,9 +163,9 @@ export class CronManager {
       Logger.info(`Running cron job immediately: ${jobName}`)
       await job.task()
       Logger.info(`Completed immediate run of cron job: ${jobName}`)
-    } catch (error) {
+    } catch (error: any) {
       Logger.error(`Error in immediate cron job '${jobName}':`, error)
-      throw error
+      throw new Error(error)
     }
   }
 }

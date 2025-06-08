@@ -11,8 +11,8 @@ export class CleanupService {
    */
   async cleanupUnverifiedUsers(): Promise<number> {
     try {
-      const SEVEN_DAYS_IN_MS = 7 * 24 * 60 * 60 * 1000
-      const cutoffDate = this.getCutoffDate(SEVEN_DAYS_IN_MS)
+      const SEVEN_DAYS = 7
+      const cutoffDate = this.getCutoffDate(SEVEN_DAYS)
 
       const unverifiedUsers =
         await this.userRepository.findUnverifiedUsersOlderThan(cutoffDate)
@@ -40,7 +40,7 @@ export class CleanupService {
 
   private getCutoffDate(days: number): Date {
     const cutoffDate = new Date()
-    cutoffDate.setDate(cutoffDate.getDate() - days)
+    cutoffDate.setDate(cutoffDate.getDate() - days * 24 * 60 * 60 * 1000)
     return cutoffDate
   }
 }

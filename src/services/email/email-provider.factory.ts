@@ -1,7 +1,9 @@
+import type { IEmailProvider } from './interfaces/email-provider.interface'
 
 import config from '@src/config/environments'
+import Logger from '@src/lib/logger'
+
 import { EmailService } from './email.service'
-import type { IEmailProvider } from './interfaces/email-provider.interface'
 import { MockEmailService } from './mock-email.service'
 
 export class EmailProviderFactory {
@@ -12,10 +14,12 @@ export class EmailProviderFactory {
    * @returns IEmailProvider - Real EmailService for production/development, MockEmailService for testing
    */
   static create(): IEmailProvider {
-    const environment = config.environment || process.env.NODE_ENV || 'development'
+    const environment =
+      config.environment || process.env.NODE_ENV || 'development'
 
     // Use mock email service for testing
-    if (environment === 'test' || !config.email?.smtp) {
+    if (environment === 'test') {
+      Logger.info('Using MockEmailService for testing environment')
       return new MockEmailService()
     }
 
