@@ -71,7 +71,6 @@ describe('CronJobsInitializer Integration', () => {
 
       const cronManager = cronJobsInitializer.getCronManager()
       const jobs = cronManager.getJobsStatus()
-      console.log(jobs)
       expect(jobs[0].enabled).toBe(true)
       expect(jobs[0].running).toBe(true)
     })

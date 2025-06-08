@@ -164,7 +164,6 @@ export class CronManager {
       Logger.info(`Completed immediate run of cron job: ${jobName}`)
     } catch (error) {
       Logger.error(`Error in immediate cron job '${jobName}':`, error)
-      // Don't re-throw the error, just log it (same behavior as scheduled execution)
     }
   }
 }

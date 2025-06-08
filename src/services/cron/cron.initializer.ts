@@ -13,7 +13,7 @@ export class CronJobsInitializer {
     // Register cleanup job for unverified users
     cronManager.registerJob({
       name: 'cleanup-unverified-users',
-      schedule: '0 2 * * *', // Every day at 2:00 AM
+      schedule: '0 3 * * *', // Every day at 3:00 AM
       task: async () => {
         const deletedCount = await this.cleanupService.cleanupUnverifiedUsers()
         Logger.info(
