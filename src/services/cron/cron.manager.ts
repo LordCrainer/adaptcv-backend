@@ -1,4 +1,6 @@
-import cron, { ScheduledTask } from 'node-cron'
+import cron from 'node-cron'
+
+import type { ScheduledTask } from 'node-cron'
 
 import Logger from '@src/lib/logger'
 
