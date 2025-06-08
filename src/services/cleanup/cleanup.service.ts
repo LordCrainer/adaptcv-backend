@@ -40,7 +40,7 @@ export class CleanupService {
 
   private getCutoffDate(days: number): Date {
     const cutoffDate = new Date()
-    cutoffDate.setDate(cutoffDate.getDate() - days * 24 * 60 * 60 * 1000)
+    cutoffDate.setDate(cutoffDate.getDate() - days)
     return cutoffDate
   }
 }

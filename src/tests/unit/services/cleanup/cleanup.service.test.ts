@@ -20,7 +20,8 @@ describe('CleanupService', () => {
   beforeEach(() => {
     mockUserRepository = {
       find: vi.fn(),
-      deleteMany: vi.fn()
+      deleteMany: vi.fn(),
+      findUnverifiedUsersOlderThan: vi.fn()
     } as any
 
     cleanupService = new CleanupService(mockUserRepository)
@@ -44,7 +45,9 @@ describe('CleanupService', () => {
         }
       ]
 
-      mockUserRepository.find.mockResolvedValue(mockUsers)
+      mockUserRepository.findUnverifiedUsersOlderThan.mockResolvedValue(
+        mockUsers
+      )
       mockUserRepository.deleteMany.mockResolvedValue({
         deletedCount: 2
       } as any)
@@ -52,10 +55,9 @@ describe('CleanupService', () => {
       const result = await cleanupService.cleanupUnverifiedUsers()
 
       expect(result).toBe(2)
-      expect(mockUserRepository.find).toHaveBeenCalledWith({
-        status: 'pending',
-        createdAt: { $lt: expect.any(Date) }
-      })
+      expect(
+        mockUserRepository.findUnverifiedUsersOlderThan
+      ).toHaveBeenCalledWith(expect.any(Date))
       expect(mockUserRepository.deleteMany).toHaveBeenCalledWith({
         _id: { $in: ['user1', 'user2'] }
       })
@@ -69,7 +71,7 @@ describe('CleanupService', () => {
     })
 
     it('should return 0 when no unverified users found', async () => {
-      mockUserRepository.find.mockResolvedValue([])
+      mockUserRepository.findUnverifiedUsersOlderThan.mockResolvedValue([])
 
       const result = await cleanupService.cleanupUnverifiedUsers()
 
@@ -80,7 +82,7 @@ describe('CleanupService', () => {
 
     it('should handle errors and rethrow them', async () => {
       const error = new Error('Database error')
-      mockUserRepository.find.mockRejectedValue(error)
+      mockUserRepository.findUnverifiedUsersOlderThan.mockRejectedValue(error)
 
       await expect(cleanupService.cleanupUnverifiedUsers()).rejects.toThrow(
         'Database error'
@@ -92,19 +94,39 @@ describe('CleanupService', () => {
     })
 
     it('should use correct date calculation for 7 days ago', async () => {
-      mockUserRepository.find.mockResolvedValue([])
+      mockUserRepository.findUnverifiedUsersOlderThan.mockResolvedValue([])
 
       await cleanupService.cleanupUnverifiedUsers()
 
-      const findCall = mockUserRepository.find.mock.calls[0][0]
-      const cutoffDate = findCall.createdAt.$lt
-      const now = new Date()
-      const sevenDaysAgo = new Date()
-      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
+      // Get the cutoff date that was passed to the repository
+      const cutoffDateCall =
+        mockUserRepository.findUnverifiedUsersOlderThan.mock.calls[0][0]
 
-      // Allow for a small time difference due to test execution time
-      const timeDiff = Math.abs(cutoffDate.getTime() - sevenDaysAgo.getTime())
+      // Calculate expected date (7 days ago)
+      const expectedCutoffDate = new Date()
+      expectedCutoffDate.setDate(expectedCutoffDate.getDate() - 7)
+
+      const timeDiff = Math.abs(
+        cutoffDateCall.getTime() - expectedCutoffDate.getTime()
+      )
       expect(timeDiff).toBeLessThan(1000) // Less than 1 second difference
+    })
+
+    it('should calculate cutoff date correctly for different day values', async () => {
+      // Test the private method behavior indirectly by checking the date passed to repository
+      mockUserRepository.findUnverifiedUsersOlderThan.mockResolvedValue([])
+
+      await cleanupService.cleanupUnverifiedUsers()
+
+      const cutoffDateCall =
+        mockUserRepository.findUnverifiedUsersOlderThan.mock.calls[0][0]
+
+      // Verify it's actually 7 days in the past
+      const daysDifference = Math.round(
+        (new Date().getTime() - cutoffDateCall.getTime()) /
+          (1000 * 60 * 60 * 24)
+      )
+      expect(daysDifference).toBe(7)
     })
   })
 })
