@@ -6,9 +6,8 @@ import { AUTH_MESSAGES } from '@src/api/Auth/constants/auth.messages'
 import { USER_MESSAGES } from '@src/api/Users/constants/users.message'
 import Logger from '@src/lib/logger'
 import { shortId } from '@src/lib/shortId'
-import { EmailProviderFactory } from '@src/services/email/email-provider.factory'
 import { TemplateService } from '@src/services/email/template.service'
-import { VerificationService } from '@src/services/verification/verification.service'
+import type { VerificationService } from '@src/services/verification/verification.service'
 import { customError } from '@src/Shared/utils/errorUtils'
 
 export interface RegisterData {
@@ -31,10 +30,10 @@ export class RegistrationService {
   constructor(
     userRepository: UserRepository,
     verificationService: VerificationService,
-    emailProvider?: IEmailProvider
+    emailProvider: IEmailProvider
   ) {
     this.userRepository = userRepository
-    this.emailProvider = emailProvider || EmailProviderFactory.create()
+    this.emailProvider = emailProvider
     this.templateService = new TemplateService()
     this.verificationService = verificationService
   }
