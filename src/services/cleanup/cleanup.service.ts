@@ -11,14 +11,11 @@ export class CleanupService {
    */
   async cleanupUnverifiedUsers(): Promise<number> {
     try {
-      const sevenDaysAgo = new Date()
-      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
+      const SEVEN_DAYS_IN_MS = 7 * 24 * 60 * 60 * 1000
+      const cutoffDate = this.getCutoffDate(SEVEN_DAYS_IN_MS)
 
-      // Find users with 'pending' status created more than 7 days ago
-      const unverifiedUsers = await this.userRepository.find({
-        status: 'pending',
-        createdAt: { $lt: sevenDaysAgo }
-      })
+      const unverifiedUsers =
+        await this.userRepository.findUnverifiedUsersOlderThan(cutoffDate)
 
       if (unverifiedUsers.length === 0) {
         Logger.info('No unverified users to cleanup')
@@ -31,7 +28,7 @@ export class CleanupService {
 
       Logger.info(`Cleaned up ${unverifiedUsers.length} unverified users`, {
         userIds,
-        cutoffDate: sevenDaysAgo
+        cutoffDate
       })
 
       return unverifiedUsers.length
@@ -39,5 +36,11 @@ export class CleanupService {
       Logger.error('Failed to cleanup unverified users', error)
       throw error
     }
+  }
+
+  private getCutoffDate(days: number): Date {
+    const cutoffDate = new Date()
+    cutoffDate.setDate(cutoffDate.getDate() - days)
+    return cutoffDate
   }
 }
