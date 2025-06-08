@@ -42,7 +42,7 @@ const AuthMiddleware =
           throw customError('accessDenied', USER_MESSAGES.not_found)
         }
 
-        await authService.refreshCacheExpiration(tokenData.userId)
+        authService.refreshCacheExpiration(tokenData.userId)
       }
 
       req.requestUser = user
