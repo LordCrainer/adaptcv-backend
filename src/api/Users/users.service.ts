@@ -50,7 +50,13 @@ export class UserService extends BaseService<IUsers> {
     const isSuperAdmin =
       (Roles.isSuperAdmin(role) && requestUser?.isSuperAdmin) || undefined
 
-    const user = await this.registerUser({ ...body, isSuperAdmin })
+    const canCreateActiveUser = requestUser?.isSuperAdmin || false
+
+    const user = await this.registerUser({
+      ...body,
+      isSuperAdmin,
+      canCreateActiveUser
+    })
 
     return {
       data: user,
@@ -58,7 +64,9 @@ export class UserService extends BaseService<IUsers> {
     }
   }
 
-  private async registerUser(body: UserCreationParams['body']) {
+  private async registerUser(
+    body: UserCreationParams['body'] & { canCreateActiveUser?: boolean }
+  ) {
     const newUser: IUsers = {
       _id: body._id || shortId.rnd(),
       email: body.email,
@@ -67,9 +75,16 @@ export class UserService extends BaseService<IUsers> {
       status: 'pending',
       authProvider: 'local'
     }
+
     if (body?.isSuperAdmin) {
       newUser.isSuperAdmin = body.isSuperAdmin
+      if (body.canCreateActiveUser) {
+        newUser.status = 'active'
+      }
+    } else if (body.canCreateActiveUser) {
+      newUser.status = 'active'
     }
+
     const savedUser: IUsers = await this.userRepository.create(newUser)
 
     if (!savedUser) {
