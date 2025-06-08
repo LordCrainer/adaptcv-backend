@@ -29,7 +29,7 @@ describe('AuthMiddleware', () => {
     email: 'test+AuthMiddleware@example.com',
     password: 'password123',
     name: 'Test User',
-    status: 'pending'
+    status: 'active'
   }
 
   beforeAll(async () => {

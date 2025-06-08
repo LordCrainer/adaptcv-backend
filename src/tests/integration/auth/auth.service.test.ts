@@ -25,7 +25,8 @@ describe('AuthService', () => {
       _id: 'test+loging',
       email: 'test+loging@example.com',
       password: 'password123',
-      name: 'Test User'
+      name: 'Test User',
+      status: 'active'
     } as IUsers
     await userRepository.create(user)
     const auth = await authService.login({
