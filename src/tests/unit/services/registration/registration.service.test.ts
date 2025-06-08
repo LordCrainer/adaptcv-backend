@@ -272,7 +272,7 @@ describe('RegistrationService', () => {
     })
 
     it('should handle non-existent user', async () => {
-      vi.mocked(mockUserRepository.findOne).mockResolvedValue({})
+      vi.mocked(mockUserRepository.findOne).mockResolvedValue({} as IUsers)
 
       await expect(
         registrationService.resendVerificationEmail('nonexistent@example.com')
