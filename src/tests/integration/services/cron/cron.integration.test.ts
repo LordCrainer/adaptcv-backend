@@ -57,7 +57,7 @@ describe('CronJobsInitializer Integration', () => {
       expect(jobs).toHaveLength(1)
       expect(jobs[0]).toEqual({
         name: 'cleanup-unverified-users',
-        schedule: '0 2 * * *',
+        schedule: '0 3 * * *',
         enabled: false, // Should be false since isProduction is false
         running: false
       })
