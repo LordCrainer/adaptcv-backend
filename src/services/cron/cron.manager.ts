@@ -13,19 +13,19 @@ export interface CronJob {
 
 export class CronManager {
   private jobs: Map<string, ScheduledTask> = new Map()
-  private registeredJobs: CronJob[] = []
+  private registeredJobs: Map<string, CronJob> = new Map()
 
   /**
    * Register a new cron job
    * @param job - The cron job configuration
    */
   registerJob(job: CronJob): void {
-    if (this.jobs.has(job.name)) {
+    if (this.registeredJobs.has(job.name)) {
       Logger.warn(`Cron job '${job.name}' is already registered`)
       return
     }
 
-    this.registeredJobs.push(job)
+    this.registeredJobs.set(job.name, job)
 
     if (job.enabled) {
       this.startJob(job.name)
@@ -41,7 +41,7 @@ export class CronManager {
    * @param jobName - The name of the job to start
    */
   startJob(jobName: string): boolean {
-    const job = this.registeredJobs.find((j) => j.name === jobName)
+    const job = this.registeredJobs.get(jobName)
     if (!job) {
       Logger.error(`Cron job '${jobName}' not found`)
       return false
@@ -96,13 +96,11 @@ export class CronManager {
    * Start all registered and enabled jobs
    */
   startAllJobs(): void {
-    this.registeredJobs
-      .filter((job) => job.enabled)
-      .forEach((job) => {
-        if (!this.jobs.has(job.name)) {
-          this.startJob(job.name)
-        }
-      })
+    for (const [jobName, job] of this.registeredJobs) {
+      if (job.enabled && !this.jobs.has(jobName)) {
+        this.startJob(jobName)
+      }
+    }
   }
 
   /**
@@ -115,6 +113,25 @@ export class CronManager {
   }
 
   /**
+   * Clear all registered jobs (useful for testing)
+   * WARNING: This is intended for testing purposes only
+   */
+  clearAllJobs(): void {
+    this.stopAllJobs()
+    this.registeredJobs.clear()
+    this.jobs.clear()
+    Logger.info('All cron jobs cleared')
+  }
+
+  /**
+   * Reset the cron manager to initial state (useful for testing)
+   * WARNING: This is intended for testing purposes only
+   */
+  reset(): void {
+    this.clearAllJobs()
+  }
+
+  /**
    * Get the status of all jobs
    */
   getJobsStatus(): Array<{
@@ -123,7 +140,7 @@ export class CronManager {
     enabled: boolean
     running: boolean
   }> {
-    return this.registeredJobs.map((job) => ({
+    return Array.from(this.registeredJobs.values()).map((job) => ({
       name: job.name,
       schedule: job.schedule,
       enabled: job.enabled,
@@ -136,14 +153,19 @@ export class CronManager {
    * @param jobName - The name of the job to run
    */
   async runJobNow(jobName: string): Promise<void> {
-    const job = this.registeredJobs.find((j) => j.name === jobName)
+    const job = this.registeredJobs.get(jobName)
     if (!job) {
       throw new Error(`Cron job '${jobName}' not found`)
     }
 
-    Logger.info(`Running cron job immediately: ${jobName}`)
-    await job.task()
-    Logger.info(`Completed immediate run of cron job: ${jobName}`)
+    try {
+      Logger.info(`Running cron job immediately: ${jobName}`)
+      await job.task()
+      Logger.info(`Completed immediate run of cron job: ${jobName}`)
+    } catch (error) {
+      Logger.error(`Error in immediate cron job '${jobName}':`, error)
+      // Don't re-throw the error, just log it (same behavior as scheduled execution)
+    }
   }
 }
 
