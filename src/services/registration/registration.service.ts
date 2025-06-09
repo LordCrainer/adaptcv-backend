@@ -35,26 +35,25 @@ export class RegistrationService {
   }
 
   /**
-   * Registra un nuevo usuario y envía email de verificación
+   * Registers a new user and sends a verification email.
+   * @param registerData - The data for the new user.
+   * @returns The API response containing the user data or an error message.
    */
-  async registerUser(registerData: RegisterData): Promise<IApiResponse<Partial<IUsers>>> {
+  async registerUser(
+    registerData: RegisterData
+  ): Promise<IApiResponse<Partial<IUsers>>> {
     try {
-      // 1. Validar datos de entrada
       this.validateRegisterData(registerData)
 
-      // 2. Verificar que el email no esté registrado
       await this.checkEmailAvailability(registerData.email)
 
-      // 3. Crear usuario con estado pending
       const newUser = await this.createPendingUser(registerData)
 
-      // 4. Generar token de verificación
       const verificationToken =
         this.verificationService.generateVerificationToken(newUser)
       const verificationUrl =
         this.verificationService.generateVerificationUrl(verificationToken)
 
-      // 5. Enviar email de verificación
       await this.sendVerificationEmail(newUser, verificationUrl)
 
       Logger.info(`User registered successfully: ${newUser.email}`)
@@ -75,13 +74,12 @@ export class RegistrationService {
   }
 
   /**
-   * Verifica el email de un usuario
+   * Verifies the email using the provided token.
+   * @param token - The verification token.
+   * @returns The API response indicating success or failure.
    */
-  async verifyEmail(
-    token: string
-  ): Promise<IApiResponse<null>> {
+  async verifyEmail(token: string): Promise<IApiResponse<null>> {
     try {
-      // 1. Verificar el token
       const verificationResult =
         await this.verificationService.verifyToken(token)
 
@@ -93,7 +91,6 @@ export class RegistrationService {
         }
       }
 
-      // 2. Buscar el usuario
       const user = await this.userRepository.findOne({
         _id: verificationResult.userId
       })
@@ -106,7 +103,6 @@ export class RegistrationService {
         }
       }
 
-      // 3. Verificar si ya está verificado
       if (user.status === 'active') {
         return {
           success: true,
@@ -115,7 +111,6 @@ export class RegistrationService {
         }
       }
 
-      // 4. Activar la cuenta
       await this.userRepository.update(
         { _id: user._id },
         { $set: { status: 'active' } }
@@ -139,20 +134,18 @@ export class RegistrationService {
   }
 
   /**
-   * Reenvía el email de verificación
+   * Resends the verification email.
+   * @param email - The email address of the user.
+   * @returns The API response indicating success or failure.F
    */
-  async resendVerificationEmail(
-    email: string
-  ): Promise<IApiResponse<null>> {
+  async resendVerificationEmail(email: string): Promise<IApiResponse<null>> {
     try {
-      // 1. Buscar el usuario
       const user = await this.userRepository.findOne({ email })
 
       if (!user?._id) {
         throw customError('notFound', USER_MESSAGES.not_found)
       }
 
-      // 2. Verificar si ya está verificado
       if (user.status === 'active') {
         return {
           success: false,
@@ -161,17 +154,14 @@ export class RegistrationService {
         }
       }
 
-      // 3. Verificar si ya hay un token pendiente
       const hasPendingToken = await this.verificationService.hasPendingToken(
         user._id
       )
 
       if (hasPendingToken) {
-        // Invalidar el token anterior
         await this.verificationService.invalidateToken(user._id)
       }
 
-      // 4. Generar nuevo token y enviar email
       const verificationToken =
         this.verificationService.generateVerificationToken(user)
       const verificationUrl =
@@ -193,7 +183,8 @@ export class RegistrationService {
   }
 
   /**
-   * Valida los datos de registro
+   * Validates the registration data.
+   * @param data - The registration data to validate.
    */
   private validateRegisterData(data: RegisterData): void {
     if (!data.name || data.name.trim().length < 2) {
@@ -216,7 +207,9 @@ export class RegistrationService {
   }
 
   /**
-   * Verifica que el email no esté registrado
+   * Checks if the email is already registered.
+   * @param email - The email to check.
+   * @throws {Error} If the email is already registered.
    */
   private async checkEmailAvailability(email: string): Promise<void> {
     const existingUser = await this.userRepository.findOne({ email })
@@ -227,7 +220,7 @@ export class RegistrationService {
   }
 
   /**
-   * Crea un usuario con estado pending
+   * Creates a user with pending status.
    */
   private async createPendingUser(registerData: RegisterData): Promise<IUsers> {
     const newUser: IUsers = {
@@ -249,7 +242,9 @@ export class RegistrationService {
   }
 
   /**
-   * Envía el email de verificación
+   * Sends the verification email.
+   * @param user - The user to send the email to.
+   * @param verificationUrl - The URL for email verification.
    */
   private async sendVerificationEmail(
     user: IUsers,
@@ -286,7 +281,9 @@ export class RegistrationService {
   }
 
   /**
-   * Valida formato de email
+   * Validates the email format.
+   * @param email - The email to validate.
+   * @returns {boolean} True if the email is valid, false otherwise.
    */
   private isValidEmail(email: string): boolean {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
