@@ -1,3 +1,30 @@
+# [1.4.0](https://github.com/LordCrainer/adaptcv-backend/compare/v1.3.0...v1.4.0) (2025-06-09)
+
+
+### Bug Fixes
+
+* conditionally enable Swagger documentation based on environment ([d56910f](https://github.com/LordCrainer/adaptcv-backend/commit/d56910f029890849ca615d126989a3187d5b6f43))
+* correct clearCookie method to set cookie value to an empty string ([497607d](https://github.com/LordCrainer/adaptcv-backend/commit/497607daa1e7881ad08aee38b3fe0dd6b89479d0))
+* correct import path for BuilderRepository interface ([87c59d7](https://github.com/LordCrainer/adaptcv-backend/commit/87c59d7828b0bc2265ee2bf58dec410f3c0bb063))
+* correct import path for Builders router in Swagger configuration ([8dd12b2](https://github.com/LordCrainer/adaptcv-backend/commit/8dd12b2c56f24097afe527a69538dad2c97974b8))
+* improve error logging format for Redis connection errors ([0cbb91b](https://github.com/LordCrainer/adaptcv-backend/commit/0cbb91b79472c72642145ad5e2b93cdae119077f))
+* remove console logging of current environment details ([37d622a](https://github.com/LordCrainer/adaptcv-backend/commit/37d622a62ce383ebcb10dfebba5515a081d73d88))
+* update authorization header to use accessToken instead of token ([aac12d3](https://github.com/LordCrainer/adaptcv-backend/commit/aac12d384fb6667c7dcd7314b53a9be5187cfdad))
+* update CORS configuration to support multiple origins and set cookie sameSite attribute ([464f685](https://github.com/LordCrainer/adaptcv-backend/commit/464f685568a8472b00dc88049fbe1606f53c98f7))
+
+
+### Features
+
+* [acv-2] Added testing for builder ([#2](https://github.com/LordCrainer/adaptcv-backend/issues/2)) ([d4704ad](https://github.com/LordCrainer/adaptcv-backend/commit/d4704add6c83546ed7490abe4541d999c8401236))
+* add end-to-end and integration tests for Builder CRUD operations ([1be61ba](https://github.com/LordCrainer/adaptcv-backend/commit/1be61bafb51e7e9be3b3a00b7a8322f554f9a2dd))
+* add Swagger documentation for Builder API routes ([bc1df84](https://github.com/LordCrainer/adaptcv-backend/commit/bc1df8476b9ae7a14f8c1f876ffbf29e9a9d9428))
+* add URL construction for server configuration in environment files ([583875e](https://github.com/LordCrainer/adaptcv-backend/commit/583875e96283f78f18973479e2e5b0f69f2252e4))
+* enhance environment logging to include server and database details ([b6440cc](https://github.com/LordCrainer/adaptcv-backend/commit/b6440ccb780192f6c27d2d4c007736c23587a141))
+* implement Builder API with CRUD operations and Swagger documentation ([578a5e1](https://github.com/LordCrainer/adaptcv-backend/commit/578a5e1b9cacb9f9ec19f921d15387623bae0247))
+* **register:** [ACV-3] Add registration module ([#3](https://github.com/LordCrainer/adaptcv-backend/issues/3)) ([942a0e2](https://github.com/LordCrainer/adaptcv-backend/commit/942a0e2c5d494064bfa36bae77e9cfb8f6a31347))
+* update shared types dependency to version 1.17.6 and enhance cookie expiration to seven days ([f50c201](https://github.com/LordCrainer/adaptcv-backend/commit/f50c201b5378eb02aa99cc8ff9c748cf7cb0c50d))
+* update Swagger configuration to include Builder API routes ([4fe3648](https://github.com/LordCrainer/adaptcv-backend/commit/4fe364860b8beb43164de9c233f3a11d3dabfc28))
+
 # [1.3.0](https://github.com/LordCrainer/adaptcv-backend/compare/v1.2.0...v1.3.0) (2025-05-28)
 
 
