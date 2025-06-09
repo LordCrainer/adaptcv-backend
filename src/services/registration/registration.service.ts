@@ -16,11 +16,6 @@ export interface RegisterData {
   password: string
 }
 
-export interface RegisterResult {
-  user: Partial<IUsers>
-  message: string
-}
-
 export class RegistrationService {
   private readonly userRepository: UserRepository
   private readonly emailProvider: IEmailProvider
@@ -42,7 +37,7 @@ export class RegistrationService {
   /**
    * Registra un nuevo usuario y envía email de verificación
    */
-  async registerUser(registerData: RegisterData): Promise<RegisterResult> {
+  async registerUser(registerData: RegisterData): Promise<IApiResponse<Partial<IUsers>>> {
     try {
       // 1. Validar datos de entrada
       this.validateRegisterData(registerData)
@@ -65,7 +60,7 @@ export class RegistrationService {
       Logger.info(`User registered successfully: ${newUser.email}`)
 
       return {
-        user: {
+        data: {
           _id: newUser._id,
           name: newUser.name,
           email: newUser.email,
@@ -84,7 +79,7 @@ export class RegistrationService {
    */
   async verifyEmail(
     token: string
-  ): Promise<{ success: boolean; message?: string }> {
+  ): Promise<IApiResponse<null>> {
     try {
       // 1. Verificar el token
       const verificationResult =
@@ -93,6 +88,7 @@ export class RegistrationService {
       if (!verificationResult.success) {
         return {
           success: false,
+          data: null,
           message: verificationResult.message
         }
       }
@@ -105,6 +101,7 @@ export class RegistrationService {
       if (!user) {
         return {
           success: false,
+          data: null,
           message: USER_MESSAGES.not_found
         }
       }
@@ -113,6 +110,7 @@ export class RegistrationService {
       if (user.status === 'active') {
         return {
           success: true,
+          data: null,
           message: AUTH_MESSAGES.email_already_verified
         }
       }
@@ -127,12 +125,14 @@ export class RegistrationService {
 
       return {
         success: true,
+        data: null,
         message: AUTH_MESSAGES.email_verified
       }
     } catch (error) {
       Logger.error('Email verification failed', error)
       return {
         success: false,
+        data: null,
         message: AUTH_MESSAGES.verification_failed
       }
     }
@@ -143,7 +143,7 @@ export class RegistrationService {
    */
   async resendVerificationEmail(
     email: string
-  ): Promise<{ success: boolean; message: string }> {
+  ): Promise<IApiResponse<null>> {
     try {
       // 1. Buscar el usuario
       const user = await this.userRepository.findOne({ email })
@@ -156,6 +156,7 @@ export class RegistrationService {
       if (user.status === 'active') {
         return {
           success: false,
+          data: null,
           message: AUTH_MESSAGES.email_already_verified
         }
       }
@@ -182,6 +183,7 @@ export class RegistrationService {
 
       return {
         success: true,
+        data: null,
         message: AUTH_MESSAGES.verification_email_sent
       }
     } catch (error) {

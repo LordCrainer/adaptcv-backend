@@ -92,7 +92,7 @@ export class AuthController {
       })
 
       new ApiResponse(res).setName('created').json({
-        data: result.user,
+        data: result.data,
         message: result.message
       })
     } catch (error) {

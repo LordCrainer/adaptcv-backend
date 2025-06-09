@@ -111,9 +111,9 @@ describe('RegistrationService', () => {
       const result = await registrationService.registerUser(validRegisterData)
 
       // Verify
-      expect(result.user._id).toBe('test-user-id-123')
-      expect(result.user.email).toBe('john@example.com')
-      expect(result.user.status).toBe('pending')
+      expect(result.data._id).toBe('test-user-id-123')
+      expect(result.data.email).toBe('john@example.com')
+      expect(result.data.status).toBe('pending')
       expect(result.message).toMatch(/registration successful/gi)
 
       // Verify email was sent
@@ -206,6 +206,7 @@ describe('RegistrationService', () => {
 
       // Verify
       expect(result.success).toBe(true)
+      expect(result.data).toBe(null)
       expect(result.message).toContain('verified')
       expect(mockUserRepository.update).toHaveBeenCalledWith(
         { _id: 'test-user-id' },
@@ -234,6 +235,7 @@ describe('RegistrationService', () => {
 
       // Verify
       expect(result.success).toBe(true)
+      expect(result.data).toBe(null)
       expect(result.message).toContain('already verified')
       expect(mockUserRepository.update).not.toHaveBeenCalled()
     })
@@ -266,6 +268,7 @@ describe('RegistrationService', () => {
 
       // Verify
       expect(result.success).toBe(true)
+      expect(result.data).toBe(null)
       expect(result.message).toContain('sent')
 
       // Verify email was sent
@@ -293,6 +296,7 @@ describe('RegistrationService', () => {
         await registrationService.resendVerificationEmail('john@example.com')
 
       expect(result.success).toBe(false)
+      expect(result.data).toBe(null)
       expect(result.message).toContain('already verified')
       expect(mockEmailService.getSentEmails()).toHaveLength(0)
     })
