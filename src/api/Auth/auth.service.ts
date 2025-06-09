@@ -13,7 +13,6 @@ import { customError } from '@Shared/utils/errorUtils'
 import { redisClient } from '@src/config/cache/redis'
 import config from '@src/config/environments'
 import Logger from '@src/lib/logger'
-import { getTokenExpirationInSeconds } from '@src/Shared/utils/auth.utils'
 
 import { USER_MESSAGES } from '../Users/constants/users.message'
 import { checkPasswordHash } from '../Users/helpers/users.helpers'
@@ -31,7 +30,7 @@ export class AuthService {
     this.userRepository = userRepository
   }
 
-  async login(params: LoginRequest) {
+  async login(params: LoginRequest): Promise<IApiResponse<AuthResponseDto>> {
     if (!params.email || !params.password) {
       throw customError('validationParams', AUTH_MESSAGES.params_missing)
     }
@@ -43,6 +42,11 @@ export class AuthService {
     if (!foundUser || !foundUser?.passwordHash) {
       throw customError('invalidCredentials', AUTH_MESSAGES.invalid_credentials)
     }
+
+    if (foundUser.status === 'pending') {
+      throw customError('unauthorized', AUTH_MESSAGES.account_not_verified)
+    }
+
     const match = await checkPasswordHash(
       params.password,
       foundUser.passwordHash
@@ -56,11 +60,16 @@ export class AuthService {
     const userCache = this.buildUserCache(foundUser)
     const { accessToken, refreshToken } = this.buildTokenPayload(userCache)
 
-    return new AuthResponseDto({
+    const authResponse = new AuthResponseDto({
       user,
       accessToken,
       refreshToken
     })
+
+    return {
+      data: authResponse,
+      message: AUTH_MESSAGES.login
+    }
   }
 
   private buildUser(foundUser: any): RequestUserData {
@@ -82,23 +91,30 @@ export class AuthService {
     }
   }
 
-  async logOut(p: { userId: string }) {
+  async logOut(p: { userId: string }): Promise<IApiResponse<boolean>> {
     if (!p.userId) {
       throw customError('validationParams', AUTH_MESSAGES.params_missing)
     }
 
     redisClient.del(`requestUser-${p.userId}`)
     Logger.info(`Token deleted from Redis for user ${p.userId}`)
-    return true
+    
+    return {
+      data: true,
+      message: AUTH_MESSAGES.logout
+    }
   }
 
-  async signUp(User: IUsers) {
+  async signUp(User: IUsers): Promise<IApiResponse<IUsers>> {
     const user = await this.userRepository.create(User)
     if (!user) {
       throw customError('notFound', USER_MESSAGES.not_created)
     }
 
-    return { user }
+    return {
+      data: user,
+      message: AUTH_MESSAGES.sing_up
+    }
   }
 
   async isAuthenticated(User: IUsers): Promise<IApiResponse<IUsers>> {
@@ -109,7 +125,7 @@ export class AuthService {
     }
   }
 
-  async refreshToken(currentRefreshToken: string): Promise<TokenResponse> {
+  async refreshToken(currentRefreshToken: string): Promise<IApiResponse<TokenResponse>> {
     if (!currentRefreshToken) {
       throw customError('validationParams', AUTH_MESSAGES.params_missing)
     }
@@ -121,7 +137,12 @@ export class AuthService {
     }
 
     const cacheUser = await this.getUserFromCache(user)
-    return this.buildTokenPayload(cacheUser)
+    const tokens = this.buildTokenPayload(cacheUser)
+    
+    return {
+      data: tokens,
+      message: AUTH_MESSAGES.refresh_token
+    }
   }
 
   private async getUserFromCache(user: IUsers): Promise<ProfileCache> {
@@ -135,7 +156,7 @@ export class AuthService {
     return parsedCacheUser
   }
 
-  private refreshCacheExpiration(user: ProfileCache) {
+  refreshCacheExpiration(user: ProfileCache) {
     redisClient.set(`requestUser-${user.userId}`, JSON.stringify(user), {
       EX: 60 * 60 * 24 * 60
     })

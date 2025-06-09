@@ -12,4 +12,12 @@ export class UserRepositoryMongo
   constructor() {
     super(usersModel, 'mongo')
   }
+
+  async findUnverifiedUsersOlderThan(cutoffDate: Date): Promise<IUsers[]> {
+    
+    return this.model.find({
+      status: 'pending',
+      createdAt: { $lt: cutoffDate }
+    })
+  }
 }

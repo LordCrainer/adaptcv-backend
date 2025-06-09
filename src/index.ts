@@ -5,6 +5,7 @@ import { dbStrategy } from './config/db/dbStrategy'
 import currentEnv from './config/environments/index'
 import app from './config/server/index'
 import Logger from './lib/logger'
+// import { cronJobsInitializer } from './services/cron/cron.dependencies'
 
 const main = async () => {
   try {
@@ -12,6 +13,9 @@ const main = async () => {
     await redisConnection(currentEnv.dataBase.redis.uri)
 
     const server: http.Server = http.createServer(app)
+
+    // Initialize cron jobs system
+    // cronJobsInitializer.initializeJobs()
 
     server.listen(app.get('port'), () =>
       Logger.info(`💻 Connected to ${currentEnv.server.url}`)

@@ -22,9 +22,20 @@ const configuration = (env: any): Environments => {
     },
     cors: {
       origin: env.API_CORS_ORIGIN?.split(',') || [
-        'adaptcv-frontend.vercel.app'
+        'https://adaptcv-frontend.vercel.app'
       ],
       optionsSuccessStatus: 200
+    },
+    email: {
+      smtp: {
+        host: env.SMTP_HOST || 'smtp.gmail.com',
+        port: parseInt(env.SMTP_PORT) || 587,
+        secure: env.SMTP_SECURE === 'true' || false,
+        user: env.SMTP_USER,
+        password: env.SMTP_PASSWORD
+      },
+      from: env.EMAIL_FROM || env.SMTP_USER,
+      verificationBaseUrl: env.EMAIL_VERIFICATION_BASE_URL || env.API_URL
     },
     secret: env.SECRET,
     jwtSecret: env.JWT_SECRET,

@@ -43,6 +43,17 @@ const configuration = (env: any): Environments => {
         secret: env.DO_SPACES_SECRET || 'localhost'
       }
     },
+    email: {
+      smtp: {
+        host: 'mock-smtp-host',
+        port: 587,
+        secure: false,
+        user: 'test@example.com',
+        password: 'test-password'
+      },
+      from: 'AdaptCV Test <test@adaptcv.com>',
+      verificationBaseUrl: 'http://localhost:3010'
+    },
     secret: env.SECRET || 'test',
     jwtSecret: env.JWT_SECRET || 'test',
     cookieSecret: env.COOKIE_SECRET || 'test',

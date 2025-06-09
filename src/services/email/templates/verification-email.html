@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verifica tu cuenta - AdaptCV</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 40px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2563eb;
+            margin-bottom: 10px;
+        }
+        .title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 20px;
+        }
+        .content {
+            margin-bottom: 30px;
+        }
+        .button {
+            display: inline-block;
+            background-color: #2563eb;
+            color: white;
+            padding: 12px 30px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 500;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .button:hover {
+            background-color: #1d4ed8;
+        }
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+            text-align: center;
+            font-size: 14px;
+            color: #6b7280;
+        }
+        .security-note {
+            background-color: #fef3c7;
+            border: 1px solid #f59e0b;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">AdaptCV</div>
+            <h1 class="title">¡Bienvenido, {{name}}!</h1>
+        </div>
+        
+        <div class="content">
+            <p>Gracias por registrarte en AdaptCV. Para completar tu registro y activar tu cuenta, necesitamos verificar tu dirección de email.</p>
+            
+            <p>Haz clic en el siguiente botón para verificar tu cuenta:</p>
+            
+            <div style="text-align: center;">
+                <a href="{{verificationUrl}}" class="button">Verificar mi cuenta</a>
+            </div>
+            
+            <p>O copia y pega este enlace en tu navegador:</p>
+            <p style="word-break: break-all; color: #2563eb;">{{verificationUrl}}</p>
+            
+            <div class="security-note">
+                <strong>Importante:</strong> Este enlace expirará en {{expirationHours}} horas por motivos de seguridad. Si no verificas tu cuenta antes de ese tiempo, deberás registrarte nuevamente.
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Si no creaste una cuenta en AdaptCV, puedes ignorar este email de forma segura.</p>
+            <p>&copy; {{year}} AdaptCV. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</body>
+</html>

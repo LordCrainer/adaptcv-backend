@@ -1,4 +1,4 @@
-import type { RoleType } from '@lordcrainer/adaptcv-shared-types'
+import type { RoleType, UserStatus } from '@lordcrainer/adaptcv-shared-types'
 
 import { usersModel } from '@src/api/Users/repository/users.schema'
 
@@ -10,6 +10,7 @@ interface UsersSeederInputData {
   password: string
   name: string
   role?: RoleType
+  status: UserStatus
 }
 
 interface UsersSeederInput {
@@ -23,14 +24,16 @@ export const usersSeederInput: UsersSeederInput = {
     email: 'superadmin@acv-test.com',
     password: 'password_superadmin',
     name: 'Super Admin',
-    role: 'superAdmin'
+    role: 'superAdmin',
+    status: 'active'
   },
   user: {
     _id: 'user',
     email: 'user@acv-test.com',
     password: 'password_user',
     name: 'User',
-    role: 'user'
+    role: 'user',
+    status: 'active'
   }
 }
 

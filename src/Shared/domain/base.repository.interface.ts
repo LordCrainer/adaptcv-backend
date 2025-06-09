@@ -15,17 +15,17 @@ export interface IWrite<T> {
     params: UpdateWithAggregationPipeline | UpdateQuery<T>,
     options?: QueryOptions<T> | null | undefined
   ): Promise<boolean>
-  findAndUpdate?(
+  findAndUpdate(
     filter: FilterQuery<T>,
     params: UpdateQuery<T>,
     options?: QueryOptions<T> | null | undefined
   ): Promise<T>
-  updateMany?(
+  updateMany(
     filter: FilterQuery<T>,
     params: UpdateWithAggregationPipeline | UpdateQuery<T>
   ): Promise<boolean>
   delete(filter?: FilterQuery<T>): Promise<boolean>
-  deleteMany?(filter?: FilterQuery<T>): Promise<boolean>
+  deleteMany(filter?: FilterQuery<T>): Promise<boolean>
   create(body: T): Promise<T>
 }
 

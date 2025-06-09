@@ -1,0 +1,14 @@
+AdaptCV - Verificación de cuenta
+
+¡Bienvenido, {{name}}!
+
+Gracias por registrarte en AdaptCV. Para completar tu registro y activar tu cuenta, necesitamos verificar tu dirección de email.
+
+Copia y pega este enlace en tu navegador para verificar tu cuenta:
+{{verificationUrl}}
+
+IMPORTANTE: Este enlace expirará en {{expirationHours}} horas por motivos de seguridad. Si no verificas tu cuenta antes de ese tiempo, deberás registrarte nuevamente.
+
+Si no creaste una cuenta en AdaptCV, puedes ignorar este email de forma segura.
+
+© {{year}} AdaptCV. Todos los derechos reservados.
