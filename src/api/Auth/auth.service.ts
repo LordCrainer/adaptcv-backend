@@ -30,7 +30,7 @@ export class AuthService {
     this.userRepository = userRepository
   }
 
-  async login(params: LoginRequest) {
+  async login(params: LoginRequest): Promise<IApiResponse<AuthResponseDto>> {
     if (!params.email || !params.password) {
       throw customError('validationParams', AUTH_MESSAGES.params_missing)
     }
@@ -60,11 +60,16 @@ export class AuthService {
     const userCache = this.buildUserCache(foundUser)
     const { accessToken, refreshToken } = this.buildTokenPayload(userCache)
 
-    return new AuthResponseDto({
+    const authResponse = new AuthResponseDto({
       user,
       accessToken,
       refreshToken
     })
+
+    return {
+      data: authResponse,
+      message: AUTH_MESSAGES.login
+    }
   }
 
   private buildUser(foundUser: any): RequestUserData {
@@ -86,23 +91,30 @@ export class AuthService {
     }
   }
 
-  async logOut(p: { userId: string }) {
+  async logOut(p: { userId: string }): Promise<IApiResponse<boolean>> {
     if (!p.userId) {
       throw customError('validationParams', AUTH_MESSAGES.params_missing)
     }
 
     redisClient.del(`requestUser-${p.userId}`)
     Logger.info(`Token deleted from Redis for user ${p.userId}`)
-    return true
+    
+    return {
+      data: true,
+      message: AUTH_MESSAGES.logout
+    }
   }
 
-  async signUp(User: IUsers) {
+  async signUp(User: IUsers): Promise<IApiResponse<IUsers>> {
     const user = await this.userRepository.create(User)
     if (!user) {
       throw customError('notFound', USER_MESSAGES.not_created)
     }
 
-    return { user }
+    return {
+      data: user,
+      message: AUTH_MESSAGES.sing_up
+    }
   }
 
   async isAuthenticated(User: IUsers): Promise<IApiResponse<IUsers>> {
@@ -113,7 +125,7 @@ export class AuthService {
     }
   }
 
-  async refreshToken(currentRefreshToken: string): Promise<TokenResponse> {
+  async refreshToken(currentRefreshToken: string): Promise<IApiResponse<TokenResponse>> {
     if (!currentRefreshToken) {
       throw customError('validationParams', AUTH_MESSAGES.params_missing)
     }
@@ -125,7 +137,12 @@ export class AuthService {
     }
 
     const cacheUser = await this.getUserFromCache(user)
-    return this.buildTokenPayload(cacheUser)
+    const tokens = this.buildTokenPayload(cacheUser)
+    
+    return {
+      data: tokens,
+      message: AUTH_MESSAGES.refresh_token
+    }
   }
 
   private async getUserFromCache(user: IUsers): Promise<ProfileCache> {

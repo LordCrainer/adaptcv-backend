@@ -46,14 +46,14 @@ describe('AuthMiddleware', () => {
   })
 
   it('should authenticate a user', async () => {
-    const auth = await authService.login({
+    const authResult = await authService.login({
       email: user.email,
       password: user.password
     })
 
     const req = {
       headers: {
-        authorization: `Bearer ${auth?.accessToken}`
+        authorization: `Bearer ${authResult.data.accessToken}`
       }
     } as RequestExtended
     const res = {} as Response

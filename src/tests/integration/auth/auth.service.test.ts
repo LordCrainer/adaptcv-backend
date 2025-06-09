@@ -29,12 +29,13 @@ describe('AuthService', () => {
       status: 'active'
     } as IUsers
     await userRepository.create(user)
-    const auth = await authService.login({
+    const result = await authService.login({
       email: user.email,
       password: user.password as string
     })
-    expect(auth?.user?.email).toBe(user.email)
-    expect(auth?.accessToken).toBeDefined()
+    expect(result.data?.user?.email).toBe(user.email)
+    expect(result.data?.accessToken).toBeDefined()
+    expect(result.message).toBeDefined()
   })
 
   it('should not login a user with invalid credentials', async () => {
