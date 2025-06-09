@@ -4,6 +4,7 @@ import type { IUsers } from '@lordcrainer/adaptcv-shared-types'
 import type { UserRepository } from '@src/api/Users/interfaces/users.repository'
 import type { VerificationService } from '@src/services/verification/verification.service'
 
+import { templateService } from '@src/services/email/email.dependencies'
 import { MockEmailService } from '@src/services/email/mock-email.service'
 import { RegistrationService } from '@src/services/registration/registration.service'
 
@@ -18,7 +19,8 @@ const mockUserRepository: UserRepository = {
   updateMany: vi.fn(),
   findAndUpdate: vi.fn(),
   aggregate: vi.fn(),
-  counterDocuments: vi.fn()
+  counterDocuments: vi.fn(),
+  findUnverifiedUsersOlderThan: vi.fn(),
 }
 
 const mockEmailService = new MockEmailService()
@@ -76,7 +78,8 @@ describe('RegistrationService', () => {
     registrationService = new RegistrationService(
       mockUserRepository,
       mockVerificationService,
-      mockEmailService
+      mockEmailService,
+      templateService
     )
   })
 

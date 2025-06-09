@@ -4,6 +4,9 @@ import config from '@src/config/environments'
 
 import { EmailService } from './email.service'
 import { MockEmailService } from './mock-email.service'
+import { TemplateService } from './template.service'
+
+export const templateService = new TemplateService()
 
 /**
  * Creates the appropriate email provider based on environment

@@ -1,13 +1,13 @@
 import type { UserRepository } from '@Api/Users/interfaces/users.repository'
 import type { IUsers } from '@lordcrainer/adaptcv-shared-types'
 import type { IEmailProvider } from '@src/services/email/interfaces/email-provider.interface'
+import type { TemplateService } from '@src/services/email/template.service'
 import type { VerificationService } from '@src/services/verification/verification.service'
 
 import { AUTH_MESSAGES } from '@src/api/Auth/constants/auth.messages'
 import { USER_MESSAGES } from '@src/api/Users/constants/users.message'
 import Logger from '@src/lib/logger'
 import { shortId } from '@src/lib/shortId'
-import { TemplateService } from '@src/services/email/template.service'
 import { customError } from '@src/Shared/utils/errorUtils'
 
 export interface RegisterData {
@@ -30,11 +30,12 @@ export class RegistrationService {
   constructor(
     userRepository: UserRepository,
     verificationService: VerificationService,
-    emailProvider: IEmailProvider
+    emailProvider: IEmailProvider,
+    templateService: TemplateService
   ) {
     this.userRepository = userRepository
     this.emailProvider = emailProvider
-    this.templateService = new TemplateService()
+    this.templateService = templateService
     this.verificationService = verificationService
   }
 
@@ -286,7 +287,7 @@ export class RegistrationService {
    * Valida formato de email
    */
   private isValidEmail(email: string): boolean {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
     return emailRegex.test(email)
   }
 }
