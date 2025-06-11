@@ -1,5 +1,3 @@
-import type { Langs } from '@Shared/utils/define'
-
 interface authMessages {
   login: string
   logout: string
@@ -34,10 +32,12 @@ export const AUTH_MESSAGES: authMessages = {
   unauthorized: 'Unauthorized',
   params_missing: 'Required parameters are missing',
   accessDenied: 'Access Denied',
-  registration_success: 'Registration successful. Please check your email to verify your account.',
+  registration_success:
+    'Registration successful. Please check your email to verify your account.',
   verification_email_sent: 'Verification email sent successfully',
   email_verified: 'Email verified successfully',
   email_already_verified: 'Email already verified',
   verification_failed: 'Email verification failed',
-  account_not_verified: 'Account not verified. Please check your email and verify your account.'
+  account_not_verified:
+    'Account not verified. Please check your email and verify your account.'
 }
