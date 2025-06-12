@@ -136,7 +136,7 @@ export class RegistrationService {
   /**
    * Resends the verification email.
    * @param email - The email address of the user.
-   * @returns The API response indicating success or failure.F
+   * @returns The API response indicating success or failure.
    */
   async resendVerificationEmail(email: string): Promise<IApiResponse<null>> {
     try {
