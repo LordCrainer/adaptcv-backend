@@ -30,7 +30,7 @@ const configuration = (env: any): Environments => {
       fileSize: 1.5 * 1000 * 1000 * 2000
     },
     cors: {
-      origin: env?.API_CORS_ORIGIN || 'localhost:4000/',
+      origin: env?.API_CORS_ORIGIN || 'http://localhost:4000',
       optionsSuccessStatus: 200
     },
     storage: {
