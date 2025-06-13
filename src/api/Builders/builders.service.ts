@@ -5,11 +5,11 @@ import { customError } from '@src/Shared/utils/errorUtils'
 
 import { BaseService } from '../sharedApi/domain/base.service'
 import { BuilderMessages } from './constants/builders.messages'
-import { BuilderRepository } from './interfaces/builders.repository'
 import {
   BuilderParams,
   CreateBuilderPayload
 } from './interfaces/builders.interface'
+import { BuilderRepository } from './interfaces/builders.repository'
 
 export class BuilderService extends BaseService<IBuilder> {
   private readonly builderRepository: BuilderRepository
@@ -20,10 +20,14 @@ export class BuilderService extends BaseService<IBuilder> {
   }
 
   async getBuilders(
-    body?: Partial<BuilderParams>
+    requestDto?: Partial<BuilderParams>
   ): Promise<IApiResponse<IBuilder[]>> {
-    const queries = this.extractQuery(body)
-    const builders = await this.builderRepository.find({}, queries)
+    const queries = this.extractQuery(requestDto?.query)
+    const reqUserId = requestDto?.requestUser?._id
+    const builders = await this.builderRepository.find(
+      { createdBy: reqUserId },
+      queries
+    )
     const pagination = await this.builderRepository.counterDocuments(queries)
     return {
       message: BuilderMessages.BUILDER_FOUND,
@@ -33,10 +37,13 @@ export class BuilderService extends BaseService<IBuilder> {
   }
 
   async getBuilder(
-    body: Partial<BuilderParams>
+    requestDto: Partial<BuilderParams>
   ): Promise<IApiResponse<IBuilder>> {
+    const { body, requestUser } = requestDto
+    const reqUserId = requestUser?._id
     const builder = await this.builderRepository.findOne({
-      _id: body.builderId
+      _id: body?.builderId,
+      createdBy: reqUserId
     })
     return {
       message: BuilderMessages.BUILDER_FOUND,
@@ -45,12 +52,14 @@ export class BuilderService extends BaseService<IBuilder> {
   }
 
   async createBuilder(
-    body: CreateBuilderPayload['body']
+    requestDto: CreateBuilderPayload
   ): Promise<IApiResponse<IBuilder>> {
+    const { body, requestUser } = requestDto
     const newBuilder = {
       _id: body?._id || shortId.rnd(),
       name: body.name,
-      status: 'draft'
+      status: 'draft',
+      createdBy: requestUser?._id
     } as IBuilder
     const createdBuilder = await this.builderRepository.create(newBuilder)
     if (!createdBuilder) {

@@ -4,6 +4,7 @@ import { model, Schema } from 'mongoose'
 const CVSchema = new Schema<IBuilder>(
   {
     _id: { type: String, required: true },
+    createdBy: { type: String, required: true },
     name: { type: String, required: true },
     aboutMe: { type: Object, required: false },
     education: { type: [Object], required: false },
