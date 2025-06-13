@@ -3,7 +3,11 @@ import { describe, expect, it, test } from 'vitest'
 import type { Criteria } from '@Shared/utils/criteriaHandle'
 
 import { extractQueryFromCriteria } from '@Shared/utils/criteriaHandle'
-import { decodeHash, encodeHash, generateHash } from '@src/Shared/utils/hash.handle'
+import {
+  decodeHash,
+  encodeHash,
+  generateHash
+} from '@src/Shared/utils/hash.handle'
 
 describe('GenerateHash', () => {
   test('should generate a unique hash (1)', () => {

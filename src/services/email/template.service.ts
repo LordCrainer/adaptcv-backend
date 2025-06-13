@@ -16,8 +16,8 @@ export class TemplateService {
   private templateCache: Map<string, HandlebarsTemplateDelegate> = new Map()
 
   constructor() {
-    const __dirname = getDirname(import.meta.url)
-    this.templatesPath = path.join(__dirname, 'templates')
+    const _dirname = getDirname(import.meta.url)
+    this.templatesPath = path.join(_dirname, 'templates')
   }
 
   async renderTemplate(

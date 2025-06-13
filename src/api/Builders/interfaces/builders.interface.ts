@@ -5,13 +5,14 @@ import type {
 
 import { Criteria } from '@src/Shared/utils/criteriaHandle'
 
-export interface BuilderParams extends Omit<IBuilder, '_id'>, Criteria<IBuilder> {
-  builderId: string
+export interface BuilderParams {
+  body?: Partial<Omit<IBuilder, '_id'> & { builderId: string }>
+  query?: Criteria<IBuilder>
   requestUser?: RequestUserData
 }
 
 export interface CreateBuilderPayload {
-  body: Pick<IBuilder, 'name' | '_id'>
+  body: Pick<IBuilder, 'name' | '_id' | 'description'>
   requestUser?: RequestUserData
 }
 export type UpdateBuilderPayload = Partial<IBuilder> & {

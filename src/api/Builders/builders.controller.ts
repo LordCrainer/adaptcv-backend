@@ -12,7 +12,7 @@ export class BuilderController {
   createBuilder: IController = async (req, res, next): Promise<void> => {
     try {
       const args = {
-        name: req.body.name,
+        body: req.body,
         requestUser: req.requestUser
       }
       const newBuilder = await this.builderService.createBuilder(args)
@@ -26,13 +26,8 @@ export class BuilderController {
   getBuilders: IController = async (req, res, next): Promise<void> => {
     try {
       const args = {
-        filters: req.query?.filters,
-        limit: req.query?.limit,
-        page: req.query?.page,
-        select: req.query?.select,
-        or: req.query?.or,
-        orderBy: req.query?.orderBy,
-        builderId: req.params.builderId
+        query: req.query,
+        requestUser: req.requestUser
       }
       const cv = await this.builderService.getBuilders(args)
       new ApiResponse(res).setName('success').json(cv)
@@ -42,10 +37,11 @@ export class BuilderController {
   }
 
   getBuilder: IController = async (req, res, next): Promise<void> => {
-    const { builderId } = req.params
     try {
       const args = {
-        builderId
+        body: { ...req.params, builderId: req.params?.builderId },
+        requestUser: req.requestUser,
+        query: req.query
       }
       const cv = await this.builderService.getBuilder(args)
       new ApiResponse(res).setName('success').json(cv)
