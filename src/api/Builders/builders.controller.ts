@@ -27,7 +27,6 @@ export class BuilderController {
     try {
       const args = {
         query: req.query,
-        builderId: req.params.builderId,
         requestUser: req.requestUser
       }
       const cv = await this.builderService.getBuilders(args)
@@ -40,7 +39,7 @@ export class BuilderController {
   getBuilder: IController = async (req, res, next): Promise<void> => {
     try {
       const args = {
-        body: { builderId: req.params?.builderId },
+        body: { ...req.params, builderId: req.params?.builderId },
         requestUser: req.requestUser,
         query: req.query
       }
