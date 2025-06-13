@@ -1,6 +1,8 @@
 import { RequestUserData } from '@lordcrainer/adaptcv-shared-types'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 
+import { beforeEach } from 'node:test'
+
 import { BuilderRepository } from '@src/api/Builders/builders.repository'
 import { BuilderService } from '@src/api/Builders/builders.service'
 import { dbStrategy } from '@src/config/db/dbStrategy'
@@ -20,10 +22,11 @@ describe('Builder Integration Tests', () => {
   beforeAll(async () => {
     builderRepository = new BuilderRepository()
     builderService = new BuilderService(builderRepository)
+    await selectedDb.connect('acv-user-test')
+    await selectedDb.clear()
   })
 
-  beforeAll(async () => {
-    await selectedDb.connect('acv-user-test')
+  beforeEach(async () => {
     await selectedDb.clear()
   })
 
