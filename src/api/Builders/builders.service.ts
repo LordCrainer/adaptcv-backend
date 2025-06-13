@@ -1,3 +1,5 @@
+import Joi from 'joi'
+
 import type { IBuilder } from '@lordcrainer/adaptcv-shared-types'
 
 import { shortId } from '@src/lib/shortId'
@@ -11,6 +13,13 @@ import {
 } from './interfaces/builders.interface'
 import { BuilderRepository } from './interfaces/builders.repository'
 
+const builderSchema = Joi.object({
+  name: Joi.string().min(2).max(100).required(),
+  _id: Joi.string().optional(),
+  status: Joi.string().valid('draft', 'published').optional(),
+  createdBy: Joi.string().optional()
+})
+
 export class BuilderService extends BaseService<IBuilder> {
   private readonly builderRepository: BuilderRepository
 
@@ -19,6 +28,9 @@ export class BuilderService extends BaseService<IBuilder> {
     this.builderRepository = builderRepository
   }
 
+  /**
+   * Obtiene la lista de builders del usuario autenticado.
+   */
   async getBuilders(
     requestDto?: Partial<BuilderParams>
   ): Promise<IApiResponse<IBuilder[]>> {
@@ -36,6 +48,10 @@ export class BuilderService extends BaseService<IBuilder> {
     }
   }
 
+  /**
+   * Obtiene un builder por ID, validando que pertenezca al usuario.
+   * Lanza error si no existe.
+   */
   async getBuilder(
     requestDto: Partial<BuilderParams>
   ): Promise<IApiResponse<IBuilder>> {
@@ -45,16 +61,26 @@ export class BuilderService extends BaseService<IBuilder> {
       _id: body?.builderId,
       createdBy: reqUserId
     })
+    if (!builder) {
+      throw customError('resourceNotFound', BuilderMessages.BUILDER_NOT_FOUND)
+    }
     return {
       message: BuilderMessages.BUILDER_FOUND,
       data: builder
     }
   }
 
+  /**
+   * Crea un nuevo builder validando los datos de entrada.
+   */
   async createBuilder(
     requestDto: CreateBuilderPayload
   ): Promise<IApiResponse<IBuilder>> {
     const { body, requestUser } = requestDto
+    const { error } = builderSchema.validate(body)
+    if (error) {
+      throw customError('validationParams', error.message)
+    }
     const newBuilder = {
       _id: body?._id || shortId.rnd(),
       name: body.name,
@@ -71,20 +97,35 @@ export class BuilderService extends BaseService<IBuilder> {
     }
   }
 
+  /**
+   * Actualiza un builder existente validando los datos y existencia.
+   */
   async updateBuilder(
     builderId: string,
     updates: Partial<IBuilder>
   ): Promise<IApiResponse<boolean>> {
+    if (updates.name) {
+      const { error } = builderSchema.validate({ name: updates.name })
+      if (error) {
+        throw customError('validationParams', error.message)
+      }
+    }
     const isUpdated = await this.builderRepository.update(
       { _id: builderId },
       { $set: updates }
     )
+    if (!isUpdated) {
+      throw customError('resourceNotFound', BuilderMessages.BUILDER_NOT_FOUND)
+    }
     return {
       message: BuilderMessages.BUILDER_UPDATED,
       data: isUpdated
     }
   }
 
+  /**
+   * Elimina un builder por ID, lanzando error si no existe.
+   */
   async deleteBuilder(builderId: string): Promise<IApiResponse<boolean>> {
     const isDeleted = await this.builderRepository.delete({ _id: builderId })
     if (!isDeleted) {
