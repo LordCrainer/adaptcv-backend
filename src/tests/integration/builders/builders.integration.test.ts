@@ -1,3 +1,4 @@
+import { RequestUserData } from '@lordcrainer/adaptcv-shared-types'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 
 import { BuilderRepository } from '@src/api/Builders/builders.repository'
@@ -10,6 +11,12 @@ let builderService: BuilderService
 let builderRepository: BuilderRepository
 
 describe('Builder Integration Tests', () => {
+  const requestUser: RequestUserData = {
+    _id: 'test-user-id',
+    name: 'Test User',
+    email: 'test@example.com',
+    status: 'active'
+  }
   beforeAll(async () => {
     builderRepository = new BuilderRepository()
     builderService = new BuilderService(builderRepository)
@@ -29,7 +36,11 @@ describe('Builder Integration Tests', () => {
       name: 'Integration Builder',
       description: 'Integration Test'
     }
-    const { data } = await builderService.createBuilder(builderData)
+    const { data } = await builderService.createBuilder({
+      body: builderData,
+      requestUser
+    })
+
     expect(data).toHaveProperty('_id')
     expect(data?.name).toBe(builderData.name)
   })
@@ -39,8 +50,10 @@ describe('Builder Integration Tests', () => {
       name: 'Update Builder',
       description: 'Integration Test'
     }
-    const { data: createdBuilder } =
-      await builderService.createBuilder(builderData)
+    const { data: createdBuilder } = await builderService.createBuilder({
+      body: builderData,
+      requestUser
+    })
     const updatedData = { name: 'Updated Builder' }
     const { data: updatedBuilder } = await builderService.updateBuilder(
       createdBuilder?._id as string,

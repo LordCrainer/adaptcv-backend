@@ -6,7 +6,6 @@ import { Roles } from '@src/api/Roles/roles'
 import { USER_MESSAGES } from '@src/api/Users/constants/users.message'
 import { UserService } from '@src/api/Users/users.service'
 import { redisClient } from '@src/config/cache/redis'
-import { getTokenExpirationInSeconds } from '@src/Shared/utils/auth.utils'
 import { customError } from '@src/Shared/utils/errorUtils'
 
 const AuthMiddleware =

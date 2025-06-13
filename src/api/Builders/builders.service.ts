@@ -17,6 +17,7 @@ const builderSchema = Joi.object({
   name: Joi.string().min(2).max(100).required(),
   _id: Joi.string().optional(),
   status: Joi.string().valid('draft', 'published').optional(),
+  description: Joi.string().optional(),
   createdBy: Joi.string().optional()
 })
 
@@ -83,7 +84,7 @@ export class BuilderService extends BaseService<IBuilder> {
     }
     const newBuilder = {
       _id: body?._id || shortId.rnd(),
-      name: body.name,
+      name: body?.name,
       status: 'draft',
       createdBy: requestUser?._id
     } as IBuilder

@@ -12,7 +12,7 @@ export interface BuilderParams {
 }
 
 export interface CreateBuilderPayload {
-  body: Pick<IBuilder, 'name' | '_id'>
+  body: Pick<IBuilder, 'name' | '_id' | 'description'>
   requestUser?: RequestUserData
 }
 export type UpdateBuilderPayload = Partial<IBuilder> & {
