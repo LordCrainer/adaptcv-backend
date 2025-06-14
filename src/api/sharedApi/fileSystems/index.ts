@@ -9,12 +9,12 @@ import { fileURLToPath } from 'url'
  * @returns The directory name as a string
  */
 const getDirname = (importMetaUrl: string): string => {
-  const __filename = fileURLToPath(importMetaUrl)
-  return path.dirname(__filename)
+  const _filename = fileURLToPath(importMetaUrl)
+  return path.dirname(_filename)
 }
 
 /**
- * Get __filename equivalent for ES modules
+ * Get _filename equivalent for ES modules
  * @param importMetaUrl - The URL of the module
  * @returns The filename as a string
  */
