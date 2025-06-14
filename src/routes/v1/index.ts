@@ -1,6 +1,6 @@
 import { Router } from 'express'
 
-import BuilderRouter from '@src/api/Builders/builder.router'
+import BuilderRouter from '@src/api/Builders/builders.router'
 import UsersRouter from '@src/api/Users/users.router'
 
 import AuthRouter from '@Api/Auth/auth.router'

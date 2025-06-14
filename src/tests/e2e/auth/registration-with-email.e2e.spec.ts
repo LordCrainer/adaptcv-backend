@@ -3,7 +3,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 
 import type { MockEmailService } from '@src/services/email/mock-email.service'
 
-import { closeRedisConnection, redisConnection } from '@src/config/cache/redis'
+import { redisConnection } from '@src/config/cache/redis'
 import { dbStrategy } from '@src/config/db/dbStrategy'
 import currentEnv from '@src/config/environments'
 import app from '@src/config/server'
