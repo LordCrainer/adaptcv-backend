@@ -64,7 +64,6 @@ export class BuilderController {
 
   deleteBuilder: IController = async (req, res, next): Promise<void> => {
     try {
-      console.log('deleteBuilder', req.params.builderId)
       const isDeleted = await this.builderService.deleteBuilder(
         req.params.builderId
       )
