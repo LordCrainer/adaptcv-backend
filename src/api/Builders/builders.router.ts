@@ -9,9 +9,10 @@ import { Router } from 'express'
 
 import { inyectAuthMiddleware } from '../Auth/auth.dependencies'
 import { inyectBuilderController } from './builders.dependencies'
+import { builderAccess } from './permissions/builders.access'
 
 const BuilderRouter = Router()
-  .use(inyectAuthMiddleware)
+  .use(inyectAuthMiddleware) // Solo autenticación, builderAccess maneja los roles
 
   /**
    * @swagger
@@ -31,7 +32,7 @@ const BuilderRouter = Router()
    *       400:
    *         description: Bad request
    */
-  .post('/', inyectBuilderController.createBuilder)
+  .post('/', builderAccess.create, inyectBuilderController.createBuilder)
 
   /**
    * @swagger
@@ -43,7 +44,7 @@ const BuilderRouter = Router()
    *       200:
    *         description: List of builders
    */
-  .get('/', inyectBuilderController.getBuilders)
+  .get('/', builderAccess.list, inyectBuilderController.getBuilders)
 
   /**
    * @swagger
@@ -64,7 +65,7 @@ const BuilderRouter = Router()
    *       404:
    *         description: Builder not found
    */
-  .get('/:builderId', inyectBuilderController.getBuilder)
+  .get('/:builderId', builderAccess.get, inyectBuilderController.getBuilder)
 
   /**
    * @swagger
@@ -91,7 +92,11 @@ const BuilderRouter = Router()
    *       404:
    *         description: Builder not found
    */
-  .put('/:builderId', inyectBuilderController.updateBuilder)
+  .put(
+    '/:builderId',
+    builderAccess.update,
+    inyectBuilderController.updateBuilder
+  )
 
   /**
    * @swagger
@@ -112,6 +117,10 @@ const BuilderRouter = Router()
    *       404:
    *         description: Builder not found
    */
-  .delete('/:builderId', inyectBuilderController.deleteBuilder)
+  .delete(
+    '/:builderId',
+    builderAccess.delete,
+    inyectBuilderController.deleteBuilder
+  )
 
 export default BuilderRouter
