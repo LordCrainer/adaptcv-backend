@@ -10,6 +10,12 @@ export interface PermissionParams<T = Record<string, any>> {
 
 export type PermissionMethod = (params: PermissionParams) => boolean
 
+export const superAdminPermissionRules: PermissionMethod = ({
+  requestUser
+}: PermissionParams) => {
+  return Roles.isSuperAdmin(requestUser.currentRole)
+}
+
 export const basePermissionRules = ({ requestUser }: PermissionParams) =>
   Roles.isSuperAdmin(requestUser.currentRole) ||
   Roles.isUser(requestUser.currentRole)
