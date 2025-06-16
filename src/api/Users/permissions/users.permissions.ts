@@ -13,9 +13,10 @@ type UserPermissionType =
   | 'deleteUser'
   | 'updateUser'
 
-const viewUserPermission: PermissionMethod = (params) => {
+const viewUserPermission: PermissionMethod = ({ requestUser }) => {
   return (
-    Roles.isSuperAdmin(params.currentRole) || Roles.isUser(params.currentRole)
+    Roles.isSuperAdmin(requestUser.currentRole) ||
+    Roles.isUser(requestUser.currentRole)
   )
 }
 

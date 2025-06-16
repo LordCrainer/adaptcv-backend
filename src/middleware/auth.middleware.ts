@@ -1,4 +1,4 @@
-import type { RequestUserData } from '@lordcrainer/adaptcv-shared-types'
+import type { IUsers, RequestUserData } from '@lordcrainer/adaptcv-shared-types'
 
 import { AuthService } from '@src/api/Auth/auth.service'
 import { AUTH_MESSAGES } from '@src/api/Auth/constants/auth.messages'
@@ -27,7 +27,7 @@ const AuthMiddleware =
       }
 
       const userCache = await redisClient.get(`requestUser-${tokenData.userId}`)
-      let user: RequestUserData
+      let user: IUsers
 
       if (userCache) {
         user = JSON.parse(userCache)
@@ -44,10 +44,7 @@ const AuthMiddleware =
         authService.refreshCacheExpiration(tokenData.userId)
       }
 
-      req.requestUser = user
-      req.requestUser.currentRole = user.isSuperAdmin
-        ? Roles.byName('superAdmin')
-        : req.requestUser?.currentRole || undefined
+      req.requestUser = mapperUserRequest(user)
 
       req.token = token
 
@@ -56,5 +53,14 @@ const AuthMiddleware =
       next(error)
     }
   }
+
+function mapperUserRequest(user: IUsers): RequestUserData {
+  return {
+    ...user,
+    currentRole: user.isSuperAdmin
+      ? Roles.byName('superAdmin')
+      : Roles.byName('user')
+  }
+}
 
 export { AuthMiddleware }

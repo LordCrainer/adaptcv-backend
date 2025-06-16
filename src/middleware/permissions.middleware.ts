@@ -1,30 +1,31 @@
+import { RequestUserData } from '@lordcrainer/adaptcv-shared-types'
+
 import { Roles } from '@src/api/Roles/roles'
 import { customError } from '@src/Shared/utils/errorUtils'
 
-export interface PermissionParams {
-  currentRole: number
-  reqUserId?: string
+export interface PermissionParams<T = Record<string, any>> {
+  requestUser: RequestUserData
+  resource?: T
 }
 
 export type PermissionMethod = (params: PermissionParams) => boolean
 
-export const basePermissionRules = (params: PermissionParams) =>
-  Roles.isSuperAdmin(params.currentRole) || Roles.isUser(params.currentRole)
+export const basePermissionRules = ({ requestUser }: PermissionParams) =>
+  Roles.isSuperAdmin(requestUser.currentRole) ||
+  Roles.isUser(requestUser.currentRole)
 
 export const checkPermissions = (
   permissionRules: PermissionMethod
 ): IController => {
   return async (req, res, next) => {
     try {
-      const { currentRole, _id: reqUserId } = req.requestUser || {}
-
-      if (!currentRole) {
+      if (!req.requestUser?.currentRole) {
         throw customError('unauthorized', 'Authentication required')
       }
 
       const hasPermission = permissionRules({
-        currentRole,
-        reqUserId: reqUserId || ''
+        requestUser: req.requestUser || {},
+        resource: req.params || req.body || req.query
       })
 
       if (!hasPermission) {
