@@ -14,8 +14,8 @@ function permissionRuleByCreatedBy(params: PermissionParams) {
 
 export const builderAccess = {
   create: checkPermissions(basePermissionRules),
-  get: checkPermissions(permissionRuleByCreatedBy),
-  list: checkPermissions(permissionRuleByCreatedBy),
+  get: checkPermissions(basePermissionRules),
+  list: checkPermissions(basePermissionRules),
   delete: checkPermissions(permissionRuleByCreatedBy),
   update: checkPermissions(permissionRuleByCreatedBy)
 }

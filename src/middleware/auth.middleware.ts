@@ -56,7 +56,11 @@ const AuthMiddleware =
 
 function mapperUserRequest(user: IUsers): RequestUserData {
   return {
-    ...user,
+    _id: user._id,
+    email: user.email,
+    name: user.name,
+    status: user.status,
+    isSuperAdmin: user.isSuperAdmin,
     currentRole: user.isSuperAdmin
       ? Roles.byName('superAdmin')
       : Roles.byName('user')
