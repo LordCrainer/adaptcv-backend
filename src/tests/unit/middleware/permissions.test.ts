@@ -96,7 +96,7 @@ describe('Permissions Middleware', () => {
   describe('checkPermissions middleware', () => {
     it('should call next() when permission is granted', async () => {
       const mockPermissionRule = vi.fn().mockReturnValue(true)
-      const middleware = checkPermissions(mockPermissionRule)
+      const middleware = checkPermissions(mockPermissionRule, 'params')
 
       mockReq.requestUser = { currentRole: 10, _id: 'user123' } as any
       mockReq.params = { builderId: 'builder123' }
@@ -112,7 +112,7 @@ describe('Permissions Middleware', () => {
 
     it('should throw forbidden error when permission is denied', async () => {
       const mockPermissionRule = vi.fn().mockReturnValue(false)
-      const middleware = checkPermissions(mockPermissionRule)
+      const middleware = checkPermissions(mockPermissionRule, 'params')
 
       mockReq.requestUser = { currentRole: 10, _id: 'user123' } as any
       mockReq.params = { builderId: 'builder123' }
@@ -129,7 +129,7 @@ describe('Permissions Middleware', () => {
 
     it('should throw unauthorized error when no user role', async () => {
       const mockPermissionRule = vi.fn()
-      const middleware = checkPermissions(mockPermissionRule)
+      const middleware = checkPermissions(mockPermissionRule, 'params')
 
       mockReq.requestUser = {} as any
 
@@ -146,7 +146,7 @@ describe('Permissions Middleware', () => {
 
     it('should pass resource from params, body, and query', async () => {
       const mockPermissionRule = vi.fn().mockReturnValue(true)
-      const middleware = checkPermissions(mockPermissionRule)
+      const middleware = checkPermissions(mockPermissionRule, 'params')
 
       mockReq.requestUser = { currentRole: 10, _id: 'user123' } as any
       mockReq.params = { builderId: 'builder123' }

@@ -8,6 +8,8 @@ export interface PermissionParams<T = Record<string, any>> {
   resource?: T
 }
 
+type SourceType = 'body' | 'params' | 'query'
+
 export type PermissionMethod = (params: PermissionParams) => boolean
 
 export const superAdminPermissionRules: PermissionMethod = ({
@@ -21,7 +23,8 @@ export const basePermissionRules = ({ requestUser }: PermissionParams) =>
   Roles.isUser(requestUser.currentRole)
 
 export const checkPermissions = (
-  permissionRules: PermissionMethod
+  permissionRules: PermissionMethod,
+  source: SourceType
 ): IController => {
   return async (req, res, next) => {
     try {
@@ -31,7 +34,7 @@ export const checkPermissions = (
 
       const hasPermission = permissionRules({
         requestUser: req.requestUser || {},
-        resource: req.params || req.body || req.query
+        resource: req[source] || {}
       })
 
       if (!hasPermission) {

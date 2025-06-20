@@ -1,3 +1,5 @@
+import { IBuilder } from '@lordcrainer/adaptcv-shared-types'
+
 import {
   basePermissionRules,
   checkPermissions,
@@ -5,7 +7,9 @@ import {
   superAdminPermissionRules
 } from '@src/middleware/permissions.middleware'
 
-function permissionRuleByCreatedBy(params: PermissionParams) {
+function permissionRuleByCreatedBy(
+  params: PermissionParams<Partial<IBuilder>>
+) {
   if (superAdminPermissionRules(params)) {
     return true
   }
@@ -13,9 +17,9 @@ function permissionRuleByCreatedBy(params: PermissionParams) {
 }
 
 export const builderAccess = {
-  create: checkPermissions(basePermissionRules),
-  get: checkPermissions(basePermissionRules),
-  list: checkPermissions(basePermissionRules),
-  delete: checkPermissions(permissionRuleByCreatedBy),
-  update: checkPermissions(permissionRuleByCreatedBy)
+  create: checkPermissions(basePermissionRules, 'body'),
+  get: checkPermissions(basePermissionRules, 'params'),
+  list: checkPermissions(basePermissionRules, 'query'),
+  delete: checkPermissions(permissionRuleByCreatedBy, 'params'),
+  update: checkPermissions(permissionRuleByCreatedBy, 'params')
 }

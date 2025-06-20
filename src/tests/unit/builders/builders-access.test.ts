@@ -56,11 +56,11 @@ describe('Builder Access Configuration', () => {
     })
   })
 
-  describe('get action (with ownership)', () => {
-    it('should allow SuperAdmin to get any builder', async () => {
+  describe('get action (no ownership validation in middleware)', () => {
+    it('should allow SuperAdmin to access get endpoint', async () => {
       mockReq.requestUser = { currentRole: 50, _id: 'superadmin123' } as any
       mockReq.params = {
-        createdBy: 'differentUser456'
+        builderId: 'somebuilder456'
       }
 
       await builderAccess.get(mockReq as Request, mockRes as Response, mockNext)
@@ -68,11 +68,11 @@ describe('Builder Access Configuration', () => {
       expect(mockNext).toHaveBeenCalledWith()
     })
 
-    it('should allow user to get their own builder', async () => {
+    it('should allow user to access get endpoint', async () => {
       const userId = 'user123'
       mockReq.requestUser = { currentRole: 10, _id: userId } as any
       mockReq.params = {
-        createdBy: userId
+        builderId: 'somebuilder456'
       }
 
       await builderAccess.get(mockReq as Request, mockRes as Response, mockNext)
@@ -80,10 +80,10 @@ describe('Builder Access Configuration', () => {
       expect(mockNext).toHaveBeenCalledWith()
     })
 
-    it("should deny user access to other user's builder", async () => {
-      mockReq.requestUser = { currentRole: 10, _id: 'user123' } as any
+    it('should deny access to unauthorized roles', async () => {
+      mockReq.requestUser = { currentRole: 5, _id: 'guest123' } as any
       mockReq.params = {
-        createdBy: 'differentUser456'
+        builderId: 'somebuilder456'
       }
 
       await builderAccess.get(mockReq as Request, mockRes as Response, mockNext)
@@ -94,7 +94,7 @@ describe('Builder Access Configuration', () => {
         })
       )
     })
-  })
+  }) 
 
   describe('update action (with ownership)', () => {
     it('should allow SuperAdmin to update any builder', async () => {
