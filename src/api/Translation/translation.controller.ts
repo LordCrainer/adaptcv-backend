@@ -3,13 +3,15 @@ import { Request, Response } from 'express'
 import { TranslationService } from './translation.service'
 
 export class TranslationController {
-  static async translate(req: Request, res: Response) {
+  constructor(private translationService: TranslationService) {}
+
+  async translate(req: Request, res: Response) {
     try {
       const { text, to, from } = req.body
       if (!text || !to || !from) {
         return res.status(400).json({ message: 'Missing required fields' })
       }
-      const result = await TranslationService.translate({
+      const result = await this.translationService.translate({
         text,
         to,
         from

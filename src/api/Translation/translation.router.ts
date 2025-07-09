@@ -1,11 +1,11 @@
 import { Router } from 'express'
 
-import { TranslationController } from './translation.controller'
+import { injectionController } from './translation.di'
 
 const TranslationRouter = Router()
 
 TranslationRouter.post('/', (req, res) => {
-  TranslationController.translate(req, res)
+  injectionController.translate(req, res)
 })
 
 export default TranslationRouter
