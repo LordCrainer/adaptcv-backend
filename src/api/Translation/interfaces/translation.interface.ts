@@ -9,6 +9,8 @@ export interface ITranslationResponse {
   characterLength?: number
 }
 
+export type TranslationProviderName = 'lecto' | 'emulator'
+
 export interface ITranslationStrategy {
   translate(request: ITranslationRequest): Promise<ITranslationResponse>
   getSupportedLanguages(): string[]
