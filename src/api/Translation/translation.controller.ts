@@ -1,11 +1,13 @@
 import { Request, Response } from 'express'
 
+import ApiResponse from '@src/Shared/utils/apiResponse'
+
 import { TranslationService } from './translation.service'
 
 export class TranslationController {
   constructor(private translationService: TranslationService) {}
 
-  async translate(req: Request, res: Response) {
+  translate: IController = async (req, res, next) => {
     try {
       const { text, to, from } = req.body
       if (!text || !to || !from) {
@@ -16,9 +18,9 @@ export class TranslationController {
         to,
         from
       })
-      return res.status(200).json({ data: result })
-    } catch (error: any) {
-      return res.status(500).json({ message: error.message })
+      return new ApiResponse(res).setName('accepted').json({ ...result })
+    } catch (error) {
+      next(error)
     }
   }
 }

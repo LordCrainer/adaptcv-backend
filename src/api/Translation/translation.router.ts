@@ -4,8 +4,6 @@ import { injectionController } from './translation.di'
 
 const TranslationRouter = Router()
 
-TranslationRouter.post('/', (req, res) => {
-  injectionController.translate(req, res)
-})
+TranslationRouter.post('/', injectionController.translate)
 
 export default TranslationRouter
