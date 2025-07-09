@@ -1,16 +1,12 @@
 export interface ITranslationRequest {
   text: string
-  sourceLanguage: string
-  targetLanguage: string
-  provider?: string
+  to: string
+  from: string
 }
 
 export interface ITranslationResponse {
   translatedText: string
-  sourceLanguage: string
-  targetLanguage: string
-  provider: string
-  confidence?: number
+  characterLength?: number
 }
 
 export interface ITranslationStrategy {

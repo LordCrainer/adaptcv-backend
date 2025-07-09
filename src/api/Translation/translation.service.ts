@@ -13,7 +13,7 @@ export class TranslationService {
   static async translate(
     request: ITranslationRequest
   ): Promise<ITranslationResponse> {
-    const provider = request.provider || 'lecto'
+    const provider = 'lecto'
     const strategy = providers[provider]
     if (!strategy) throw new Error('Translation provider not supported')
     return strategy.translate(request)

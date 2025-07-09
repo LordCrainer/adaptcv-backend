@@ -28,13 +28,13 @@ export class LectoTranslationStrategy implements ITranslationStrategy {
   }
 
   async translate(request: ITranslationRequest): Promise<ITranslationResponse> {
-    const { text, sourceLanguage, targetLanguage } = request
+    const { text, from, to } = request
     const response = await axios.post(
       this.baseUrl,
       {
         texts: [text],
-        to: targetLanguage,
-        from: sourceLanguage
+        to: [to],
+        from: from
       },
       {
         headers: {
@@ -43,12 +43,20 @@ export class LectoTranslationStrategy implements ITranslationStrategy {
         }
       }
     )
+
+    if (
+      !response.data ||
+      !response.data.translations ||
+      response.data.translations.length === 0
+    ) {
+      throw new Error('Translation failed or no translations found')
+    }
+
+    const { translated_characters = 0, translations } = response.data
+    const translatedText = translations[0]?.translated.join(',') || ''
     return {
-      translatedText: response.data.translations[0],
-      sourceLanguage,
-      targetLanguage,
-      provider: 'lecto',
-      confidence: response.data.confidence || undefined
+      translatedText,
+      characterLength: translated_characters
     }
   }
 }
