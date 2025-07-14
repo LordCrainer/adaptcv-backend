@@ -123,4 +123,29 @@ const BuilderRouter = Router()
     inyectBuilderController.deleteBuilder
   )
 
+  /**
+   * @swagger
+   * /builders/{builderId}/duplicate:
+   *   post:
+   *     summary: Duplicate a builder by ID
+   *     tags: [Builder]
+   *     parameters:
+   *       - in: path
+   *         name: builderId
+   *         required: true
+   *         schema:
+   *           type: string
+   *         description: The ID of the builder to duplicate
+   *     responses:
+   *       201:
+   *         description: Builder duplicated
+   *       404:
+   *         description: Builder not found
+   */
+  .post(
+    '/:builderId/duplicate',
+    builderAccess.get,
+    inyectBuilderController.duplicateBuilder
+  )
+
 export default BuilderRouter

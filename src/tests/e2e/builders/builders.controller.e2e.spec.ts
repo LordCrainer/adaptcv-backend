@@ -25,6 +25,29 @@ describe('Builder Controller E2E Tests', () => {
       expect(response.body.data).toHaveProperty('_id')
       expect(response.body.data.name).toBe(builderData.name)
     })
+
+    it('should duplicate a builder successfully via controller (SuperAdmin)', async () => {
+      const originalData = {
+        name: 'Duplicable Builder',
+        description: 'E2E Duplicate Test',
+        createdBy: 'test-user-id',
+        status: 'draft'
+      } as IBuilder
+      const createRes = await request(app)
+        .post('/v1/builders')
+        .set('Authorization', `Bearer ${tokenSuperAdmin}`)
+        .send(originalData)
+      expect(createRes.status).toBe(201)
+      const builderId = createRes.body.data._id
+
+      const dupRes = await request(app)
+        .post(`/v1/builders/${builderId}/duplicate`)
+        .set('Authorization', `Bearer ${tokenSuperAdmin}`)
+      expect(dupRes.status).toBe(201)
+      expect(dupRes.body.data).toHaveProperty('_id')
+      expect(dupRes.body.data._id).not.toBe(builderId)
+      expect(dupRes.body.data.name).toBe(`${originalData.name} Copy`)
+    })
   })
 
   describe('CRUD Operations by user', () => {
