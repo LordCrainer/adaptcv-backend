@@ -5,11 +5,32 @@
  *   description: Builder management
  */
 
-import { Router } from 'express'
+import { NextFunction, Response, Router } from 'express'
 
 import { inyectAuthMiddleware } from '../Auth/auth.dependencies'
-import { inyectBuilderController } from './builders.dependencies'
+import {
+  builderService,
+  inyectBuilderController
+} from './builders.dependencies'
 import { builderAccess } from './permissions/builders.access'
+
+// Middleware to load builder resource and attach createdBy to params for permission checks
+async function loadBuilderResource(
+  req: RequestExtended<{ builderId: string; createdBy?: string }>,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const { data: builder } = await builderService.getBuilder({
+      body: { builderId: req.params.builderId },
+      requestUser: req.requestUser
+    })
+    req.params.createdBy = builder.createdBy!
+    next()
+  } catch (err) {
+    next(err)
+  }
+}
 
 const BuilderRouter = Router()
   .use(inyectAuthMiddleware) // Solo autenticación, builderAccess maneja los roles
@@ -94,6 +115,7 @@ const BuilderRouter = Router()
    */
   .put(
     '/:builderId',
+    loadBuilderResource,
     builderAccess.update,
     inyectBuilderController.updateBuilder
   )
@@ -119,6 +141,7 @@ const BuilderRouter = Router()
    */
   .delete(
     '/:builderId',
+    loadBuilderResource,
     builderAccess.delete,
     inyectBuilderController.deleteBuilder
   )
@@ -144,7 +167,8 @@ const BuilderRouter = Router()
    */
   .post(
     '/:builderId/duplicate',
-    builderAccess.get,
+    loadBuilderResource,
+    builderAccess.update,
     inyectBuilderController.duplicateBuilder
   )
 
