@@ -48,6 +48,44 @@ describe('Builder Controller E2E Tests', () => {
       expect(dupRes.body.data._id).not.toBe(builderId)
       expect(dupRes.body.data.name).toBe(`${originalData.name} Copy`)
     })
+
+    it('should update a builder successfully via controller (SuperAdmin)', async () => {
+      const original = { name: 'Updatable Builder', description: 'E2E Update Test' } as IBuilder
+      const createRes = await request(app)
+        .post('/v1/builders')
+        .set('Authorization', `Bearer ${tokenSuperAdmin}`)
+        .send(original)
+      const id = createRes.body.data._id
+      const updated = { name: 'Updated Builder' }
+      const updateRes = await request(app)
+        .put(`/v1/builders/${id}`)
+        .set('Authorization', `Bearer ${tokenSuperAdmin}`)
+        .send(updated)
+      expect(updateRes.status).toBe(200)
+      expect(updateRes.body.data).toBe(true)
+      const fetchRes = await request(app)
+        .get(`/v1/builders/${id}`)
+        .set('Authorization', `Bearer ${tokenSuperAdmin}`)
+      expect(fetchRes.body.data.name).toBe(updated.name)
+    })
+
+    it('should delete a builder successfully via controller (SuperAdmin)', async () => {
+      const builder = { name: 'Deletable Builder', description: 'E2E Delete Test' } as IBuilder
+      const createRes = await request(app)
+        .post('/v1/builders')
+        .set('Authorization', `Bearer ${tokenSuperAdmin}`)
+        .send(builder)
+      const id = createRes.body.data._id
+      const deleteRes = await request(app)
+        .delete(`/v1/builders/${id}`)
+        .set('Authorization', `Bearer ${tokenSuperAdmin}`)
+      expect(deleteRes.status).toBe(200)
+      expect(deleteRes.body.data).toBe(true)
+      const fetchRes = await request(app)
+        .get(`/v1/builders/${id}`)
+        .set('Authorization', `Bearer ${tokenSuperAdmin}`)
+      expect(fetchRes.status).toBe(404)
+    })
   })
 
   describe('CRUD Operations by user', () => {
