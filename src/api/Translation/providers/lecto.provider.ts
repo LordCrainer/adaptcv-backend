@@ -28,11 +28,11 @@ export class LectoTranslationStrategy implements ITranslationStrategy {
   }
 
   async translate(request: ITranslationRequest): Promise<ITranslationResponse> {
-    const { text, from, to } = request
+    const { texts, from, to } = request
     const response = await axios.post(
       this.baseUrl,
       {
-        texts: [text],
+        texts: texts,
         to: [to],
         from: from
       },

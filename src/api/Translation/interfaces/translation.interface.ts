@@ -1,15 +1,16 @@
 export interface ITranslationRequest {
-  text: string
+  texts: string | string[]
   to: string
   from: string
 }
 
 export interface ITranslationResponse {
-  translatedText: string
+  translatedText: string,
+  isJson?: boolean
   characterLength?: number
 }
 
-export type TranslationProviderName = 'lecto' | 'emulator'
+export type TranslationProviderName = 'lecto' | 'emulator' | 'gemini'
 
 export interface ITranslationStrategy {
   translate(request: ITranslationRequest): Promise<ITranslationResponse>

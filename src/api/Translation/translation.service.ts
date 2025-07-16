@@ -4,13 +4,15 @@ import {
   ITranslationStrategy,
   TranslationProviderName
 } from '@Api/Translation/interfaces/translation.interface'
+import { GeminiTranslationStrategy } from '@Api/Translation/providers/gemini.provider'
 import { LectoTranslationStrategy } from '@Api/Translation/providers/lecto.provider'
 
 import { TranslationEmulatorService } from './providers/translationEmulator.provider'
 
 const providers: Record<TranslationProviderName, ITranslationStrategy> = {
   lecto: new LectoTranslationStrategy(process.env.LECTO_API_KEY || ''),
-  emulator: new TranslationEmulatorService()
+  emulator: new TranslationEmulatorService(),
+  gemini: new GeminiTranslationStrategy(process.env.GEMINI_API_KEY || '')
 }
 
 export class TranslationService {

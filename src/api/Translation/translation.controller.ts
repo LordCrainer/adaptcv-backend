@@ -9,12 +9,12 @@ export class TranslationController {
 
   translate: IController = async (req, res, next) => {
     try {
-      const { text, to, from } = req.body
-      if (!text || !to || !from) {
+      const { texts, to, from } = req.body
+      if (!texts || !to || !from) {
         return res.status(400).json({ message: 'Missing required fields' })
       }
       const result = await this.translationService.translate({
-        text,
+        texts,
         to,
         from
       })
