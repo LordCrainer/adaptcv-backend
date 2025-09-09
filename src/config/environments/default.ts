@@ -44,6 +44,7 @@ const defaultEnv = (env: any): Environments => {
     secret: env?.SECRET ?? 'develop',
     jwtSecret: env?.JWT_SECRET ?? 'develop',
     cookieSecret: env?.COOKIE_SECRET ?? 'develop',
+    cookieDomain: env?.COOKIE_DOMAIN ?? 'localhost',
     bcryptSaltRounds: env?.BCRYPT_SALT_ROUNDS ?? 10,
     debugs: {
       debug: JSON.parse(env?.DEBUG ?? false),

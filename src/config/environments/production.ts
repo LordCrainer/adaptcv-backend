@@ -40,6 +40,7 @@ const configuration = (env: any): Environments => {
     secret: env.SECRET,
     jwtSecret: env.JWT_SECRET,
     cookieSecret: env.COOKIE_SECRET,
+    cookieDomain: env.COOKIE_DOMAIN || 'localhost',
     bcryptSaltRounds: env.BCRYPT_SALT_ROUNDS || 10
   }
 }

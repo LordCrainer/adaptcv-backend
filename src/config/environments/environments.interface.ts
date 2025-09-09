@@ -17,6 +17,7 @@ export interface Environments {
   server: Server
   jwtSecret: string
   cookieSecret?: string
+  cookieDomain?: string
   multer: Multer
   cors: Cors
   email?: Email
