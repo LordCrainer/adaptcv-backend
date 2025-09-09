@@ -1,3 +1,15 @@
+# [1.5.0](https://github.com/LordCrainer/adaptcv-backend/compare/v1.4.0...v1.5.0) (2025-06-14)
+
+
+### Bug Fixes
+
+* [acv-4] minor changes ([#5](https://github.com/LordCrainer/adaptcv-backend/issues/5)) ([f5450ae](https://github.com/LordCrainer/adaptcv-backend/commit/f5450ae2e76475d39e6a8c3482d4d8474df376f1))
+
+
+### Features
+
+* **register:** [acv-4] Refactor registration and add unit tests for authentication ([#4](https://github.com/LordCrainer/adaptcv-backend/issues/4)) ([f1256d5](https://github.com/LordCrainer/adaptcv-backend/commit/f1256d58eca5db7e6ad5c2994721e1766de49dd2))
+
 # [1.4.0](https://github.com/LordCrainer/adaptcv-backend/compare/v1.3.0...v1.4.0) (2025-06-09)
 
 
