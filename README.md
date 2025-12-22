@@ -76,6 +76,37 @@ docker-compose --profile prod up --build
   npm run start
   ```
 
+## Health Check Endpoint
+
+The API includes a health check endpoint at `/health` that can be used for monitoring and uptime services like UptimeRobot.
+
+**Endpoint:** `GET /health`
+
+**Response (Healthy):**
+```json
+{
+  "status": "ok",
+  "timestamp": "2025-12-22T01:30:00.000Z",
+  "services": {
+    "mongodb": {
+      "status": "connected",
+      "readyState": 1
+    },
+    "redis": {
+      "status": "connected"
+    }
+  }
+}
+```
+
+**Response (Unhealthy):** Returns HTTP 503 with service status details.
+
+This endpoint:
+- Does not require authentication
+- Is available in all environments (development, production, test)
+- Checks MongoDB and Redis connection status
+- Returns HTTP 200 when healthy, HTTP 503 when unhealthy
+
 ## License
 
 This project is licensed under the ISC License.
