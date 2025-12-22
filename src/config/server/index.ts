@@ -4,6 +4,7 @@ import env from '@src/config/environments'
 import currentEnv from '@src/config/environments'
 import { expressMiddleware } from '@src/config/server/express.middleware'
 import { errorHandler } from '@src/middleware/error.handler.http'
+import healthRouter from '@src/routes/health.router'
 import swaggerRouter from '@src/routes/swaggerConfig'
 import { routerV1 } from '@src/routes/v1/index'
 import { customError } from '@src/Shared/utils/errorUtils'
@@ -17,6 +18,9 @@ expressMiddleware(app)
 if (currentEnv.environment !== 'production') {
   app.use('/docs', swaggerRouter)
 }
+
+// Health check endpoint - available in all environments
+app.use('/health', healthRouter)
 
 app.get('/', (req, res, next) => {
   if (currentEnv.environment === 'production') {
