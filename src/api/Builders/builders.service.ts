@@ -137,4 +137,27 @@ export class BuilderService extends BaseService<IBuilder> {
       data: isDeleted
     }
   }
+
+  /**
+   * Duplicates an existing builder, appending ' Copy' to its name.
+   */
+  async duplicateBuilder(builderId: string): Promise<IApiResponse<IBuilder>> {
+    const existing = await this.builderRepository.findOne({ _id: builderId })
+    if (!existing) {
+      throw customError('resourceNotFound', BuilderMessages.BUILDER_NOT_FOUND)
+    }
+    const newBuilder = {
+      ...existing,
+      _id: shortId.rnd(),
+      name: [existing.name, 'Copy'].join(' ') || `New Builder CV`
+    } as IBuilder
+    const createdBuilder = await this.builderRepository.create(newBuilder)
+    if (!createdBuilder) {
+      throw customError('resourceNotFound', BuilderMessages.BUILDER_NOT_CREATED)
+    }
+    return {
+      message: BuilderMessages.BUILDER_DUPLICATED,
+      data: createdBuilder
+    }
+  }
 }

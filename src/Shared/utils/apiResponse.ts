@@ -2,6 +2,8 @@ import { HttpStatusCode } from 'axios'
 
 import type { CookieOptions, Response } from 'express'
 
+import currentEnv from '@src/config/environments'
+
 import { generateHttpMessage, HttpKeys } from './http.utils'
 
 class ApiResponse {
@@ -45,8 +47,9 @@ class ApiResponse {
     const SEVEN_DAYS = 24 * 3600 * 1000 * 7
     const defaultOptions: CookieOptions = {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: currentEnv.isProduction,
       sameSite: 'none',
+      domain: currentEnv.cookieDomain,
       expires: new Date(Date.now() + SEVEN_DAYS)
     }
     this.res.cookie(key, value, { ...defaultOptions, ...options })

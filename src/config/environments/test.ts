@@ -57,6 +57,7 @@ const configuration = (env: any): Environments => {
     secret: env.SECRET || 'test',
     jwtSecret: env.JWT_SECRET || 'test',
     cookieSecret: env.COOKIE_SECRET || 'test',
+    cookieDomain: env.COOKIE_DOMAIN || 'localhost',
     bcryptSaltRounds: env.BCRYPT_SALT_ROUNDS || 10,
     configGeneral: {
       trustProxy: env?.TRUST_PROXY ?? false

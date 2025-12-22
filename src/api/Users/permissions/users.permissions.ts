@@ -13,8 +13,11 @@ type UserPermissionType =
   | 'deleteUser'
   | 'updateUser'
 
-const viewUserPermission: PermissionMethod = (params) => {
-  return Roles.isSuperAdmin(params.role) || Roles.isUser(params.role)
+const viewUserPermission: PermissionMethod = ({ requestUser }) => {
+  return (
+    Roles.isSuperAdmin(requestUser.currentRole) ||
+    Roles.isUser(requestUser.currentRole)
+  )
 }
 
 const userPermissionRules: Record<UserPermissionType, PermissionMethod> = {
@@ -25,6 +28,10 @@ const userPermissionRules: Record<UserPermissionType, PermissionMethod> = {
   updateUser: basePermissionRules
 }
 
-const userPermissions = checkPermissions(userPermissionRules)
-
-export { userPermissions }
+export const userAccess = {
+  get: checkPermissions(viewUserPermission),
+  list: checkPermissions(viewUserPermission),
+  create: checkPermissions(basePermissionRules),
+  delete: checkPermissions(basePermissionRules),
+  update: checkPermissions(basePermissionRules)
+}

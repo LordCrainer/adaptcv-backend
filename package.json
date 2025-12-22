@@ -9,7 +9,7 @@
     "dev": "cross-env NODE_ENV=development tsx watch src/index.ts",
     "build": "tsc && tsc-alias dist && tsc-esm-fix dist",
     "start": "cross-env NODE_ENV=production node dist/src/index.js",
-    "test:all": "vitest",
+    "test": "vitest",
     "test:unit": "cross-env NODE_ENV=test vitest --project unit",
     "test:int": "cross-env NODE_ENV=test vitest --project integration",
     "test:e2e": "cross-env NODE_ENV=test vitest --project e2e",
@@ -28,7 +28,8 @@
   "author": "Carlos García <carlosgarcia.cagm@gmail.com>",
   "license": "ISC",
   "dependencies": {
-    "@lordcrainer/adaptcv-shared-types": "^1.17.9",
+    "@google/genai": "^1.9.0",
+    "@lordcrainer/adaptcv-shared-types": "^1.17.11",
     "axios": "^1.9.0",
     "bcrypt": "^5.1.1",
     "compression": "^1.8.0",

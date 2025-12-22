@@ -1,4 +1,4 @@
-import { RequestUserData } from '@lordcrainer/adaptcv-shared-types'
+import { IBuilder, RequestUserData } from '@lordcrainer/adaptcv-shared-types'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 
 import { beforeEach } from 'node:test'
@@ -17,7 +17,8 @@ describe('Builder Integration Tests', () => {
     _id: 'test-user-id',
     name: 'Test User',
     email: 'test@example.com',
-    status: 'active'
+    status: 'active',
+    currentRole: 1
   }
   beforeAll(async () => {
     builderRepository = new BuilderRepository()
@@ -67,5 +68,35 @@ describe('Builder Integration Tests', () => {
       _id: createdBuilder?._id
     })
     expect(foundBuilder.name).toBe(updatedData.name)
+  })
+
+  it('should duplicate a builder in the database', async () => {
+    const builderData = {
+      name: 'Original Builder',
+      description: 'Integration Duplicate Test',
+      createdBy: requestUser._id,
+      status: 'draft'
+    } as IBuilder
+    const { data: createdBuilder } = await builderService.createBuilder({
+      body: builderData,
+      requestUser
+    })
+    const { data: duplicatedBuilder } = await builderService.duplicateBuilder(
+      createdBuilder._id as string
+    )
+
+    expect(duplicatedBuilder).toHaveProperty('_id')
+    expect(duplicatedBuilder._id).not.toBe(createdBuilder._id)
+    expect(duplicatedBuilder.name).toBe(`${createdBuilder.name} Copy`)
+
+    const foundOriginal = await builderRepository.findOne({
+      _id: createdBuilder._id
+    })
+    const foundDuplicate = await builderRepository.findOne({
+      _id: duplicatedBuilder._id
+    })
+    expect(foundOriginal).toBeTruthy()
+    expect(foundDuplicate).toBeTruthy()
+    expect(foundDuplicate?._id).toBe(duplicatedBuilder._id)
   })
 })

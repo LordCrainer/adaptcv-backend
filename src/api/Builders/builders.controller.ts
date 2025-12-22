@@ -72,4 +72,17 @@ export class BuilderController {
       next(error)
     }
   }
+
+  /**
+   * Duplicate a builder by ID, appending ' Copy' to its name.
+   */
+  duplicateBuilder: IController = async (req, res, next): Promise<void> => {
+    try {
+      const builderId = req.params.builderId
+      const result = await this.builderService.duplicateBuilder(builderId)
+      new ApiResponse(res).setName('created').json(result)
+    } catch (error) {
+      next(error)
+    }
+  }
 }

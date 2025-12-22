@@ -5,5 +5,6 @@ export const BuilderMessages = {
   BUILDER_CREATED: 'Builder successfully created.',
   BUILDER_UPDATED: 'Builder successfully updated.',
   BUILDER_DELETED: 'Builder successfully deleted.',
-  BUILDER_NOT_CREATED: 'Builder not created.'
+  BUILDER_NOT_CREATED: 'Builder not created.',
+  BUILDER_DUPLICATED: 'Builder successfully duplicated.'
 }

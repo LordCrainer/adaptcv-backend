@@ -1,6 +1,9 @@
 import jwt from 'jsonwebtoken'
 
-import type { UserRepository } from '@Api/Users/interfaces/users.repository'
+import type {
+  IUserExtend,
+  UserRepository
+} from '@Api/Users/interfaces/users.repository'
 import type { IUsers, LoginRequest } from '@lordcrainer/adaptcv-shared-types'
 import type {
   ProfileCache,
@@ -72,13 +75,14 @@ export class AuthService {
     }
   }
 
-  private buildUser(foundUser: any): RequestUserData {
+  private buildUser(foundUser: IUserExtend): RequestUserData {
     return {
       _id: foundUser._id,
       name: foundUser.name,
       email: foundUser.email,
       timezone: foundUser?.timezone,
-      status: foundUser.status
+      status: foundUser.status,
+      currentRole: foundUser.role || 0
     }
   }
 
@@ -98,7 +102,7 @@ export class AuthService {
 
     redisClient.del(`requestUser-${p.userId}`)
     Logger.info(`Token deleted from Redis for user ${p.userId}`)
-    
+
     return {
       data: true,
       message: AUTH_MESSAGES.logout
@@ -125,7 +129,9 @@ export class AuthService {
     }
   }
 
-  async refreshToken(currentRefreshToken: string): Promise<IApiResponse<TokenResponse>> {
+  async refreshToken(
+    currentRefreshToken: string
+  ): Promise<IApiResponse<TokenResponse>> {
     if (!currentRefreshToken) {
       throw customError('validationParams', AUTH_MESSAGES.params_missing)
     }
@@ -138,7 +144,7 @@ export class AuthService {
 
     const cacheUser = await this.getUserFromCache(user)
     const tokens = this.buildTokenPayload(cacheUser)
-    
+
     return {
       data: tokens,
       message: AUTH_MESSAGES.refresh_token

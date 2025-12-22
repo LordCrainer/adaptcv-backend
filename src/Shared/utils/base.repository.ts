@@ -82,13 +82,13 @@ export class BaseRepository<T extends { _id?: string }>
     const combinedFilters = { ...initialFilters, ...filters, ...or }
     let query = this.model.findOne(combinedFilters)
     if (select) {
-      query.select(select as any)
+      query = query.select(select as any)
     }
     if (queries?.populate) {
-      query.populate(queries.populate).lean()
+      query = query.populate(queries.populate)
     }
-    const found = query.sort(orderBy)
-    return found as unknown as T
+    const found = await query.sort(orderBy).lean().exec()
+    return found as T
   }
 
   async update(

@@ -3,7 +3,7 @@ import express from 'express'
 import { canAccess } from '@src/middleware/canAccess'
 
 import { inyectAuthMiddleware } from '../Auth/auth.dependencies'
-import { userPermissions } from './permissions/users.permissions'
+import { userAccess } from './permissions/users.permissions'
 import { inyectUserController } from './users.dependencies'
 
 /**
@@ -97,11 +97,7 @@ UsersRouter.use(inyectAuthMiddleware, canAccess('user'))
  *       404:
  *         description: User not found
  */
-UsersRouter.get(
-  '/:userId',
-  userPermissions('getUser'),
-  inyectUserController.getUser
-)
+UsersRouter.get('/:userId', userAccess.get, inyectUserController.getUser)
 
 /**
  * GET method route
@@ -147,7 +143,7 @@ UsersRouter.get(
  *               items:
  *                 $ref: '#/components/schemas/User'
  */
-UsersRouter.get('/', userPermissions('getUsers'), inyectUserController.getUsers)
+UsersRouter.get('/', userAccess.list, inyectUserController.getUsers)
 
 /**
  * POST method route
@@ -177,11 +173,7 @@ UsersRouter.get('/', userPermissions('getUsers'), inyectUserController.getUsers)
  *       400:
  *         description: Bad request
  */
-UsersRouter.post(
-  '/',
-  userPermissions('createUser'),
-  inyectUserController.createUser
-)
+UsersRouter.post('/', userAccess.create, inyectUserController.createUser)
 
 /**
  * DELETE method route
@@ -210,7 +202,7 @@ UsersRouter.post(
  */
 UsersRouter.delete(
   '/:userId',
-  userPermissions('deleteUser'),
+  userAccess.delete,
   inyectUserController.deleteUser
 )
 

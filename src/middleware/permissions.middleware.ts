@@ -1,31 +1,52 @@
+import { RequestUserData } from '@lordcrainer/adaptcv-shared-types'
+
 import { Roles } from '@src/api/Roles/roles'
 import { customError } from '@src/Shared/utils/errorUtils'
 
-export interface PermissionParams {
-  role: number
+export interface PermissionParams<T = Record<string, any>> {
+  requestUser: RequestUserData
+  resource?: T
 }
+
+type SourceType = 'body' | 'params' | 'query'
 
 export type PermissionMethod = (params: PermissionParams) => boolean
 
-export const basePermissionRules = (params: PermissionParams) =>
-  Roles.isSuperAdmin(params.role)
+export const superAdminPermissionRules: PermissionMethod = ({
+  requestUser
+}: PermissionParams) => {
+  return Roles.isSuperAdmin(requestUser.currentRole)
+}
 
-export const checkPermissions =
-  <T extends string>(permissionRules: Record<T, PermissionMethod>) =>
-  (action: T): IController => {
-    return (req, res, next) => {
-      const { currentRole } = req.requestUser || {}
-      if (
-        currentRole &&
-        !permissionRules[action]?.({
-          role: currentRole
-        })
-      ) {
+export const basePermissionRules = ({ requestUser }: PermissionParams) =>
+  Roles.isSuperAdmin(requestUser.currentRole) ||
+  Roles.isUser(requestUser.currentRole)
+
+export const checkPermissions = (
+  permissionRules: PermissionMethod,
+  source: SourceType
+): IController => {
+  return async (req, res, next) => {
+    try {
+      if (!req.requestUser?.currentRole) {
+        throw customError('unauthorized', 'Authentication required')
+      }
+
+      const hasPermission = permissionRules({
+        requestUser: req.requestUser || {},
+        resource: req[source] || {}
+      })
+
+      if (!hasPermission) {
         throw customError(
           'forbidden',
           'You do not have permission to perform this action'
         )
       }
+
       next()
+    } catch (error) {
+      next(error)
     }
   }
+}
