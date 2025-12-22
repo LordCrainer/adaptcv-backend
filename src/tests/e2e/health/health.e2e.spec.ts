@@ -102,7 +102,7 @@ describe('Health Endpoint E2E Tests', () => {
       // Should return 503 for unhealthy services
       expect(response.status).toBe(503)
       expect(response.body.status).toBe('error')
-      expect(response.body.services.redis.status).toBe('disconnected')
+      expect(['disconnected', 'not_initialized']).toContain(response.body.services.redis.status)
 
       // Reconnect for other tests
       await redisConnection(currentEnv.dataBase.redis.uri)

@@ -43,6 +43,7 @@ const healthRouter = Router()
  *                       properties:
  *                         status:
  *                           type: string
+ *                           enum: [connected, disconnected, not_initialized]
  *                           example: connected
  *       503:
  *         description: One or more services are unhealthy
@@ -68,7 +69,13 @@ healthRouter.get('/', (req: Request, res: Response) => {
     const mongoHealthy = mongoStatus === 1
 
     // Check Redis connection status
-    const redisHealthy = redisClient?.isReady ?? false
+    // Check if client exists and is ready
+    const redisHealthy = redisClient ? redisClient.isReady : false
+    const redisStatusText = !redisClient 
+      ? 'not_initialized' 
+      : redisHealthy 
+        ? 'connected' 
+        : 'disconnected'
 
     // Determine overall health
     const isHealthy = mongoHealthy && redisHealthy
@@ -82,7 +89,7 @@ healthRouter.get('/', (req: Request, res: Response) => {
           readyState: mongoStatus
         },
         redis: {
-          status: redisHealthy ? 'connected' : 'disconnected'
+          status: redisStatusText
         }
       }
     }
