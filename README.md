@@ -78,7 +78,7 @@ docker-compose --profile prod up --build
 
 ## Health Check Endpoint
 
-The API includes a health check endpoint at `/health` that can be used for monitoring and uptime services like UptimeRobot.
+The API includes a global infrastructure health check endpoint at `/health` for monitoring critical dependencies with services like UptimeRobot.
 
 **Endpoint:** `GET /health`
 
@@ -106,6 +106,8 @@ This endpoint:
 - Is available in all environments (development, production, test)
 - Checks MongoDB and Redis connection status
 - Returns HTTP 200 when healthy, HTTP 503 when unhealthy
+
+**Note:** This is different from service-specific health endpoints like `/v1/auth/health` and `/v1/users/health`, which only verify that the API routes are responding. The global `/health` endpoint checks the actual infrastructure dependencies.
 
 ## License
 

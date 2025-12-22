@@ -6,6 +6,14 @@ import { redisClient } from '@src/config/cache/redis'
 const healthRouter = Router()
 
 /**
+ * Global Infrastructure Health Check Endpoint
+ * 
+ * This endpoint checks the health of critical infrastructure dependencies (MongoDB, Redis).
+ * It is designed for external monitoring services like UptimeRobot.
+ * 
+ * Note: This is different from service-specific health endpoints like /v1/auth/health
+ * or /v1/users/health, which only check if those API routes are available.
+ * 
  * @swagger
  * /health:
  *   get:
