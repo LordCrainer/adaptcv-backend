@@ -12,7 +12,7 @@ interface RequestExtended<T = any> extends Request {
 
 declare global {
   interface IController<T = any> {
-    (req: RequestExtended<T>, res: Response, next: NextFunction): void
+    (req: RequestExtended<T>, res: Response, next: NextFunction): void | Promise<void>
   }
 
   type RecursivePartial<T> = {
