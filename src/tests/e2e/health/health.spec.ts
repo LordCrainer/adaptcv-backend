@@ -3,7 +3,6 @@ import request from 'supertest'
 
 import app from '@src/config/server'
 import { dbStrategy } from '@src/config/db/dbStrategy'
-import { redisConnection, closeRedisConnection } from '@src/config/cache/redis'
 import currentEnv from '@src/config/environments'
 
 const selectedDb = dbStrategy.mongoMemory
@@ -11,11 +10,9 @@ const selectedDb = dbStrategy.mongoMemory
 describe('Health E2E Tests', () => {
   beforeAll(async () => {
     await selectedDb.connect('acv-health-test')
-    await redisConnection(currentEnv.dataBase.redis.uri)
   })
 
   afterAll(async () => {
-    await closeRedisConnection()
     await selectedDb.disconnect()
   })
 
