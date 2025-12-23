@@ -3,7 +3,6 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 
 import type { MockEmailService } from '@src/services/email/mock-email.service'
 
-import { redisConnection } from '@src/config/cache/redis'
 import { dbStrategy } from '@src/config/db/dbStrategy'
 import currentEnv from '@src/config/environments'
 import app from '@src/config/server'
@@ -17,7 +16,6 @@ let mockEmailService: MockEmailService
 describe('Registration with Email E2E Tests', () => {
   beforeAll(async () => {
     await selectedDb.connect('acv-registration-email-test')
-    await redisConnection(currentEnv.dataBase.redis.uri)
 
     // Get the mock email service instance - it should be MockEmailService in test environment
     mockEmailService = emailProvider as MockEmailService

@@ -8,7 +8,39 @@ on:
       - main
 
 jobs:
-  testing-job:
+  unit-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Configurate Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22.x
+          cache: 'npm'
+
+      # Step 2.1: Configure .npmrc for GitHub Packages
+      - name: Configure .npmrc for GitHub Packages
+        run: |
+          echo "@lordcrainer:registry=https://npm.pkg.github.com" >> .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_TOKEN }}" >> .npmrc
+
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Step 4: Run unit tests
+      - name: Run unit tests
+        env:
+          DEBUG: 'true'
+          SKIP_CLEAR: 'false'
+        run: npm run test:unit
+
+  integration-tests:
     runs-on: ubuntu-latest
 
     services:
@@ -40,21 +72,46 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # Step 4: Run unit tests
-      - name: Run unit tests
-        env:
-          DEBUG: 'true'
-          SKIP_CLEAR: 'false'
-        run: npm run test:unit
-
-      # Step 5: Run Integration tests
+      # Step 4: Run Integration tests
       - name: Run Integration tests
         env:
           DEBUG: 'true'
           SKIP_CLEAR: 'false'
         run: npm run test:int
 
-      # Step 6: Run E2E tests
+  e2e-tests:
+    runs-on: ubuntu-latest
+
+    services:
+      redis:
+        image: redis:latest
+        ports:
+          - 6380:6379
+        options: --entrypoint redis-server
+
+    steps:
+      # Step 1: Checkout repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Configurate Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22.x
+          cache: 'npm'
+
+      # Step 2.1: Configure .npmrc for GitHub Packages
+      - name: Configure .npmrc for GitHub Packages
+        run: |
+          echo "@lordcrainer:registry=https://npm.pkg.github.com" >> .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_TOKEN }}" >> .npmrc
+
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Step 4: Run E2E tests
       - name: Run E2E tests
         env:
           DEBUG: 'true'
