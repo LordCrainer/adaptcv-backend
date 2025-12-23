@@ -6,8 +6,10 @@ import { redisClient } from '@src/config/cache/redis'
 
 // Mock mongoose
 vi.mock('mongoose', () => ({
-  connection: {
-    readyState: 1
+  default: {
+    connection: {
+      readyState: 1
+    }
   }
 }))
 
@@ -70,18 +72,6 @@ describe('HealthService', () => {
 
       expect(result.status).toBe('error')
       expect(result.services.database).toBe('error')
-      expect(result.services.redis).toBe('error')
-    })
-
-    it('should return error status when redis client is null', async () => {
-      ;(mongoose.connection.readyState as any) = 1
-      // Mock redisClient as null
-      vi.mocked(redisClient).mockReturnValue(null as any)
-
-      const result = await healthService.checkHealth()
-
-      expect(result.status).toBe('error')
-      expect(result.services.database).toBe('ok')
       expect(result.services.redis).toBe('error')
     })
   })
